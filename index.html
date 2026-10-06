@@ -817,7 +817,10 @@
           </head>
           <body>
             <div style="width:100%; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #222; padding-bottom:15px;">
-              <div style="font-size:1.8rem; color:#aaa; font-weight:800; letter-spacing:1px;">TERMINAL DE CHECK-IN KOSMO</div>
+              <div style="display:flex; align-items:center; gap:15px;">
+                <img src="logo.jpg.jpg" alt="KOSMO" style="height:60px; object-fit:contain; background:#fff; border-radius:6px; padding:4px;" onerror="this.src='logo.jpg';">
+                <div style="font-size:1.8rem; color:#aaa; font-weight:800; letter-spacing:1px; text-align:left;">TERMINAL DE CHECK-IN KOSMO</div>
+              </div>
               <div id="totem-relogio" style="font-size: 6.5rem; font-family: monospace; color: #ffd43b; font-weight: 900; letter-spacing: 2px;">00:00:00</div>
             </div>
             
@@ -863,7 +866,7 @@
         `;
         return;
       }
-      
+
         gerarQRCodeInscricao();
       } catch(e) {}
     });
