@@ -3,48 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado de Gestão</title>
+  <title>Ginásio KOSMO - Sistema Completo de Gestão</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root { --primary: #c92a2a; --bg: #f4f6f9; --dark: #212529; --border: #dee2e6; }
+    :root { --primary: #c92a2a; --primary-dark: #a61e1e; --sidebar-bg: #1e2227; --sidebar-hover: #2a3038; --sidebar-text: #c2c7d0; --bg: #f4f6f9; --card: #ffffff; --success: #2b8a3e; --danger: #d9480f; --warning: #f59f00; --dark: #212529; --border: #dee2e6; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { display: flex; height: 100vh; overflow: hidden; background: var(--bg); color: var(--dark); }
-    
-    #login-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: #111417; z-index: 50000; display: flex; justify-content: center; align-items: center;
-    }
-    .login-box {
-      background: #fff; padding: 25px 30px; border-radius: 10px; width: 100%; max-width: 440px;
-      text-align: center; border-top: 5px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
+    html, body { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg); color: var(--dark); }
+    body { display: flex; }
+
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #111417; z-index: 50000; display: flex; justify-content: center; align-items: center; }
+    .login-box { background: #fff; padding: 25px 30px; border-radius: 10px; width: 100%; max-width: 440px; text-align: center; border-top: 5px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .login-logo { width: 100%; height: 80px; object-fit: contain; margin-bottom: 12px; }
 
-    aside { width: 260px; background: #1e2227; color: #c2c7d0; display: flex; flex-direction: column; }
-    .gym-header { padding: 15px; text-align: center; background: #14171a; border-bottom: 1px solid #333; }
+    aside { width: 260px; min-width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; height: 100%; border-right: 1px solid #14171a; }
+    .gym-header { padding: 15px; text-align: center; background: #14171a; border-bottom: 1px solid rgba(255,255,255,0.08); }
     .sidebar-logo { width: 100%; height: 45px; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px; margin-bottom: 6px; }
-    .gym-header h3 { color: #fff; font-size: 1.1rem; }
-    
-    .menu { flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-    .nav-btn { background: transparent; border: none; color: #c2c7d0; padding: 10px 15px; text-align: left; font-size: 0.9rem; cursor: pointer; border-radius: 5px; font-weight: 600; }
-    .nav-btn:hover, .nav-btn.active { background: var(--primary); color: #fff; }
-    
-    .main-content { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
-    header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 25px; }
-    main { flex: 1; overflow-y: auto; padding: 25px; }
-    .card { background: #fff; border-radius: 8px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-    h2 { font-size: 1.2rem; margin-bottom: 15px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 8px; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
-    label { font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px; color: #495057; }
-    input, select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.9rem; }
-    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-    .btn:hover { background: #a61e1e; }
+    .gym-header h3 { font-size: 1.1rem; color: #fff; font-weight: 800; }
+    .gym-header p { font-size: 0.75rem; color: #88929b; }
+
+    .menu-scroll { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .nav-group-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px; color: #6c7884; padding: 12px 16px 4px; font-weight: 700; }
+    .nav-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; font-size: 0.88rem; color: var(--sidebar-text); cursor: pointer; font-weight: 500; border: none; background: transparent; text-align: left; transition: background 0.15s; }
+    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+    .nav-item.active { background: var(--primary); color: #fff; font-weight: 700; }
+    .nav-item .icon { font-size: 1.15rem; width: 26px; text-align: center; margin-right: 10px; }
+
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+    .top-title { font-size: 1.15rem; font-weight: 700; }
+
+    main { flex: 1; overflow-y: auto; padding: 20px; }
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+    .card { background: var(--card); border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+    h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 8px; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #495057; }
+    input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.9rem; background-color: #fff; }
+
+    .btn { background: var(--primary); color: #fff; border: none; padding: 9px 18px; border-radius: 5px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-green { background: var(--success); }
     .btn-blue { background: #1971c2; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { background: #f8f9fa; font-weight: 600; }
-    .badge-ok { background: #2b8a3e; color: #fff; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; border-radius: 4px; color:#fff; border:none; cursor:pointer; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    th { background: #f8f9fa; font-weight: 600; color: #495057; }
+    .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; }
+    .badge-ok { background: var(--success); }
+    .badge-err { background: var(--danger); }
   </style>
 </head>
 <body>
@@ -61,25 +72,58 @@
     </div>
   </div>
 
-  <aside>
+  <!-- MENU LATERAL COMPLETO -->
+  <aside id="sidebar-panel">
     <div class="gym-header">
       <img src="assets/img/logo.jpg" alt="KOSMO" class="sidebar-logo" onerror="this.src='logo.jpg';">
       <h3>KOSMO</h3>
-      <p style="font-size:0.75rem; color:#aaa; margin-top:2px;">NIF: 283023805</p>
+      <p>Praia, Terra Branca, 7600<br><strong>NIF: 283023805</strong></p>
     </div>
-    <div class="menu">
-      <button class="nav-btn active" onclick="switchTab('membros')">👤 Gestão de Membros</button>
-      <button class="nav-btn" onclick="switchTab('checkins')">🔔 Check-ins / Totem</button>
+    <div class="menu-scroll">
+      <div class="nav-group-title">Membros & Online</div>
+      <button type="button" class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')"><span class="icon">🏠</span><span class="nav-text">Dashboard Geral</span></button>
+      <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
+      <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
+      
+      <div class="nav-group-title">Loja & Stock</div>
+      <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
+      <button type="button" class="nav-item" id="nav-produtos" onclick="navigate('produtos')"><span class="icon">📦</span><span class="nav-text">Produtos (A a Z)</span></button>
+      <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
+      <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
+
+      <div class="nav-group-title">Comunicação</div>
+      <button type="button" class="nav-item" id="nav-mensagens" onclick="navigate('mensagens')"><span class="icon">💬</span><span class="nav-text">Enviar WhatsApp</span></button>
+      <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat & Feed Online</span></button>
+
+      <div class="nav-group-title">Colaboradores</div>
+      <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Cartão Ponto</span></button>
+      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Manual)</span></button>
+    </div>
+    <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
+      <span style="display:block; color:#ffd43b; font-size:0.75rem; margin-bottom:6px; text-align:center; font-weight:bold;">Sessão: Admin</span>
+      <button type="button" onclick="location.reload()" class="btn btn-sm" style="background:#e03131; width:100%;">Terminar Sessão</button>
     </div>
   </aside>
 
-  <div class="main-content">
+  <div class="main-wrapper">
     <header>
-      <h2 id="page-title" style="border:none; margin:0; padding:0;">Gestão de Membros</h2>
-      <button class="btn btn-blue" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
+      <div class="top-title" id="page-title">Dashboard Geral</div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Ecrã Totem Gigante</button>
+      </div>
     </header>
+
     <main>
-      <section id="tab-membros">
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view-section active">
+        <div class="card">
+          <h2>Bem-vindo ao Painel de Controlo KOSMO</h2>
+          <p>Utilize o menu lateral para navegar entre Membros, Stock, POS, Check-ins e Staff.</p>
+        </div>
+      </section>
+
+      <!-- MEMBROS -->
+      <section id="view-membros" class="view-section">
         <div class="card">
           <h2>Registar Novo Membro</h2>
           <div class="form-grid">
@@ -93,12 +137,13 @@
           <h2>Lista de Membros Ativos</h2>
           <table>
             <thead><tr><th>Nome</th><th>Código / ID</th><th>Plano</th><th>Estado</th></tr></thead>
-            <tbody id="members-tbody"><tr><td colspan="4" style="text-align:center; color:#777;">A carregar membros...</td></tr></tbody>
+            <tbody id="members-tbody"><tr><td colspan="4" style="text-align:center; color:#777;">Sem membros registados.</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <section id="tab-checkins" style="display:none;">
+      <!-- CHECK-INS -->
+      <section id="view-checkins" class="view-section">
         <div class="card">
           <h2>Terminal de Check-ins (Leitor de Cartão / Barras)</h2>
           <input type="text" id="chk-input" placeholder="Passe o cartão ou digite o ID e prima Enter..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; width:100%; margin-bottom:15px;">
@@ -108,15 +153,103 @@
           </table>
         </div>
       </section>
+
+      <!-- POS -->
+      <section id="view-pos" class="view-section"><div class="card"><h2>POS - Ponto de Venda</h2><p>Módulo de vendas operacional.</p></div></section>
+      <!-- PRODUTOS -->
+      <section id="view-produtos" class="view-section"><div class="card"><h2>Produtos</h2><p>Gestão de artigos da loja.</p></div></section>
+      <!-- STOCK -->
+      <section id="view-stock" class="view-section"><div class="card"><h2>Stock</h2><p>Inventário atualizado.</p></div></section>
+      <!-- VENDAS -->
+      <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><p>Registo de transações.</p></div></section>
+      <!-- MENSAGENS -->
+      <section id="view-mensagens" class="view-section"><div class="card"><h2>Enviar WhatsApp</h2><p>Comunicação direta com alunos.</p></div></section>
+      <!-- CHAT -->
+      <section id="view-chat" class="view-section"><div class="card"><h2>Chat & Feed Online</h2><p>Mensagens da comunidade.</p></div></section>
+      <!-- COLAB -->
+      <section id="view-colab" class="view-section"><div class="card"><h2>Gerir Staff</h2><p>Controlo de colaboradores.</p></div></section>
+      <!-- PICAPONTO -->
+      <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto (Manual)</h2><p>Registo de entradas e saídas do staff.</p></div></section>
     </main>
   </div>
 
   <script>
-    let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
-      { name: 'Silvio Cabral', barcode: '112233', plan: 'Mensal', estado: 'Ativo' }
-    ];
+    let members = JSON.parse(localStorage.getItem('kosmo_members')) || [{ name: 'Silvio Cabral', barcode: '112233', plan: 'Mensal', estado: 'Ativo' }];
     let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
 
-    function switchTab(tab) {
-      document.getElementById('tab-membros').style.display = tab === 'membros' ? 'block' : 'none';
-      document.getElementById
+    function directLogin() { document.getElementById('login-overlay').style.display = 'none'; }
+    function openTotemWindow() { window.open('totem.html', '_blank', 'width=1100,height=800'); }
+
+    function navigate(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('view-' + viewId);
+      if (target) target.classList.add('active');
+      const navBtn = document.getElementById('nav-' + viewId);
+      if (navBtn) navBtn.classList.add('active');
+
+      const titles = {
+        dashboard: 'Dashboard Geral', membros: 'Membros Ativos & Gestão', checkins: 'Check-ins / Totem',
+        pos: 'POS - Ponto de Venda', produtos: 'Catálogo de Produtos', stock: 'Stock', vendas: 'Histórico de Vendas',
+        mensagens: 'Enviar WhatsApp', chat: 'Chat & Feed Online', colab: 'Gerir Staff', picaponto: 'Pica Ponto (Manual)'
+      };
+      document.getElementById('page-title').innerText = titles[viewId] || 'Gestão KOSMO';
+      if (viewId === 'membros') renderMembers();
+      if (viewId === 'checkins') renderAttendance();
+    }
+
+    function saveMember() {
+      const name = document.getElementById('m-name').value.trim();
+      const barcode = document.getElementById('m-barcode').value.trim();
+      const plan = document.getElementById('m-plan').value;
+      if (!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
+      members.push({ name, barcode, plan, estado: 'Ativo' });
+      localStorage.setItem('kosmo_members', JSON.stringify(members));
+      alert('Membro registado com sucesso!');
+      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+      renderMembers();
+    }
+
+    function renderMembers() {
+      const tbody = document.getElementById('members-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      members.forEach(m => {
+        tbody.innerHTML += `<tr><td><strong>${m.name}</strong></td><td><code>${m.barcode}</code></td><td>${m.plan}</td><td><span class="badge badge-ok">${m.estado}</span></td></tr>`;
+      });
+    }
+
+    function onScan(e) {
+      if (e.key === 'Enter') {
+        const code = document.getElementById('chk-input').value.trim();
+        if (!code) return;
+        const m = members.find(x => x.barcode === code) || { name: 'Membro (Convidado)', plan: 'Geral', barcode: code };
+        const now = new Date();
+        const log = { data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: m.barcode, status: 'Ativo' };
+        
+        attendanceLogs.unshift(log);
+        localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
+        renderAttendance();
+
+        localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: m.name, plan: m.plan, auth: true, time: Date.now() }));
+        document.getElementById('chk-input').value = '';
+      }
+    }
+
+    function renderAttendance() {
+      const tbody = document.getElementById('attendance-tbody');
+      if (!tbody) return;
+      if (attendanceLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem check-ins registados hoje.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = '';
+      attendanceLogs.forEach(a => {
+        tbody.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td><strong>${a.name}</strong></td><td><code>${a.barcode}</code></td><td><span class="badge badge-ok">Ativo</span></td></tr>`;
+      });
+    }
+
+    window.onload = () => { renderMembers(); renderAttendance(); };
+  </script>
+</body>
+</html>
