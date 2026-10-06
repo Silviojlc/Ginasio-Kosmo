@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -98,10 +98,13 @@
       <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
       <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
 
-      <div class="nav-group-title">Comunicação & Backup</div>
+      <div class="nav-group-title">Base de Dados Global</div>
+      <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Base de Dados & Transações</span></button>
+
+      <div class="nav-group-title">Comunicação & Lembretes</div>
       <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
       <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
-      <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar Dados / Backups</span></button>
+      <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Auto (-5d / 2x dia)</span></button>
 
       <div class="nav-group-title">Colaboradores & Staff</div>
       <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Funções</span></button>
@@ -127,7 +130,7 @@
       <section id="view-dashboard" class="view-section active">
         <div class="card">
           <h2>Bem-vindo ao Sistema KOSMO</h2>
-          <p>Painel operacional carregado com sucesso. Selecione uma opção no menu lateral.</p>
+          <p>Painel operacional carregado com sucesso. Notificações automáticas (-5d / 2x ao dia) ativas em segundo plano.</p>
         </div>
       </section>
 
@@ -138,39 +141,34 @@
           <input type="hidden" id="m-edit-id" value="">
           <div class="form-grid">
             <div><label>Nome Completo *</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
-            <div><label>Filho(a) de (Pai e Mãe)</label><input type="text" id="m- pais" placeholder="Nome dos pais"></div>
-            <div><label>Data de Nascimento / Idade</label><input type="text" id="m-nascimento" placeholder="DD/MM/AAAA (Idade)"></div>
             <div><label>Código / ID Cartão *</label><input type="text" id="m-barcode" placeholder="Ex: 112233"></div>
             <div><label>Telemóvel</label><input type="tel" id="m-phone" placeholder="9988886"></div>
-            <div><label>Peso Atual (kg)</label><input type="text" id="m-peso" placeholder="Ex: 75kg"></div>
-            <div><label>Possui Patologia / Lesão?</label><input type="text" id="m-patologia" placeholder="Sim/Não e descreva"></div>
-            <div><label>Objetivo Principal</label><input type="text" id="m-objetivo" placeholder="Ex: Hipertrofia, Emagrecimento"></div>
-            <div><label>Plano</label><select id="m-plan" onchange="toggleMemberAnexo()"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
-            <div><label>Estado do Aluno</label><select id="m-estado"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option><option value="Desativado">Desativado</option></select></div>
+            <div><label>Plano</label><select id="m-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
+            <div><label>Estado</label><select id="m-estado"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option><option value="Desativado">Desativado</option></select></div>
             <div><label>Data de Início</label><input type="date" id="m-date"></div>
             <div><label>Fotografia Pessoal</label><input type="file" id="m-foto-file" accept="image/*" onchange="converterFotoMembro(event)"></div>
-            <div id="m-box-anexo" style="grid-column:1/-1; display:none; background:#fff3bf; padding:12px; border-radius:6px; border:1px solid #f59f00;">
-              <label id="m-label-anexo" style="font-weight:bold; color:#b7791f;">Documento Comprovativo Obrigatório *</label>
-              <input type="file" id="m-anexo-file" accept="image/*,.pdf" onchange="converterAnexoMembro(event)">
-            </div>
-          </div>
-          <div class="contrato-box">
-            <strong>Contrato de Inscrição KOSMO</strong><br>
-            Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar como a encontrei. Concordo que qualquer material danificado ou destruído propositadamente recairá sobre mim a responsabilidade de o consertar ou indemnizar por completo.<br><br>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer; color:var(--success);">
-              <input type="checkbox" id="m-contrato-check" style="width:18px; height:18px;"> Escrevo na linha: "concordo plenamente" com todas as condições impostas.
-            </label>
           </div>
           <input type="hidden" id="m-foto-base64" value="">
-          <input type="hidden" id="m-anexo-base64" value="">
           <button class="btn" id="btn-save-member" onclick="saveMember()">Registar Membro</button>
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <h2>Lista de Membros Ativos & Gestão</h2>
+          <h2>Lista de Membros (Ativos 🟢, A Fencer 5d 🟡, Expirados 🔴, Inativos ⚫)</h2>
           <table>
             <thead><tr><th>Foto</th><th>Nome</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="members-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BASE DE DADOS GLOBAL -->
+      <section id="view-database" class="view-section">
+        <div class="card">
+          <h2>Base de Dados & Transações (Editar, Imprimir, Alterar, Excluir)</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">Registo global de todas as subscrições, pagamentos e histórico de dados unificados.</p>
+          <table>
+            <thead><tr><th>Tipo</th><th>Identificação / Cliente</th><th>Detalhes / Plano</th><th>Data / Registo</th><th>Ações de Gestão</th></tr></thead>
+            <tbody id="database-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem dados na base de dados.</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -212,7 +210,7 @@
             </div>
             <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
               <h3 style="margin-bottom:10px; font-size:0.95rem; color:var(--primary);">🛒 Carrinho</h3>
-              <div style="margin-bottom:10px;"><label>Nome do Cliente</label><input type="text" id="pos-client-name" placeholder="Nome do cliente"></div>
+              <div style="margin-bottom:10px;"><label>Nome do Cliente</label><input type="text" id="pos-client-name" placeholder="Cliente Balcão"></div>
               <div id="pos-cart-items" style="max-height:240px; overflow-y:auto; margin-bottom:12px; font-size:0.85rem;">Carrinho vazio.</div>
               <div style="border-top:2px solid var(--border); padding-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:1.05rem;">
                 <span>Total:</span>
@@ -235,17 +233,17 @@
             <div><label>Preço de Venda (CVE) *</label><input type="number" id="p-price" placeholder="2500"></div>
             <div><label>Stock Inicial</label><input type="number" id="p-stock" value="10"></div>
             <div><label>Fotografia do Produto</label><input type="file" id="p-foto-file" accept="image/*" onchange="converterFotoProduto(event)"></div>
-            <div style="grid-column:1/-1;"><label>Descrição do Produto</label><textarea id="p-desc" rows="2" placeholder="Detalhes..."></textarea></div>
-            <div style="grid-column:1/-1;"><label>Modo de Usar</label><textarea id="p-use" rows="2" placeholder="Instruções..."></textarea></div>
+            <div style="grid-column:1/-1;"><label>Descrição</label><textarea id="p-desc" rows="2"></textarea></div>
+            <div style="grid-column:1/-1;"><label>Modo de Usar</label><textarea id="p-use" rows="2"></textarea></div>
           </div>
           <input type="hidden" id="p-foto-base64" value="">
           <button class="btn" id="btn-save-prod" onclick="saveProduct()">Guardar Produto</button>
           <button class="btn btn-blue" id="btn-cancel-prod" onclick="cancelEditProduct()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <h2>Catálogo de Produtos (A a Z)</h2>
+          <h2>Catálogo de Produtos</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Produto & Descrição</th><th>Modo de Usar</th><th>Preços</th><th>Stock</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Produto</th><th>Modo de Usar</th><th>Preço</th><th>Stock</th><th>Ações</th></tr></thead>
             <tbody id="products-tbody"></tbody>
           </table>
         </div>
@@ -256,7 +254,7 @@
         <div class="card">
           <h2>Gestão de Stock Atual</h2>
           <table>
-            <thead><tr><th>Produto</th><th>Stock Atual</th><th>Estado</th></tr></thead>
+            <thead><tr><th>Produto</th><th>Stock</th><th>Estado</th></tr></thead>
             <tbody id="stock-tbody"></tbody>
           </table>
         </div>
@@ -289,12 +287,12 @@
       <!-- CHAT -->
       <section id="view-chat" class="view-section">
         <div class="card">
-          <h2>Chat Multimédia & Ficheiros</h2>
+          <h2>Chat Multimédia</h2>
           <div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;">
             <div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div>
             <div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;">
               <input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)">
-              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar Ficheiro</button>
+              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar</button>
               <input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()">
               <button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button>
             </div>
@@ -313,22 +311,22 @@
         </div>
       </section>
 
-      <!-- LEMBRETES -5D (02 NOTIFICAÇÕES AO DIA) -->
+      <!-- ALERTAS VENCIMENTO (-5D / 2x ao dia) -->
       <section id="view-lembretes" class="view-section">
         <div class="card">
-          <h2>Alertas de Vencimento (-5 Dias) - 02 Notificações Diárias</h2>
-          <button class="btn btn-blue" onclick="verificarAlertaVencimentos()">Executar Verificação</button>
+          <h2>Alertas Automáticos de Vencimento (-5 Dias) - 02 Notificações Diárias</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">O sistema dispara automaticamente 02 vezes ao dia por e-mail e WhatsApp (opcional).</p>
           <table>
-            <thead><tr><th>Membro</th><th>Telemóvel</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead>
-            <tbody id="alertas-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Clique em executar.</td></tr></tbody>
+            <thead><tr><th>Membro</th><th>Telemóvel</th><th>Plano</th><th>Vencimento</th><th>Estado do Alerta</th></tr></thead>
+            <tbody id="alertas-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">A verificar alertas...</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <!-- IMPORTAR DADOS -->
+      <!-- IMPORTAR BACKUP -->
       <section id="view-importar" class="view-section">
         <div class="card">
-          <h2>Importar Backup Universal (Ativos, Inativos, Expirados, Produtos)</h2>
+          <h2>Importar Dados / Backups Universais</h2>
           <div class="form-grid">
             <div><label>Ficheiro (.json / .csv)</label><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div>
           </div>
@@ -344,18 +342,18 @@
             <div><label>Nome *</label><input type="text" id="colab-name"></div>
             <div><label>Cargo</label><input type="text" id="colab-role"></div>
             <div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div>
-            <div><label>Funções / Permissões</label><select id="colab-perm"><option value="Total">Gestão Total</option><option value="Checkins">Apenas Check-ins</option></select></div>
+            <div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div>
             <div><label>Utilizador</label><input type="text" id="colab-user"></div>
             <div><label>Senha</label><input type="password" id="colab-pass"></div>
-            <div><label>Fotografia Pessoal</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
+            <div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
           </div>
           <input type="hidden" id="colab-foto-base64" value="">
-          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar / Atualizar Staff</button>
+          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button>
         </div>
         <div class="card">
           <h2>Equipa</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>Função</th><th>ID</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead>
             <tbody id="colab-tbody"></tbody>
           </table>
         </div>
@@ -364,7 +362,7 @@
       <!-- PICA PONTO -->
       <section id="view-picaponto" class="view-section">
         <div class="card">
-          <h2>Pica Ponto (Leitor ou Manual)</h2>
+          <h2>Pica Ponto (Leitor / Manual)</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="text" id="pica-input" placeholder="Passe o cartão..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;">
             <button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button>
@@ -383,20 +381,15 @@
     <div style="background:#fff; width:100%; max-width:600px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
       <img src="logo.jpg" alt="KOSMO" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
-      <h2>Ginásio KOSMO - Inscrição Online (Contrato KOSMO)</h2>
+      <h2>Ginásio KOSMO - Inscrição Online</h2>
       <div class="form-grid" style="margin-top:15px; text-align:left;">
         <div><label>Nome Completo *</label><input type="text" id="portal-name" placeholder="O seu nome"></div>
         <div><label>NIF</label><input type="text" id="portal-nif"></div>
         <div><label>Telemóvel</label><input type="tel" id="portal-phone"></div>
-        <div><label>Plano *</label><select id="portal-plan" onchange="togglePortalAnexos()"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
+        <div><label>Plano *</label><select id="portal-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
         <div><label>Fotografia Pessoal *</label><input type="file" id="portal-foto-file" accept="image/*" onchange="converterFotoPortal(event)"></div>
-        <div id="portal-box-anexo" style="grid-column:1/-1; display:none; background:#fff3bf; padding:10px; border-radius:5px;">
-          <label id="portal-label-anexo" style="font-weight:bold; color:#b7791f;">Documento Comprovativo *</label>
-          <input type="file" id="portal-anexo-file" accept="image/*,.pdf" onchange="converterAnexoPortal(event)">
-        </div>
       </div>
       <input type="hidden" id="portal-foto-b64" value="">
-      <input type="hidden" id="portal-anexo-b64" value="">
       <div class="contrato-box" style="text-align:left;">
         <strong>Contrato de Inscrição KOSMO</strong><br>
         Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar.<br><br>
@@ -424,7 +417,6 @@
       { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: 'Total', user: 'admin', pass: 'admin123', foto: '' }
     ];
     let cartItems = [];
-    let loggedStaff = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
@@ -432,24 +424,15 @@
         document.getElementById('login-overlay').style.display = 'none';
         abrirPortalInscricao();
       }
+      verificarAlertaVencimentos();
     });
 
     function directLogin() {
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
-        loggedStaff = null;
         document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('logged-user-label').innerText = 'Sessão: Admin';
         navigate('dashboard');
-        return;
-      }
-      const staff = collaborators.find(c => c.user === u && c.pass === p);
-      if (staff) {
-        loggedStaff = staff;
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('logged-user-label', `Staff: ${staff.name}`);
-        navigate('membros');
         return;
       }
       alert('Utilizador ou palavra-passe incorretos.');
@@ -482,6 +465,8 @@
       renderChat();
       renderBiblioteca();
       renderColab();
+      renderDatabase();
+      verificarAlertaVencimentos();
       populateCardSelect();
       localStorage.setItem('kosmo_members', JSON.stringify(members));
       localStorage.setItem('kosmo_produtos', JSON.stringify(products));
@@ -511,22 +496,6 @@
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('colab-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
     }
 
-    function toggleMemberAnexo() {
-      const p = document.getElementById('m-plan').value;
-      const b = document.getElementById('m-box-anexo');
-      const l = document.getElementById('m-label-anexo');
-      if (p === 'Plano Estudante') { b.style.display = 'block'; l.innerText = 'Comprovativo de Estudante / Matrícula *'; }
-      else if (p === 'Plano Casal') { b.style.display = 'block'; l.innerText = 'Certidão de Casamento / Comprovativo *'; }
-      else { b.style.display = 'none'; }
-    }
-
-    function togglePortalAnexos() {
-      const p = document.getElementById('portal-plan').value;
-      const b = document.getElementById('portal-box-anexo');
-      if (p === 'Plano Estudante' || p === 'Plano Casal') { b.style.display = 'block'; }
-      else { b.style.display = 'none'; }
-    }
-
     function saveMember() {
       const editId = document.getElementById('m-edit-id').value;
       const name = document.getElementById('m-name').value.trim();
@@ -538,20 +507,14 @@
       const foto = document.getElementById('m-foto-base64').value;
 
       if (!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
-
       if (editId) {
         const m = members.find(x => x.id == editId);
-        if (m) {
-          m.name = name; m.barcode = barcode; m.phone = phone; m.plan = plan; m.estado = estado; m.date = date;
-          if (foto) m.foto = foto;
-        }
-        alert('Membro atualizado com sucesso!');
-        cancelEditMember();
+        if (m) { m.name = name; m.barcode = barcode; m.phone = phone; m.plan = plan; m.estado = estado; m.date = date; if (foto) m.foto = foto; }
+        alert('Membro atualizado!'); cancelEditMember();
       } else {
         members.push({ id: Date.now(), name, barcode, phone, plan, estado, date, foto: foto || '' });
-        alert('Membro registado com sucesso!');
+        alert('Membro registado!');
         document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
-        document.getElementById('m-phone').value = ''; document.getElementById('m-foto-base64').value = '';
       }
       refreshAll();
     }
@@ -566,9 +529,8 @@
       document.getElementById('m-plan').value = m.plan;
       document.getElementById('m-estado').value = m.estado || 'Ativo';
       document.getElementById('m-date').value = m.date || '';
-      document.getElementById('m-foto-base64').value = m.foto || '';
       document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
-      document.getElementById('btn-save-member').innerText = 'Guardar Alterações';
+      document.getElementById('btn-save-member').innerText = 'Guardar';
       document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
       navigate('membros');
     }
@@ -583,12 +545,7 @@
 
     function renovarSubscricao(id) {
       const m = members.find(x => x.id === id);
-      if (m) {
-        m.date = new Date().toISOString().split('T')[0];
-        m.estado = 'Ativo';
-        refreshAll();
-        alert(`Subscrição de ${m.name} renovada com sucesso por mais 30 dias!`);
-      }
+      if (m) { m.date = new Date().toISOString().split('T')[0]; m.estado = 'Ativo'; refreshAll(); alert(`Subscrição de ${m.name} renovada por 30 dias!`); }
     }
 
     function renderMembers() {
@@ -600,29 +557,26 @@
         dtReg.setDate(dtReg.getDate() + 30);
         const diffDays = Math.ceil((dtReg - now) / (1000 * 60 * 60 * 24));
         
-        let badge = '<span class="badge badge-ok">Ativo</span>';
-        if (m.estado === 'Inativo') badge = '<span class="badge badge-inativo">Inativo</span>';
-        else if (m.estado === 'Desativado') badge = '<span class="badge badge-inativo">Desativado</span>';
-        else if (dtReg < now) badge = '<span class="badge badge-err">Expirado</span>';
-        else if (diffDays <= 5 && diffDays >= 0) badge = `<span class="badge badge-warn">Faltam ${diffDays} dias</span>`;
+        let badge = '<span class="badge badge-ok">Ativo 🟢</span>';
+        if (m.estado === 'Inativo') badge = '<span class="badge badge-inativo">Inativo ⚫</span>';
+        else if (m.estado === 'Desativado') badge = '<span class="badge badge-inativo">Desativado ⚫</span>';
+        else if (dtReg < now) badge = '<span class="badge badge-err">Expirado 🔴</span>';
+        else if (diffDays <= 5 && diffDays >= 0) badge = `<span class="badge badge-warn">Faltam ${diffDays} dias 🟡</span>`;
 
         const fotoTag = m.foto ? `<img src="${m.foto}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">` : '👤';
+        t.innerHTML += `<tr><td>${fotoTag}</td><td><strong>${m.name}</strong></td><td><code>${m.barcode}</code></td><td>${m.plan}</td><td>${dtReg.toLocaleDateString('pt-PT')}</td><td>${badge}</td><td><button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button> <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button></td></tr>`;
+      });
+    }
 
-        t.innerHTML += `
-          <tr>
-            <td>${fotoTag}</td>
-            <td><strong>${m.name}</strong><br><small>Tel: ${m.phone || '---'}</small></td>
-            <td><code>${m.barcode}</code></td>
-            <td>${m.plan}</td>
-            <td>${dtReg.toLocaleDateString('pt-PT')}</td>
-            <td>${badge}</td>
-            <td>
-              <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button>
-              <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button>
-              <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button>
-            </td>
-          </tr>
-        `;
+    function renderDatabase() {
+      const t = document.getElementById('database-tbody');
+      if (!t) return; t.innerHTML = '';
+      if (members.length === 0 && salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem dados.</td></tr>`; return; }
+      members.forEach(m => {
+        t.innerHTML += `<tr><td>Membro</td><td><strong>${m.name}</strong> (${m.barcode})</td><td>Plano: ${m.plan} | Estado: ${m.estado}</td><td>Início: ${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">Excluir</button></td></tr>`;
+      });
+      salesHistory.forEach((s, i) => {
+        t.innerHTML += `<tr><td>Venda POS</td><td>Cliente: ${s.client}</td><td>Artigo: ${s.prod} (Qtd: ${s.qty})</td><td>${s.date} (Staff: ${s.func})</td><td><strong>${s.total} CVE</strong> <button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
       });
     }
 
@@ -632,91 +586,57 @@
       const buy = Number(document.getElementById('p-buy').value) || 0;
       const price = Number(document.getElementById('p-price').value) || 0;
       const stock = Number(document.getElementById('p-stock').value) || 0;
-      const desc = document.getElementById('p-desc').value;
-      const use = document.getElementById('p-use').value;
-      const foto = document.getElementById('p-foto-base64').value;
-
-      if (!name || !price) { alert('Insira o nome e o preço de venda.'); return; }
+      if (!name || !price) { alert('Insira nome e preço.'); return; }
       if (editIdx !== '') {
         const p = products[editIdx];
-        if (p) { p.name = name; p.buy = buy; p.price = price; p.stock = stock; p.desc = desc; p.use = use; if (foto) p.foto = foto; }
-        alert('Produto atualizado!');
-        cancelEditProduct();
+        if (p) { p.name = name; p.buy = buy; p.price = price; p.stock = stock; p.desc = document.getElementById('p-desc').value; p.use = document.getElementById('p-use').value; }
+        alert('Atualizado!'); cancelEditProduct();
       } else {
-        products.push({ name, buy, price, stock, desc, use, foto: foto || '' });
-        alert('Produto registado!');
-        document.getElementById('p-name').value = ''; document.getElementById('p-price').value = '';
+        products.push({ name, buy, price, stock, desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: document.getElementById('p-foto-base64').value });
+        alert('Registo criado!');
       }
       refreshAll();
     }
 
     function editProduct(idx) {
-      const p = products[idx];
-      if (!p) return;
+      const p = products[idx]; if (!p) return;
       document.getElementById('p-edit-idx').value = idx;
       document.getElementById('p-name').value = p.name;
-      document.getElementById('p-buy').value = p.buy || 0;
+      document.getElementById('p-buy').value = p.buy;
       document.getElementById('p-price').value = p.price;
       document.getElementById('p-stock').value = p.stock;
       document.getElementById('p-desc').value = p.desc || '';
       document.getElementById('p-use').value = p.use || '';
-      document.getElementById('p-foto-base64').value = p.foto || '';
-      document.getElementById('form-prod-title').innerText = 'Editar Produto: ' + p.name;
-      document.getElementById('btn-save-prod').innerText = 'Guardar Alterações';
-      document.getElementById('btn-cancel-prod').style.display = 'inline-flex';
       navigate('produtos');
     }
-
-    function cancelEditProduct() {
-      document.getElementById('p-edit-idx').value = '';
-      document.getElementById('form-prod-title').innerText = 'Registar ou Editar Produto';
-      document.getElementById('btn-save-prod').innerText = 'Guardar Produto';
-      document.getElementById('btn-cancel-prod').style.display = 'none';
-      document.getElementById('p-name').value = ''; document.getElementById('p-price').value = '';
-    }
+    function cancelEditProduct() { document.getElementById('p-edit-idx').value = ''; document.getElementById('p-name').value = ''; }
 
     function renderProducts() {
-      const t = document.getElementById('products-tbody');
-      if (!t) return; t.innerHTML = '';
-      products.forEach((p, idx) => {
-        const fotoTag = p.foto ? `<img src="${p.foto}" style="width:38px;height:38px;object-fit:cover;border-radius:4px;">` : '📦';
-        t.innerHTML += `<tr><td>${fotoTag}</td><td><strong>${p.name}</strong><br><small>${p.desc || ''}</small></td><td>${p.use || ''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${idx})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
-      });
+      const t = document.getElementById('products-tbody'); if (!t) return; t.innerHTML = '';
+      products.forEach((p, idx) => t.innerHTML += `<tr><td>📦</td><td><strong>${p.name}</strong></td><td>${p.use || ''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${idx})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
     }
 
     function renderStock() {
-      const t = document.getElementById('stock-tbody');
-      if (!t) return; t.innerHTML = '';
-      products.forEach(p => {
-        const badge = p.stock > 3 ? '<span class="badge badge-ok">Normal</span>' : '<span class="badge badge-err">Baixo</span>';
-        t.innerHTML += `<tr><td><strong>${p.name}</strong></td><td>${p.stock}</td><td>${badge}</td></tr>`;
-      });
+      const t = document.getElementById('stock-tbody'); if (!t) return; t.innerHTML = '';
+      products.forEach(p => t.innerHTML += `<tr><td>${p.name}</td><td>${p.stock}</td><td>${p.stock > 3 ? '<span class="badge badge-ok">Normal</span>' : '<span class="badge badge-err">Baixo</span>'}</td></tr>`);
     }
 
     function renderSales() {
-      const t = document.getElementById('sales-tbody');
-      if (!t) return;
-      if (salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem vendas.</td></tr>`; return; }
+      const t = document.getElementById('sales-tbody'); if (!t) return;
+      if (salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr>`; return; }
       t.innerHTML = '';
-      salesHistory.forEach(s => {
-        t.innerHTML += `<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`;
-      });
+      salesHistory.forEach(s => t.innerHTML += `<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`);
     }
 
     function renderPOSCatalog() {
-      const grid = document.getElementById('pos-catalog-grid');
-      if (!grid) return; grid.innerHTML = '';
-      products.forEach((p, idx) => {
-        grid.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;"><h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" style="margin-top:5px;" onclick="addToCart(${idx})">Adicionar</button></div>`;
-      });
+      const g = document.getElementById('pos-catalog-grid'); if (!g) return; g.innerHTML = '';
+      products.forEach((p, i) => g.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;"><h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`);
     }
 
-    function addToCart(idx) {
-      const p = products[idx];
-      if (p.stock <= 0) { alert('Sem stock!'); return; }
-      const item = cartItems.find(x => x.idx === idx);
-      if (item) item.qty++;
-      else cartItems.push({ idx, name: p.name, price: p.price, qty: 1 });
+    function addToCart(i) {
+      const p = products[i]; if (p.stock <= 0) { alert('Sem stock.'); return; }
+      const item = cartItems.find(x => x.idx === i);
+      if (item) item.qty++; else cartItems.push({ idx: i, name: p.name, price: p.price, qty: 1 });
       renderCart();
     }
 
@@ -725,69 +645,45 @@
       if (!c) return;
       if (cartItems.length === 0) { c.innerHTML = 'Carrinho vazio.'; if (tot) tot.innerText = '0 CVE'; return; }
       c.innerHTML = ''; let total = 0;
-      cartItems.forEach((item, i) => {
-        let sub = item.price * item.qty; total += sub;
-        c.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>${item.name} x${item.qty}</span> <span>${sub} CVE</span></div>`;
-      });
+      cartItems.forEach((it, i) => { total += it.price * it.qty; c.innerHTML += `<div>${it.name} x${it.qty} - ${it.price * it.qty} CVE</div>`; });
       if (tot) tot.innerText = total.toLocaleString() + ' CVE';
     }
 
     function finalizarVendaPOS() {
       if (cartItems.length === 0) { alert('Carrinho vazio.'); return; }
-      const client = document.getElementById('pos-client-name').value.trim() || 'Cliente Balcão';
-      const funcName = loggedStaff ? loggedStaff.name : 'Administrador';
-      const agora = new Date().toLocaleString('pt-PT');
-      cartItems.forEach(item => {
-        const p = products[item.idx];
-        if (p) {
-          p.stock -= item.qty;
-          salesHistory.unshift({ date: agora, func: funcName, client: client, prod: item.name, qty: item.qty, total: item.price * item.qty });
-        }
-      });
-      cartItems = []; document.getElementById('pos-client-name').value = '';
-      refreshAll(); alert('Venda concluída com sucesso!');
+      const cli = document.getElementById('pos-client-name').value.trim() || 'Balcão';
+      cartItems.forEach(it => { products[it.idx].stock -= it.qty; salesHistory.unshift({ date: new Date().toLocaleString('pt-PT'), func: 'Admin', client: cli, prod: it.name, qty: it.qty, total: it.price * it.qty }); });
+      cartItems = []; refreshAll(); alert('Venda concluída!');
     }
 
-    function onScan(e) {
-      if (e.key === 'Enter') {
-        const code = document.getElementById('chk-input').value.trim();
-        if (!code) return;
-        processarCheckinCodigo(code);
-        document.getElementById('chk-input').value = '';
-      }
-    }
-    function checkinManualPrompt() {
-      const code = prompt('ID do Membro:');
-      if (code) processarCheckinCodigo(code);
-    }
-    function processarCheckinCodigo(code) {
+    function onScan(e) { if (e.key === 'Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
+    function checkinManualPrompt() { const c = prompt('ID Membro:'); if (c) processarCheckin(c); }
+    function processarCheckin(code) {
       const m = members.find(x => x.barcode === code);
-      const now = new Date(); let isAtivo = false; let nome = 'Desconhecido'; let plano = 'Geral';
+      const now = new Date(); let ativo = false; let nome = 'Desconhecido';
       if (m) {
-        nome = m.name; plano = m.plan;
+        nome = m.name;
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
-        isAtivo = d >= now;
+        ativo = d >= now && m.estado === 'Ativo';
       }
-      attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nome, barcode: code, status: isAtivo ? 'Ativo' : 'Expirado' });
+      attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nome, barcode: code, status: ativo ? 'Ativo' : 'Expirado' });
       renderAttendance();
-      localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: nome, plan: plano, auth: isAtivo, time: Date.now() }));
+      localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: nome, plan: m ? m.plan : 'Geral', auth: ativo, time: Date.now() }));
     }
     function renderAttendance() {
-      const t = document.getElementById('attendance-tbody');
-      if (!t) return; t.innerHTML = '';
-      attendanceLogs.forEach(a => t.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td><span class="badge ${a.status === 'Ativo' ? 'badge-ok' : 'badge-err'}">${a.status}</span></td></tr>`);
+      const t = document.getElementById('attendance-tbody'); if (!t) return; t.innerHTML = '';
+      attendanceLogs.forEach(a => t.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td><span class="badge ${a.status==='Ativo'?'badge-ok':'badge-err'}">${a.status}</span></td></tr>`);
     }
 
-    function onScanStaff(e) { if (e.key === 'Enter') { processarPicaStaff(document.getElementById('pica-input').value.trim()); document.getElementById('pica-input').value = ''; } }
-    function picaManualPrompt() { const c = prompt('ID do Staff:'); if (c) processarPicaStaff(c); }
-    function processarPicaStaff(code) {
+    function onScanStaff(e) { if (e.key === 'Enter') processarPica(document.getElementById('pica-input').value.trim()); }
+    function picaManualPrompt() { const c = prompt('ID Staff:'); if (c) processarPica(c); }
+    function processarPica(code) {
       const s = collaborators.find(x => x.barcode === code);
-      staffLogs.unshift({ time: new Date().toLocaleTimeString('pt-PT'), name: s ? s.name : code, type: 'Ponto Registado' });
+      staffLogs.unshift({ time: new Date().toLocaleTimeString('pt-PT'), name: s ? s.name : code });
       renderStaffAttendance();
     }
     function renderStaffAttendance() {
-      const t = document.getElementById('pica-tbody');
-      if (!t) return; t.innerHTML = '';
+      const t = document.getElementById('pica-tbody'); if (!t) return; t.innerHTML = '';
       staffLogs.forEach(s => t.innerHTML += `<tr><td>${s.time}</td><td>${s.name}</td><td>OK</td></tr>`);
     }
 
@@ -796,32 +692,23 @@
       const name = document.getElementById('portal-name').value.trim();
       const contrato = document.getElementById('portal-contrato').checked;
       const foto = document.getElementById('portal-foto-b64').value;
-      if (!name || !contrato || !foto) { alert('Preencha o nome, aceite o contrato e adicione a foto.'); return; }
-      inscricoesOnline.push({ id: Date.now(), name, nif: document.getElementById('portal-nif').value, phone: document.getElementById('portal-phone').value, plan: document.getElementById('portal-plan').value, foto });
+      if (!name || !contrato || !foto) { alert('Preencha os campos, foto e contrato.'); return; }
+      inscricoesOnline.push({ id: Date.now(), name, phone: document.getElementById('portal-phone').value, plan: document.getElementById('portal-plan').value, foto });
       alert('Inscrição submetida!'); document.getElementById('portal-inscricao-overlay').style.display = 'none'; refreshAll();
     }
     function renderInscricoes() {
-      const t = document.getElementById('online-inscricoes-tbody');
-      if (!t) return; t.innerHTML = '';
-      inscricoesOnline.forEach((ins, idx) => {
-        t.innerHTML += `<tr><td>👤</td><td>${ins.name}</td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="members.push({id:Date.now(),name:'${ins.name}',barcode:'9999',plan:'${ins.plan}',estado:'Ativo',date:'2026-01-01',foto:'${ins.foto}'}); inscricoesOnline.splice(${idx},1); refreshAll();">Aprovar</button></td></tr>`;
-      });
+      const t = document.getElementById('online-inscricoes-tbody'); if (!t) return; t.innerHTML = '';
+      inscricoesOnline.forEach((ins, i) => t.innerHTML += `<tr><td>👤</td><td>${ins.name}</td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="members.push({id:Date.now(),name:'${ins.name}',barcode:'9999',plan:'${ins.plan}',estado:'Ativo',date:'2026-01-01',foto:'${ins.foto}'}); inscricoesOnline.splice(${i},1); refreshAll();">Aprovar</button></td></tr>`);
     }
 
     function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; refreshAll(); } }
     function enviarArquivoChat(e) {
       const f = e.target.files[0]; if (!f) return;
-      const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileUrl:evt.target.result, fileName:f.name}); refreshAll(); alert('Enviado!'); };
+      const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); refreshAll(); alert('Enviado!'); };
       r.readAsDataURL(f);
     }
-    function renderChat() {
-      const a = document.getElementById('chat-msgs'); if (!a) return; a.innerHTML = '';
-      chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`);
-    }
-    function renderBiblioteca() {
-      const b = document.getElementById('bib-list'); if (!b) return; b.innerHTML = '';
-      biblioteca.forEach((i, idx) => b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}">${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
-    }
+    function renderChat() { const a = document.getElementById('chat-msgs'); if (!a) return; a.innerHTML = ''; chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`); }
+    function renderBiblioteca() { const b = document.getElementById('bib-list'); if (!b) return; b.innerHTML = ''; biblioteca.forEach((i, idx) => b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}">${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
 
     function verificarAlertaVencimentos() {
       const t = document.getElementById('alertas-tbody'); if (!t) return; t.innerHTML = '';
@@ -835,27 +722,789 @@
         }
       });
       if (count === 0) t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum alerta pendente.</td></tr>`;
-      else alert(`${count} membros notificados (02 vezes ao dia).`);
     }
 
     function importarDadosComputador(e) {
       const f = e.target.files[0]; if (!f) return;
       const r = new FileReader(); r.onload = e => {
-        try { const d = JSON.parse(e.target.result); if (d.members) members = d.members; if (d.products) products = d.products; refreshAll(); alert('Importado com sucesso!'); } catch(err) { alert('Erro no ficheiro.'); }
+        try { const d = JSON.parse(e.target.result); if (d.members) members = d.members; if (d.products) products = d.products; refreshAll(); alert('Importado!'); } catch(err) { alert('Erro.'); }
       };
       r.readAsText(f);
     }
 
     function addColab() {
-      const name = document.getElementById('colab-name').value.trim();
-      const barcode = document.getElementById('colab-barcode').value.trim();
+      const name = document.getElementById('colab-name').value.trim(); const barcode = document.getElementById('colab-barcode').value.trim();
       if (!name || !barcode) { alert('Preencha os campos.'); return; }
-      collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, perm: document.getElementById('colab-perm').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value });
+      collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, perm: document.getElementById('colab-perm').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value });
       refreshAll(); alert('Staff registado!');
     }
     function renderColab() {
       const t = document.getElementById('colab-tbody'); if (!t) return; t.innerHTML = '';
-      collaborators.forEach((c, idx) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td>${c.perm}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
+      collaborators.forEach((c, i) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${i},1); refreshAll();">🗑️</button></td></tr>`);
+    }
+
+    function toggleCardType() { populateCardSelect(); }
+    function populateCardSelect() {
+      const sel = document.getElementById('card-member-select'); if (!sel) return; sel.innerHTML = '';
+      if (document.getElementById('card-type-select').value === 'membro') members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+      else collaborators.forEach(c => sel.innerHTML += `<option value="${c.name}">${c.name}</option>`);
+      renderDigitalCard();
+    }
+    function renderDigitalCard() {
+      const z = document.getElementById('digital-card-container'), name = document.getElementById('card-member-select').value;
+      if (!z) return;
+      const obj = document.getElementById('card-type-select').value === 'membro' ? members.find(x=>x.name===name) : collaborators.find(x=>x.name===name);
+      if (!obj) { z.innerHTML = 'Selecione.'; return; }
+      z.innerHTML = `<div class="id-card-wrap"><h3>Ginásio KOSMO</h3><h2>${obj.name}</h2><p>ID: ${obj.barcode}</p><svg id="card-bc"></svg></div>`;
+      setTimeout(() => { if (window.JsBarcode) JsBarcode("#card-bc", obj.barcode, { format: "CODE128", width: 2, height: 40, displayValue: true }); }, 100);
+    }
+
+    window.onload = () => { refreshAll(); };
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    :root { --primary: #c92a2a; --primary-dark: #a61e1e; --sidebar-bg: #1e2227; --sidebar-hover: #2a3038; --sidebar-text: #c2c7d0; --bg: #f4f6f9; --card: #ffffff; --success: #2b8a3e; --danger: #d9480f; --warning: #f59f00; --dark: #212529; --border: #dee2e6; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg); color: var(--dark); display: flex; }
+
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #111417; z-index: 50000; display: flex; justify-content: center; align-items: center; }
+    .login-box { background: #fff; padding: 25px 30px; border-radius: 10px; width: 100%; max-width: 440px; text-align: center; border-top: 5px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .login-logo { width: 100%; height: 85px; object-fit: contain; margin-bottom: 12px; background: #fff; border-radius: 6px; padding: 4px; }
+
+    aside { width: 260px; min-width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; height: 100%; border-right: 1px solid #14171a; }
+    .gym-header { padding: 15px; text-align: center; background: #14171a; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-logo { width: 100%; height: 50px; object-fit: contain; background: #fff; border-radius: 6px; padding: 4px; margin-bottom: 6px; }
+    .gym-header h3 { font-size: 1.1rem; color: #fff; font-weight: 800; }
+    .gym-header p { font-size: 0.72rem; color: #88929b; }
+
+    .menu-scroll { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .nav-group-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px; color: #6c7884; padding: 12px 16px 4px; font-weight: 700; }
+    .nav-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; font-size: 0.88rem; color: var(--sidebar-text); cursor: pointer; font-weight: 500; border: none; background: transparent; text-align: left; transition: background 0.15s; }
+    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+    .nav-item.active { background: var(--primary); color: #fff; font-weight: 700; }
+    .nav-item .icon { font-size: 1.15rem; width: 26px; text-align: center; margin-right: 10px; }
+
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+    .top-title { font-size: 1.15rem; font-weight: 700; }
+
+    main { flex: 1; overflow-y: auto; padding: 20px; }
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+    .card { background: var(--card); border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+    h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 8px; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #495057; }
+    input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.9rem; background-color: #fff; }
+
+    .btn { background: var(--primary); color: #fff; border: none; padding: 9px 18px; border-radius: 5px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-green { background: var(--success); }
+    .btn-blue { background: #1971c2; }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; border-radius: 4px; color:#fff; border:none; cursor:pointer; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    th { background: #f8f9fa; font-weight: 600; color: #495057; }
+    .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; }
+    .badge-ok { background: var(--success); }
+    .badge-warn { background: var(--warning); color: #000; }
+    .badge-err { background: var(--danger); }
+    .badge-inativo { background: #6c757d; }
+    .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 180px; overflow-y: auto; margin-bottom: 10px; }
+    .id-card-wrap { width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <img src="logo.jpg" alt="Ginásio KOSMO" class="login-logo" onerror="this.src='src/img/logo.jpg';">
+      <h3 style="margin-bottom: 6px; color: var(--dark);">Painel de Gestão - KOSMO</h3>
+      <p style="font-size: 0.78rem; color: #666; margin-bottom: 15px;">NIF: 283023805 • Terra Branca</p>
+      <div style="margin-bottom: 10px; text-align: left;"><label>Utilizador</label><input type="text" id="log-user" value="admin"></div>
+      <div style="margin-bottom: 15px; text-align: left;"><label>Palavra-passe</label><input type="password" id="log-pass" value="admin123"></div>
+      <button type="button" class="btn" style="width: 100%; padding: 12px;" onclick="directLogin()">Entrar no Sistema</button>
+      <button type="button" class="btn btn-blue" style="width: 100%; padding: 10px; margin-top: 8px;" onclick="abrirPortalInscricao()">🌐 Abrir Portal de Inscrição Online</button>
+    </div>
+  </div>
+
+  <!-- MENU LATERAL -->
+  <aside id="sidebar-panel">
+    <div class="gym-header">
+      <img src="logo.jpg" alt="KOSMO" class="sidebar-logo" onerror="this.src='src/img/logo.jpg';">
+      <h3>KOSMO</h3>
+      <p>Terra Branca, Frente Escola Amor De Deus<br><strong>NIF: 283023805</strong></p>
+    </div>
+    <div class="menu-scroll">
+      <div class="nav-group-title">Membros & Online</div>
+      <button type="button" class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')"><span class="icon">🏠</span><span class="nav-text">Dashboard Geral</span></button>
+      <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
+      <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Inscrições Online</span></button>
+      <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
+      <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
+      
+      <div class="nav-group-title">Loja & Stock</div>
+      <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
+      <button type="button" class="nav-item" id="nav-produtos" onclick="navigate('produtos')"><span class="icon">📦</span><span class="nav-text">Produtos (A a Z)</span></button>
+      <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
+      <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
+
+      <div class="nav-group-title">Base de Dados Global</div>
+      <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Base de Dados & Transações</span></button>
+
+      <div class="nav-group-title">Comunicação & Lembretes</div>
+      <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
+      <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
+      <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Auto (-5d / 2x dia)</span></button>
+
+      <div class="nav-group-title">Colaboradores & Staff</div>
+      <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Funções</span></button>
+      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
+    </div>
+    <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
+      <span id="logged-user-label" style="display:block; color:#ffd43b; font-size:0.75rem; margin-bottom:6px; text-align:center; font-weight:bold;">Sessão: Admin</span>
+      <button type="button" onclick="location.reload()" class="btn btn-sm" style="background:#e03131; width:100%;">Terminar Sessão</button>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header>
+      <div class="top-title" id="page-title">Dashboard Geral</div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
+        <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view-section active">
+        <div class="card">
+          <h2>Bem-vindo ao Sistema KOSMO</h2>
+          <p>Painel operacional carregado com sucesso. Notificações automáticas (-5d / 2x ao dia) ativas em segundo plano.</p>
+        </div>
+      </section>
+
+      <!-- MEMBROS -->
+      <section id="view-membros" class="view-section">
+        <div class="card">
+          <h2 id="form-member-title">Registar ou Editar Membro (Contrato KOSMO)</h2>
+          <input type="hidden" id="m-edit-id" value="">
+          <div class="form-grid">
+            <div><label>Nome Completo *</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
+            <div><label>Código / ID Cartão *</label><input type="text" id="m-barcode" placeholder="Ex: 112233"></div>
+            <div><label>Telemóvel</label><input type="tel" id="m-phone" placeholder="9988886"></div>
+            <div><label>Plano</label><select id="m-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
+            <div><label>Estado</label><select id="m-estado"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option><option value="Desativado">Desativado</option></select></div>
+            <div><label>Data de Início</label><input type="date" id="m-date"></div>
+            <div><label>Fotografia Pessoal</label><input type="file" id="m-foto-file" accept="image/*" onchange="converterFotoMembro(event)"></div>
+          </div>
+          <input type="hidden" id="m-foto-base64" value="">
+          <button class="btn" id="btn-save-member" onclick="saveMember()">Registar Membro</button>
+          <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
+        </div>
+        <div class="card">
+          <h2>Lista de Membros (Ativos 🟢, A Fencer 5d 🟡, Expirados 🔴, Inativos ⚫)</h2>
+          <table>
+            <thead><tr><th>Foto</th><th>Nome</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
+            <tbody id="members-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BASE DE DADOS GLOBAL -->
+      <section id="view-database" class="view-section">
+        <div class="card">
+          <h2>Base de Dados & Transações (Editar, Imprimir, Alterar, Excluir)</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">Registo global de todas as subscrições, pagamentos e histórico de dados unificados.</p>
+          <table>
+            <thead><tr><th>Tipo</th><th>Identificação / Cliente</th><th>Detalhes / Plano</th><th>Data / Registo</th><th>Ações de Gestão</th></tr></thead>
+            <tbody id="database-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem dados na base de dados.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- INSCRIÇÕES ONLINE -->
+      <section id="view-inscricoes" class="view-section">
+        <div class="card">
+          <h2>Inscrições Online Pendentes</h2>
+          <table>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Telemóvel</th><th>Plano</th><th>Ações</th></tr></thead>
+            <tbody id="online-inscricoes-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CHECK-INS -->
+      <section id="view-checkins" class="view-section">
+        <div class="card">
+          <h2>Terminal de Check-ins (Leitor ou Manual)</h2>
+          <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="chk-input" placeholder="Passe o cartão ou digite o ID e prima Enter..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; flex:1;">
+            <button class="btn btn-green" onclick="checkinManualPrompt()">Check-in Manual</button>
+          </div>
+          <table>
+            <thead><tr><th>Data</th><th>Hora</th><th>Membro</th><th>Código</th><th>Estado</th></tr></thead>
+            <tbody id="attendance-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem check-ins registados hoje.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- POS -->
+      <section id="view-pos" class="view-section">
+        <div class="card">
+          <h2>POS - Ponto de Venda & Carrinho</h2>
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+            <div>
+              <h3 style="margin-bottom:10px; font-size:0.95rem; color:#495057;">Catálogo de Produtos</h3>
+              <div id="pos-catalog-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; max-height:450px; overflow-y:auto; padding-right:5px;"></div>
+            </div>
+            <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
+              <h3 style="margin-bottom:10px; font-size:0.95rem; color:var(--primary);">🛒 Carrinho</h3>
+              <div style="margin-bottom:10px;"><label>Nome do Cliente</label><input type="text" id="pos-client-name" placeholder="Cliente Balcão"></div>
+              <div id="pos-cart-items" style="max-height:240px; overflow-y:auto; margin-bottom:12px; font-size:0.85rem;">Carrinho vazio.</div>
+              <div style="border-top:2px solid var(--border); padding-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:1.05rem;">
+                <span>Total:</span>
+                <span id="pos-cart-total" style="color:var(--primary);">0 CVE</span>
+              </div>
+              <button class="btn btn-green" style="width:100%; margin-top:15px;" onclick="finalizarVendaPOS()">💳 Concluir Venda</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUTOS -->
+      <section id="view-produtos" class="view-section">
+        <div class="card">
+          <h2 id="form-prod-title">Registar ou Editar Produto</h2>
+          <input type="hidden" id="p-edit-idx" value="">
+          <div class="form-grid">
+            <div><label>Nome do Produto *</label><input type="text" id="p-name" placeholder="Ex: Creatina"></div>
+            <div><label>Preço de Compra (CVE)</label><input type="number" id="p-buy" placeholder="1500"></div>
+            <div><label>Preço de Venda (CVE) *</label><input type="number" id="p-price" placeholder="2500"></div>
+            <div><label>Stock Inicial</label><input type="number" id="p-stock" value="10"></div>
+            <div><label>Fotografia do Produto</label><input type="file" id="p-foto-file" accept="image/*" onchange="converterFotoProduto(event)"></div>
+            <div style="grid-column:1/-1;"><label>Descrição</label><textarea id="p-desc" rows="2"></textarea></div>
+            <div style="grid-column:1/-1;"><label>Modo de Usar</label><textarea id="p-use" rows="2"></textarea></div>
+          </div>
+          <input type="hidden" id="p-foto-base64" value="">
+          <button class="btn" id="btn-save-prod" onclick="saveProduct()">Guardar Produto</button>
+          <button class="btn btn-blue" id="btn-cancel-prod" onclick="cancelEditProduct()" style="display:none; background:#868e96;">Cancelar</button>
+        </div>
+        <div class="card">
+          <h2>Catálogo de Produtos</h2>
+          <table>
+            <thead><tr><th>Foto</th><th>Produto</th><th>Modo de Usar</th><th>Preço</th><th>Stock</th><th>Ações</th></tr></thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- STOCK -->
+      <section id="view-stock" class="view-section">
+        <div class="card">
+          <h2>Gestão de Stock Atual</h2>
+          <table>
+            <thead><tr><th>Produto</th><th>Stock</th><th>Estado</th></tr></thead>
+            <tbody id="stock-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- HISTÓRICO DE VENDAS -->
+      <section id="view-vendas" class="view-section">
+        <div class="card">
+          <h2>Histórico de Vendas (Data, Hora, Funcionário e Cliente)</h2>
+          <table>
+            <thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead>
+            <tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem vendas registadas.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CARTÕES DIGITAIS -->
+      <section id="view-cartaodigital" class="view-section">
+        <div class="card" style="text-align:center;">
+          <h2>Cartão Digital com Fotografia</h2>
+          <div style="margin-bottom:15px;">
+            <select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Staff</option></select>
+            <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select>
+          </div>
+          <div id="digital-card-container"></div>
+          <button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+        </div>
+      </section>
+
+      <!-- CHAT -->
+      <section id="view-chat" class="view-section">
+        <div class="card">
+          <h2>Chat Multimédia</h2>
+          <div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;">
+            <div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div>
+            <div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;">
+              <input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)">
+              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar</button>
+              <input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()">
+              <button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BIBLIOTECA -->
+      <section id="view-biblioteca" class="view-section">
+        <div class="card">
+          <h2>Biblioteca de Arquivos</h2>
+          <table>
+            <thead><tr><th>Nome</th><th>Ações</th></tr></thead>
+            <tbody id="bib-list"><tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ALERTAS VENCIMENTO (-5D / 2x ao dia) -->
+      <section id="view-lembretes" class="view-section">
+        <div class="card">
+          <h2>Alertas Automáticos de Vencimento (-5 Dias) - 02 Notificações Diárias</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">O sistema dispara automaticamente 02 vezes ao dia por e-mail e WhatsApp (opcional).</p>
+          <table>
+            <thead><tr><th>Membro</th><th>Telemóvel</th><th>Plano</th><th>Vencimento</th><th>Estado do Alerta</th></tr></thead>
+            <tbody id="alertas-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">A verificar alertas...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- IMPORTAR BACKUP -->
+      <section id="view-importar" class="view-section">
+        <div class="card">
+          <h2>Importar Dados / Backups Universais</h2>
+          <div class="form-grid">
+            <div><label>Ficheiro (.json / .csv)</label><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GERIR STAFF -->
+      <section id="view-colab" class="view-section">
+        <div class="card">
+          <h2 id="form-staff-title">Gerir Staff & Funções</h2>
+          <input type="hidden" id="staff-edit-id" value="">
+          <div class="form-grid">
+            <div><label>Nome *</label><input type="text" id="colab-name"></div>
+            <div><label>Cargo</label><input type="text" id="colab-role"></div>
+            <div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div>
+            <div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div>
+            <div><label>Utilizador</label><input type="text" id="colab-user"></div>
+            <div><label>Senha</label><input type="password" id="colab-pass"></div>
+            <div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
+          </div>
+          <input type="hidden" id="colab-foto-base64" value="">
+          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button>
+        </div>
+        <div class="card">
+          <h2>Equipa</h2>
+          <table>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead>
+            <tbody id="colab-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PICA PONTO -->
+      <section id="view-picaponto" class="view-section">
+        <div class="card">
+          <h2>Pica Ponto (Leitor / Manual)</h2>
+          <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="pica-input" placeholder="Passe o cartão..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;">
+            <button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button>
+          </div>
+          <table>
+            <thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead>
+            <tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center; color:#777;">Sem registos.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- PORTAL DE INSCRIÇÃO ONLINE -->
+  <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
+    <div style="background:#fff; width:100%; max-width:600px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
+      <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
+      <img src="logo.jpg" alt="KOSMO" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
+      <h2>Ginásio KOSMO - Inscrição Online</h2>
+      <div class="form-grid" style="margin-top:15px; text-align:left;">
+        <div><label>Nome Completo *</label><input type="text" id="portal-name" placeholder="O seu nome"></div>
+        <div><label>NIF</label><input type="text" id="portal-nif"></div>
+        <div><label>Telemóvel</label><input type="tel" id="portal-phone"></div>
+        <div><label>Plano *</label><select id="portal-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
+        <div><label>Fotografia Pessoal *</label><input type="file" id="portal-foto-file" accept="image/*" onchange="converterFotoPortal(event)"></div>
+      </div>
+      <input type="hidden" id="portal-foto-b64" value="">
+      <div class="contrato-box" style="text-align:left;">
+        <strong>Contrato de Inscrição KOSMO</strong><br>
+        Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar.<br><br>
+        <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer;"><input type="checkbox" id="portal-contrato"> Concordo plenamente com os termos do contrato.</label>
+      </div>
+      <button class="btn" style="width:100%; margin-top:10px;" onclick="submeterInscricaoOnline()">Submeter Inscrição Online</button>
+    </div>
+  </div>
+
+  <!-- SCRIPT MASTER -->
+  <script>
+    let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
+      { id: 1, name: 'Silvio Cabral', barcode: '112233', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '' }
+    ];
+    let products = JSON.parse(localStorage.getItem('kosmo_produtos')) || [
+      { name: 'Creatina 300g', buy: 1800, price: 2500, stock: 12, desc: 'Creatina pura', use: 'Tomar 5g ao dia', foto: '' }
+    ];
+    let salesHistory = JSON.parse(localStorage.getItem('kosmo_sales')) || [];
+    let inscricoesOnline = JSON.parse(localStorage.getItem('kosmo_inscricoes')) || [];
+    let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+    let staffLogs = JSON.parse(localStorage.getItem('kosmo_staff_attendance')) || [];
+    let chatMsgs = JSON.parse(localStorage.getItem('kosmo_chat')) || [];
+    let biblioteca = JSON.parse(localStorage.getItem('kosmo_bib')) || [];
+    let collaborators = JSON.parse(localStorage.getItem('kosmo_staff')) || [
+      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: 'Total', user: 'admin', pass: 'admin123', foto: '' }
+    ];
+    let cartItems = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('portal') === 'inscricao') {
+        document.getElementById('login-overlay').style.display = 'none';
+        abrirPortalInscricao();
+      }
+      verificarAlertaVencimentos();
+    });
+
+    function directLogin() {
+      const u = document.getElementById('log-user').value.trim();
+      const p = document.getElementById('log-pass').value.trim();
+      if (u === 'admin' && p === 'admin123') {
+        document.getElementById('login-overlay').style.display = 'none';
+        navigate('dashboard');
+        return;
+      }
+      alert('Utilizador ou palavra-passe incorretos.');
+    }
+
+    function openTotemWindow() {
+      window.open('totem.html', '_blank', 'width=1200,height=800');
+    }
+
+    function navigate(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const t = document.getElementById('view-' + viewId);
+      if (t) t.classList.add('active');
+      const n = document.getElementById('nav-' + viewId);
+      if (n) n.classList.add('active');
+      refreshAll();
+    }
+
+    function refreshAll() {
+      renderMembers();
+      renderProducts();
+      renderStock();
+      renderSales();
+      renderPOSCatalog();
+      renderCart();
+      renderInscricoes();
+      renderAttendance();
+      renderStaffAttendance();
+      renderChat();
+      renderBiblioteca();
+      renderColab();
+      renderDatabase();
+      verificarAlertaVencimentos();
+      populateCardSelect();
+      localStorage.setItem('kosmo_members', JSON.stringify(members));
+      localStorage.setItem('kosmo_produtos', JSON.stringify(products));
+      localStorage.setItem('kosmo_sales', JSON.stringify(salesHistory));
+      localStorage.setItem('kosmo_inscricoes', JSON.stringify(inscricoesOnline));
+      localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
+      localStorage.setItem('kosmo_staff_attendance', JSON.stringify(staffLogs));
+      localStorage.setItem('kosmo_chat', JSON.stringify(chatMsgs));
+      localStorage.setItem('kosmo_bib', JSON.stringify(biblioteca));
+      localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
+    }
+
+    function converterFotoMembro(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+    function converterFotoPortal(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-foto-b64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+    function converterFotoProduto(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('p-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+    function converterFotoStaff(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('colab-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+
+    function saveMember() {
+      const editId = document.getElementById('m-edit-id').value;
+      const name = document.getElementById('m-name').value.trim();
+      const barcode = document.getElementById('m-barcode').value.trim();
+      const phone = document.getElementById('m-phone').value.trim();
+      const plan = document.getElementById('m-plan').value;
+      const estado = document.getElementById('m-estado').value;
+      const date = document.getElementById('m-date').value || new Date().toISOString().split('T')[0];
+      const foto = document.getElementById('m-foto-base64').value;
+
+      if (!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
+      if (editId) {
+        const m = members.find(x => x.id == editId);
+        if (m) { m.name = name; m.barcode = barcode; m.phone = phone; m.plan = plan; m.estado = estado; m.date = date; if (foto) m.foto = foto; }
+        alert('Membro atualizado!'); cancelEditMember();
+      } else {
+        members.push({ id: Date.now(), name, barcode, phone, plan, estado, date, foto: foto || '' });
+        alert('Membro registado!');
+        document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+      }
+      refreshAll();
+    }
+
+    function editMember(id) {
+      const m = members.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById('m-edit-id').value = m.id;
+      document.getElementById('m-name').value = m.name;
+      document.getElementById('m-barcode').value = m.barcode;
+      document.getElementById('m-phone').value = m.phone || '';
+      document.getElementById('m-plan').value = m.plan;
+      document.getElementById('m-estado').value = m.estado || 'Ativo';
+      document.getElementById('m-date').value = m.date || '';
+      document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
+      document.getElementById('btn-save-member').innerText = 'Guardar';
+      document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
+      navigate('membros');
+    }
+
+    function cancelEditMember() {
+      document.getElementById('m-edit-id').value = '';
+      document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro (Contrato KOSMO)';
+      document.getElementById('btn-save-member').innerText = 'Registar Membro';
+      document.getElementById('btn-cancel-edit').style.display = 'none';
+      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+    }
+
+    function renovarSubscricao(id) {
+      const m = members.find(x => x.id === id);
+      if (m) { m.date = new Date().toISOString().split('T')[0]; m.estado = 'Ativo'; refreshAll(); alert(`Subscrição de ${m.name} renovada por 30 dias!`); }
+    }
+
+    function renderMembers() {
+      const t = document.getElementById('members-tbody');
+      if (!t) return; t.innerHTML = '';
+      const now = new Date();
+      members.forEach(m => {
+        const dtReg = new Date(m.date || '2026-01-01');
+        dtReg.setDate(dtReg.getDate() + 30);
+        const diffDays = Math.ceil((dtReg - now) / (1000 * 60 * 60 * 24));
+        
+        let badge = '<span class="badge badge-ok">Ativo 🟢</span>';
+        if (m.estado === 'Inativo') badge = '<span class="badge badge-inativo">Inativo ⚫</span>';
+        else if (m.estado === 'Desativado') badge = '<span class="badge badge-inativo">Desativado ⚫</span>';
+        else if (dtReg < now) badge = '<span class="badge badge-err">Expirado 🔴</span>';
+        else if (diffDays <= 5 && diffDays >= 0) badge = `<span class="badge badge-warn">Faltam ${diffDays} dias 🟡</span>`;
+
+        const fotoTag = m.foto ? `<img src="${m.foto}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">` : '👤';
+        t.innerHTML += `<tr><td>${fotoTag}</td><td><strong>${m.name}</strong></td><td><code>${m.barcode}</code></td><td>${m.plan}</td><td>${dtReg.toLocaleDateString('pt-PT')}</td><td>${badge}</td><td><button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button> <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button></td></tr>`;
+      });
+    }
+
+    function renderDatabase() {
+      const t = document.getElementById('database-tbody');
+      if (!t) return; t.innerHTML = '';
+      if (members.length === 0 && salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem dados.</td></tr>`; return; }
+      members.forEach(m => {
+        t.innerHTML += `<tr><td>Membro</td><td><strong>${m.name}</strong> (${m.barcode})</td><td>Plano: ${m.plan} | Estado: ${m.estado}</td><td>Início: ${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">Excluir</button></td></tr>`;
+      });
+      salesHistory.forEach((s, i) => {
+        t.innerHTML += `<tr><td>Venda POS</td><td>Cliente: ${s.client}</td><td>Artigo: ${s.prod} (Qtd: ${s.qty})</td><td>${s.date} (Staff: ${s.func})</td><td><strong>${s.total} CVE</strong> <button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
+      });
+    }
+
+    function saveProduct() {
+      const editIdx = document.getElementById('p-edit-idx').value;
+      const name = document.getElementById('p-name').value.trim();
+      const buy = Number(document.getElementById('p-buy').value) || 0;
+      const price = Number(document.getElementById('p-price').value) || 0;
+      const stock = Number(document.getElementById('p-stock').value) || 0;
+      if (!name || !price) { alert('Insira nome e preço.'); return; }
+      if (editIdx !== '') {
+        const p = products[editIdx];
+        if (p) { p.name = name; p.buy = buy; p.price = price; p.stock = stock; p.desc = document.getElementById('p-desc').value; p.use = document.getElementById('p-use').value; }
+        alert('Atualizado!'); cancelEditProduct();
+      } else {
+        products.push({ name, buy, price, stock, desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: document.getElementById('p-foto-base64').value });
+        alert('Registo criado!');
+      }
+      refreshAll();
+    }
+
+    function editProduct(idx) {
+      const p = products[idx]; if (!p) return;
+      document.getElementById('p-edit-idx').value = idx;
+      document.getElementById('p-name').value = p.name;
+      document.getElementById('p-buy').value = p.buy;
+      document.getElementById('p-price').value = p.price;
+      document.getElementById('p-stock').value = p.stock;
+      document.getElementById('p-desc').value = p.desc || '';
+      document.getElementById('p-use').value = p.use || '';
+      navigate('produtos');
+    }
+    function cancelEditProduct() { document.getElementById('p-edit-idx').value = ''; document.getElementById('p-name').value = ''; }
+
+    function renderProducts() {
+      const t = document.getElementById('products-tbody'); if (!t) return; t.innerHTML = '';
+      products.forEach((p, idx) => t.innerHTML += `<tr><td>📦</td><td><strong>${p.name}</strong></td><td>${p.use || ''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${idx})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
+    }
+
+    function renderStock() {
+      const t = document.getElementById('stock-tbody'); if (!t) return; t.innerHTML = '';
+      products.forEach(p => t.innerHTML += `<tr><td>${p.name}</td><td>${p.stock}</td><td>${p.stock > 3 ? '<span class="badge badge-ok">Normal</span>' : '<span class="badge badge-err">Baixo</span>'}</td></tr>`);
+    }
+
+    function renderSales() {
+      const t = document.getElementById('sales-tbody'); if (!t) return;
+      if (salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr>`; return; }
+      t.innerHTML = '';
+      salesHistory.forEach(s => t.innerHTML += `<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`);
+    }
+
+    function renderPOSCatalog() {
+      const g = document.getElementById('pos-catalog-grid'); if (!g) return; g.innerHTML = '';
+      products.forEach((p, i) => g.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;"><h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`);
+    }
+
+    function addToCart(i) {
+      const p = products[i]; if (p.stock <= 0) { alert('Sem stock.'); return; }
+      const item = cartItems.find(x => x.idx === i);
+      if (item) item.qty++; else cartItems.push({ idx: i, name: p.name, price: p.price, qty: 1 });
+      renderCart();
+    }
+
+    function renderCart() {
+      const c = document.getElementById('pos-cart-items'), tot = document.getElementById('pos-cart-total');
+      if (!c) return;
+      if (cartItems.length === 0) { c.innerHTML = 'Carrinho vazio.'; if (tot) tot.innerText = '0 CVE'; return; }
+      c.innerHTML = ''; let total = 0;
+      cartItems.forEach((it, i) => { total += it.price * it.qty; c.innerHTML += `<div>${it.name} x${it.qty} - ${it.price * it.qty} CVE</div>`; });
+      if (tot) tot.innerText = total.toLocaleString() + ' CVE';
+    }
+
+    function finalizarVendaPOS() {
+      if (cartItems.length === 0) { alert('Carrinho vazio.'); return; }
+      const cli = document.getElementById('pos-client-name').value.trim() || 'Balcão';
+      cartItems.forEach(it => { products[it.idx].stock -= it.qty; salesHistory.unshift({ date: new Date().toLocaleString('pt-PT'), func: 'Admin', client: cli, prod: it.name, qty: it.qty, total: it.price * it.qty }); });
+      cartItems = []; refreshAll(); alert('Venda concluída!');
+    }
+
+    function onScan(e) { if (e.key === 'Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
+    function checkinManualPrompt() { const c = prompt('ID Membro:'); if (c) processarCheckin(c); }
+    function processarCheckin(code) {
+      const m = members.find(x => x.barcode === code);
+      const now = new Date(); let ativo = false; let nome = 'Desconhecido';
+      if (m) {
+        nome = m.name;
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        ativo = d >= now && m.estado === 'Ativo';
+      }
+      attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nome, barcode: code, status: ativo ? 'Ativo' : 'Expirado' });
+      renderAttendance();
+      localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: nome, plan: m ? m.plan : 'Geral', auth: ativo, time: Date.now() }));
+    }
+    function renderAttendance() {
+      const t = document.getElementById('attendance-tbody'); if (!t) return; t.innerHTML = '';
+      attendanceLogs.forEach(a => t.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td><span class="badge ${a.status==='Ativo'?'badge-ok':'badge-err'}">${a.status}</span></td></tr>`);
+    }
+
+    function onScanStaff(e) { if (e.key === 'Enter') processarPica(document.getElementById('pica-input').value.trim()); }
+    function picaManualPrompt() { const c = prompt('ID Staff:'); if (c) processarPica(c); }
+    function processarPica(code) {
+      const s = collaborators.find(x => x.barcode === code);
+      staffLogs.unshift({ time: new Date().toLocaleTimeString('pt-PT'), name: s ? s.name : code });
+      renderStaffAttendance();
+    }
+    function renderStaffAttendance() {
+      const t = document.getElementById('pica-tbody'); if (!t) return; t.innerHTML = '';
+      staffLogs.forEach(s => t.innerHTML += `<tr><td>${s.time}</td><td>${s.name}</td><td>OK</td></tr>`);
+    }
+
+    function abrirPortalInscricao() { document.getElementById('portal-inscricao-overlay').style.display = 'flex'; }
+    function submeterInscricaoOnline() {
+      const name = document.getElementById('portal-name').value.trim();
+      const contrato = document.getElementById('portal-contrato').checked;
+      const foto = document.getElementById('portal-foto-b64').value;
+      if (!name || !contrato || !foto) { alert('Preencha os campos, foto e contrato.'); return; }
+      inscricoesOnline.push({ id: Date.now(), name, phone: document.getElementById('portal-phone').value, plan: document.getElementById('portal-plan').value, foto });
+      alert('Inscrição submetida!'); document.getElementById('portal-inscricao-overlay').style.display = 'none'; refreshAll();
+    }
+    function renderInscricoes() {
+      const t = document.getElementById('online-inscricoes-tbody'); if (!t) return; t.innerHTML = '';
+      inscricoesOnline.forEach((ins, i) => t.innerHTML += `<tr><td>👤</td><td>${ins.name}</td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="members.push({id:Date.now(),name:'${ins.name}',barcode:'9999',plan:'${ins.plan}',estado:'Ativo',date:'2026-01-01',foto:'${ins.foto}'}); inscricoesOnline.splice(${i},1); refreshAll();">Aprovar</button></td></tr>`);
+    }
+
+    function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; refreshAll(); } }
+    function enviarArquivoChat(e) {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); refreshAll(); alert('Enviado!'); };
+      r.readAsDataURL(f);
+    }
+    function renderChat() { const a = document.getElementById('chat-msgs'); if (!a) return; a.innerHTML = ''; chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`); }
+    function renderBiblioteca() { const b = document.getElementById('bib-list'); if (!b) return; b.innerHTML = ''; biblioteca.forEach((i, idx) => b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}">${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
+
+    function verificarAlertaVencimentos() {
+      const t = document.getElementById('alertas-tbody'); if (!t) return; t.innerHTML = '';
+      const now = new Date(); let count = 0;
+      members.forEach(m => {
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        const diff = Math.ceil((d - now)/(1000*60*60*24));
+        if (diff <= 5 && diff >= 0) {
+          count++;
+          t.innerHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td><span class="badge badge-warn">02 Notificações Diárias Ativas</span></td></tr>`;
+        }
+      });
+      if (count === 0) t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum alerta pendente.</td></tr>`;
+    }
+
+    function importarDadosComputador(e) {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = e => {
+        try { const d = JSON.parse(e.target.result); if (d.members) members = d.members; if (d.products) products = d.products; refreshAll(); alert('Importado!'); } catch(err) { alert('Erro.'); }
+      };
+      r.readAsText(f);
+    }
+
+    function addColab() {
+      const name = document.getElementById('colab-name').value.trim(); const barcode = document.getElementById('colab-barcode').value.trim();
+      if (!name || !barcode) { alert('Preencha os campos.'); return; }
+      collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, perm: document.getElementById('colab-perm').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value });
+      refreshAll(); alert('Staff registado!');
+    }
+    function renderColab() {
+      const t = document.getElementById('colab-tbody'); if (!t) return; t.innerHTML = '';
+      collaborators.forEach((c, i) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${i},1); refreshAll();">🗑️</button></td></tr>`);
     }
 
     function toggleCardType() { populateCardSelect(); }
