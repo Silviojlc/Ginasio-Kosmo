@@ -3,149 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado de Gestão (Estável)</title>
-
+  <title>Ginásio KOSMO - Sistema Integrado de Gestão</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
   <style>
-    :root {
-      --primary: #c92a2a;
-      --primary-dark: #a61e1e;
-      --sidebar-bg: #1e2227;
-      --sidebar-hover: #2a3038;
-      --sidebar-text: #c2c7d0;
-      --bg: #f4f6f9;
-      --card: #ffffff;
-      --success: #2b8a3e;
-      --danger: #d9480f;
-      --warning: #f59f00;
-      --dark: #212529;
-      --border: #dee2e6;
-    }
-
+    :root { --primary: #c92a2a; --bg: #f4f6f9; --dark: #212529; --border: #dee2e6; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background-color: var(--bg); color: var(--dark); }
-    body { display: flex; }
-
-    #login-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: #111417; z-index: 50000; display: flex; justify-content: center; align-items: center;
-    }
-    .login-box {
-      background: #fff; padding: 25px 30px; border-radius: 10px; width: 100%; max-width: 440px;
-      text-align: center; border-top: 5px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .logo-placeholder { width: 100%; height: 80px; background: #212529; color: #ffd43b; font-weight: 900; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 6px; margin-bottom: 15px; }
-
-    aside {
-      width: 260px; min-width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text);
-      display: flex; flex-direction: column; height: 100%; border-right: 1px solid #14171a; overflow-x: hidden;
-    }
-    .gym-header { padding: 16px 12px; text-align: center; background: #14171a; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .gym-header h3 { font-size: 1.1rem; color: #fff; font-weight: 800; margin-top: 6px; }
-    .gym-header p { font-size: 0.75rem; color: #88929b; }
-
-    .menu-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 0; }
-    .nav-group-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px; color: #6c7884; padding: 12px 16px 4px; font-weight: 700; white-space: nowrap; }
-    .nav-item {
-      display: flex; align-items: center; width: 100%; padding: 10px 16px; font-size: 0.88rem;
-      color: var(--sidebar-text); cursor: pointer; font-weight: 500; border: none; background: transparent; text-align: left;
-      text-decoration: none; transition: background 0.15s; white-space: nowrap;
-    }
-    .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
-    .nav-item.active { background: var(--primary); color: #fff; font-weight: 700; }
-    .nav-item .icon { font-size: 1.15rem; width: 26px; text-align: center; margin-right: 10px; }
-
-    .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
-    header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
-    .top-title { font-size: 1.15rem; font-weight: 700; }
-
-    main { flex: 1; overflow-y: auto; padding: 20px; }
-    .view-section { display: none; }
-    .view-section.active { display: block; }
-    .card { background: var(--card); border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
-    h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 8px; }
-
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 12px; }
-    label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #495057; }
-    input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.9rem; background-color: #fff; }
-
-    .btn {
-      background: var(--primary); color: #fff; border: none; padding: 9px 18px; border-radius: 5px;
-      font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn:hover { background: var(--primary-dark); }
-    .btn-green { background: var(--success); }
+    body { display: flex; height: 100vh; overflow: hidden; background: var(--bg); color: var(--dark); }
+    aside { width: 260px; background: #1e2227; color: #c2c7d0; display: flex; flex-direction: column; }
+    .gym-header { padding: 20px; text-align: center; background: #14171a; border-bottom: 1px solid #333; }
+    .gym-header h3 { color: #fff; font-size: 1.2rem; }
+    .menu { flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+    .nav-btn { background: transparent; border: none; color: #c2c7d0; padding: 10px 15px; text-align: left; font-size: 0.9rem; cursor: pointer; border-radius: 5px; font-weight: 600; }
+    .nav-btn:hover, .nav-btn.active { background: var(--primary); color: #fff; }
+    .main-content { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 25px; }
+    main { flex: 1; overflow-y: auto; padding: 25px; }
+    .card { background: #fff; border-radius: 8px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+    h2 { font-size: 1.2rem; margin-bottom: 15px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 8px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    label { font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px; color: #495057; }
+    input, select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.9rem; }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    .btn:hover { background: #a61e1e; }
     .btn-blue { background: #1971c2; }
-    .btn-sm { padding: 5px 10px; font-size: 0.78rem; border-radius: 4px; color:#fff; border:none; cursor:pointer; }
-    
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    th { background: #f8f9fa; font-weight: 600; color: #495057; }
-    .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; }
-    .badge-ok { background: var(--success); }
-    .badge-err { background: var(--danger); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: #f8f9fa; font-weight: 600; }
+    .badge-ok { background: #2b8a3e; color: #fff; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN DE ACESSO -->
-  <div id="login-overlay">
-    <div class="login-box">
-      <div class="logo-placeholder">KOSMO</div>
-      <h3 style="margin-bottom: 6px; color: var(--dark);">Painel de Gestão - KOSMO</h3>
-      <p style="font-size: 0.78rem; color: #666; margin-bottom: 15px;">Insira as suas credenciais de acesso</p>
-      <div style="margin-bottom: 10px; text-align: left;"><label>Utilizador</label><input type="text" id="log-user" value="admin"></div>
-      <div style="margin-bottom: 15px; text-align: left;"><label>Palavra-passe</label><input type="password" id="log-pass" value="admin123"></div>
-      <button type="button" class="btn" style="width: 100%; padding: 12px;" onclick="directLogin()">Entrar no Sistema</button>
-      <button type="button" class="btn btn-blue" style="width: 100%; padding: 10px; margin-top: 8px;" onclick="abrirPortalInscricao()">🌐 Abrir Portal de Inscrição Online</button>
-    </div>
-  </div>
-
-  <!-- MENU LATERAL -->
-  <aside id="sidebar-panel">
+  <aside>
     <div class="gym-header">
-      <div style="font-size: 1.2rem; font-weight: 900; background:#212529; color:#ffd43b; padding:8px; border-radius:6px; display:inline-block; width:100%;">KOSMO GYM</div>
-      <h3>KOSMO</h3>
-      <p>Praia, Terra Branca, 7600<br><strong>NIF: 283023805</strong></p>
+      <h3>KOSMO GYM</h3>
+      <p style="font-size:0.75rem; color:#aaa; margin-top:4px;">NIF: 283023805</p>
     </div>
-    <div class="menu-scroll">
-      <div class="nav-group-title">Membros & Online</div>
-      <button type="button" class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')"><span class="icon">🏠</span><span class="nav-text">Dashboard Geral</span></button>
-      <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
-      <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
-    </div>
-    <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
-      <span id="logged-user-label" style="display:block; color:#ffd43b; font-size:0.75rem; margin-bottom:6px; text-align:center; font-weight:bold;">Sessão: Admin</span>
-      <button type="button" onclick="location.reload()" class="btn btn-sm" style="background:#e03131; width:100%;">Terminar Sessão</button>
+    <div class="menu">
+      <button class="nav-btn active" onclick="switchTab('membros')">👤 Gestão de Membros</button>
+      <button class="nav-btn" onclick="switchTab('checkins')">🔔 Check-ins / Totem</button>
     </div>
   </aside>
 
-  <div class="main-wrapper">
+  <div class="main-content">
     <header>
-      <div class="top-title" id="page-title">Dashboard Geral</div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Abrir Portal Inscrição</button>
-        <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Ecrã Totem Gigante</button>
-      </div>
+      <h2 id="page-title" style="border:none; margin:0; padding:0;">Gestão de Membros</h2>
+      <button class="btn btn-blue" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
     </header>
-
     <main>
-      <section id="view-dashboard" class="view-section active">
+      <!-- TAB MEMBROS -->
+      <section id="tab-membros">
         <div class="card">
-          <h2>Bem-vindo ao Sistema KOSMO</h2>
-          <p>Clique em <strong>"Ecrã Totem Gigante"</strong> no canto superior direito para abrir o terminal interativo de check-in em ecrã completo.</p>
-        </div>
-      </section>
-
-      <section id="view-membros" class="view-section">
-        <div class="card">
-          <h2>Gestão de Membros</h2>
+          <h2>Registar Novo Membro</h2>
           <div class="form-grid">
             <div><label>Nome Completo</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
             <div><label>Código / ID (Cartão / Barras)</label><input type="text" id="m-barcode" placeholder="Ex: 123456"></div>
@@ -153,157 +63,103 @@
           </div>
           <button class="btn" onclick="saveMember()">Registar Membro</button>
         </div>
+        <div class="card">
+          <h2>Lista de Membros Ativos</h2>
+          <table>
+            <thead><tr><th>Nome</th><th>Código / ID</th><th>Plano</th><th>Estado</th></tr></thead>
+            <tbody id="members-tbody"><tr><td colspan="4" style="text-align:center; color:#777;">A carregar membros...</td></tr></tbody>
+          </table>
+        </div>
       </section>
 
-      <section id="view-checkins" class="view-section">
+      <!-- TAB CHECK-INS -->
+      <section id="tab-checkins" style="display:none;">
         <div class="card">
-          <h2>Terminal de Check-ins por Leitor</h2>
-          <input type="text" id="chk-input" placeholder="Passe o cartão ou digite o ID..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; width:100%; margin-bottom:15px;">
+          <h2>Terminal de Check-ins (Leitor de Cartão / Barras)</h2>
+          <input type="text" id="chk-input" placeholder="Passe o cartão ou digite o ID e prima Enter..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; width:100%; margin-bottom:15px;">
           <table>
             <thead><tr><th>Data</th><th>Hora</th><th>Membro</th><th>Código</th><th>Estado</th></tr></thead>
-            <tbody id="today-attendance-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem check-ins hoje.</td></tr></tbody>
+            <tbody id="attendance-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem check-ins registados hoje.</td></tr></tbody>
           </table>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- PORTAL DE INSCRIÇÃO ONLINE -->
-  <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
-    <div style="background:#fff; width:100%; max-width:500px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); position:relative;">
-      <button onclick="fecharPortalInscricao()" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer; font-weight:bold;">✖</button>
-      <h2 style="color:var(--primary); margin-bottom:10px;">Portal de Inscrição Online</h2>
-      <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">Insira os seus dados para submeter a inscrição.</p>
-      <div style="margin-bottom:10px;"><label>Nome</label><input type="text" id="portal-name" placeholder="O seu nome"></div>
-      <div style="margin-bottom:15px;"><label>Telemóvel</label><input type="tel" id="portal-phone" placeholder="9988886"></div>
-      <button class="btn" style="width:100%;" onclick="alert('Inscrição submetida com sucesso!'); fecharPortalInscricao();">Submeter</button>
-    </div>
-  </div>
-
   <script>
-    let members = [
+    let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
       { name: 'Silvio Cabral', barcode: '112233', plan: 'Mensal', estado: 'Ativo' }
     ];
-    let attendanceLogs = [];
-    let totemWindowRef = null;
+    let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('totem') === 'true') {
-        document.body.innerHTML = `
-          <!DOCTYPE html>
-          <html lang="pt">
-          <head>
-            <meta charset="UTF-8">
-            <title>Ginásio KOSMO - Ecrã Totem Gigante</title>
-            <style>
-              body { background: #0b0e11; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; box-sizing: border-box; text-align: center; overflow: hidden; }
-              .badge { padding: 25px 80px; border-radius: 16px; font-size: 3.5rem; font-weight: 900; color: #fff; display: inline-block; margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-            </style>
-          </head>
-          <body>
-            <div style="width:100%; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #222; padding-bottom:15px;">
-              <div style="display:flex; align-items:center; gap:15px;">
-                <div style="background:#ffd43b; color:#111; font-weight:900; font-size:1.4rem; padding:8px 14px; border-radius:6px;">KOSMO</div>
-                <div style="font-size:1.8rem; color:#aaa; font-weight:800; letter-spacing:1px; text-align:left;">TERMINAL DE CHECK-IN KOSMO</div>
-              </div>
-              <div id="totem-relogio" style="font-size: 6.5rem; font-family: monospace; color: #ffd43b; font-weight: 900; letter-spacing: 2px;">00:00:00</div>
-            </div>
-            
-            <div id="totem-corpo" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-              <h1 style="color:#ffd43b; font-size:4.5rem; margin:15px 0; font-weight:900;">Aproxime o seu Cartão / QR Code</h1>
-              <p style="font-size:2.2rem; color:#ddd; font-style:italic; max-width:1100px; font-weight:700; line-height:1.4;">"Moldar o seu corpo ao seu estilo através de uma forma correta e saudável"</p>
-            </div>
-
-            <div style="color:#777; font-size:1.2rem; text-align:center; font-weight:bold;">Ginásio KOSMO • Praia, Cabo Verde</div>
-
-            <script>
-              let resetTimer = null;
-              function voltarEcraInicial() {
-                document.getElementById('totem-corpo').innerHTML = \`
-                  <h1 style="color:#ffd43b; font-size:4.5rem; margin:15px 0; font-weight:900;">Aproxime o seu Cartão / QR Code</h1>
-                  <p style="font-size:2.2rem; color:#ddd; font-style:italic; max-width:1100px; font-weight:700; line-height:1.4;">"Moldar o seu corpo ao seu estilo através de uma forma correta e saudável"</p>
-                \`;
-              }
-
-              function processarCheckinTotem(d) {
-                if (resetTimer) clearTimeout(resetTimer);
-                const bgCol = d.auth ? '#2b8a3e' : '#c92a2a';
-                document.getElementById('totem-corpo').innerHTML = \`
-                  <h1 style="color:\${bgCol}; font-size:4.8rem; margin:10px 0; font-weight:900;">\${d.name}</h1>
-                  <p style="font-size:2.2rem; font-weight:bold; margin-bottom:10px;">Plano: \${d.plan}</p>
-                  <div class="badge" style="background:\${bgCol};">ACESSO PERMITIDO</div>
-                \`;
-                resetTimer = setTimeout(() => { voltarEcraInicial(); }, 15000);
-              }
-
-              setInterval(() => {
-                document.getElementById('totem-relogio').innerText = new Date().toLocaleTimeString('pt-PT');
-              }, 1000);
-
-              window.addEventListener('storage', (event) => {
-                if (event.key === 'kosmo_totem_scan') {
-                  try { const d = JSON.parse(event.newValue); if (d) processarCheckinTotem(d); } catch(e) {}
-                }
-              });
-            <\/script>
-          </body>
-          </html>
-        `;
-        return;
-      }
-    });
-
-    function directLogin() {
-      document.getElementById('login-overlay').style.display = 'none';
-      navigate('dashboard');
-    }
-
-    function navigate(viewId) {
-      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      const target = document.getElementById('view-' + viewId);
-      if (target) target.classList.add('active');
-      const navBtn = document.getElementById('nav-' + viewId);
-      if (navBtn) navBtn.classList.add('active');
+    function switchTab(tab) {
+      document.getElementById('tab-membros').style.display = tab === 'membros' ? 'block' : 'none';
+      document.getElementById('tab-checkins').style.display = tab === 'checkins' ? 'block' : 'none';
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('page-title').innerText = tab === 'membros' ? 'Gestão de Membros' : 'Check-ins / Totem';
+      if (tab === 'membros') renderMembers();
+      if (tab === 'checkins') renderAttendance();
     }
 
     function openTotemWindow() {
-      const totemUrl = window.location.href.split('?')[0] + '?totem=true';
-      window.open(totemUrl, '_blank', 'width=1100,height=800');
-    }
-
-    function onScan(e) {
-      if (e.key === 'Enter') {
-        const code = document.getElementById('chk-input').value.trim();
-        if (!code) return;
-        const m = members.find(x => x.barcode === code) || { name: 'Membro Exemplo', plan: 'Mensal', barcode: code };
-        attendanceLogs.unshift({ data: new Date().toLocaleDateString('pt-PT'), time: new Date().toLocaleTimeString('pt-PT'), name: m.name, barcode: m.barcode, status: 'Ativo' });
-        
-        const t = document.getElementById('today-attendance-tbody');
-        if (t) {
-          t.innerHTML = '';
-          attendanceLogs.forEach(a => t.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td><strong>${a.name}</strong></td><td>${a.barcode}</td><td><span class="badge badge-ok">Ativo</span></td></tr>`);
-        }
-
-        const totemData = { name: m.name, plan: m.plan, auth: true, barcode: m.barcode, time: Date.now() };
-        localStorage.setItem('kosmo_totem_scan', JSON.stringify(totemData));
-        document.getElementById('chk-input').value = '';
-      }
+      window.open('totem.html', '_blank', 'width=1100,height=800');
     }
 
     function saveMember() {
       const name = document.getElementById('m-name').value.trim();
       const barcode = document.getElementById('m-barcode').value.trim();
       const plan = document.getElementById('m-plan').value;
-      if (!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
+      if (!name || !barcode) { alert('Preencha todos os campos obrigatórios.'); return; }
       members.push({ name, barcode, plan, estado: 'Ativo' });
+      localStorage.setItem('kosmo_members', JSON.stringify(members));
       alert('Membro registado com sucesso!');
-      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+      document.getElementById('m-name').value = '';
+      document.getElementById('m-barcode').value = '';
+      renderMembers();
     }
 
-    function abrirPortalInscricao() { document.getElementById('portal-inscricao-overlay').style.display = 'flex'; }
-    function fecharPortalInscricao() { document.getElementById('portal-inscricao-overlay').style.display = 'none'; }
+    function renderMembers() {
+      const tbody = document.getElementById('members-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      members.forEach(m => {
+        tbody.innerHTML += `<tr><td><strong>${m.name}</strong></td><td><code>${m.barcode}</code></td><td>${m.plan}</td><td><span class="badge-ok">${m.estado}</span></td></tr>`;
+      });
+    }
+
+    function onScan(e) {
+      if (e.key === 'Enter') {
+        const code = document.getElementById('chk-input').value.trim();
+        if (!code) return;
+        const m = members.find(x => x.barcode === code) || { name: 'Membro (Convidado)', plan: 'Geral', barcode: code };
+        const now = new Date();
+        const log = { data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: m.barcode, status: 'Ativo' };
+        
+        attendanceLogs.unshift(log);
+        localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
+        renderAttendance();
+
+        // Envia os dados para a janela do Totem em tempo real
+        localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: m.name, plan: m.plan, auth: true, time: Date.now() }));
+        document.getElementById('chk-input').value = '';
+      }
+    }
+
+    function renderAttendance() {
+      const tbody = document.getElementById('attendance-tbody');
+      if (!tbody) return;
+      if (attendanceLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem check-ins registados hoje.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = '';
+      attendanceLogs.forEach(a => {
+        tbody.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td><strong>${a.name}</strong></td><td><code>${a.barcode}</code></td><td><span class="badge-ok">Ativo</span></td></tr>`;
+      });
+    }
+
+    window.onload = () => { renderMembers(); renderAttendance(); };
   </script>
 </body>
 </html>
