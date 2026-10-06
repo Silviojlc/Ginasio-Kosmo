@@ -88,7 +88,7 @@
       <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
       <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Inscrições Online</span></button>
       <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
-      <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
+      <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais com Foto</span></button>
       
       <div class="nav-group-title">Loja & Stock</div>
       <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
@@ -102,8 +102,7 @@
 
       <div class="nav-group-title">Colaboradores & Staff</div>
       <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Funções</span></button>
-      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
-      <button type="button" class="nav-item" id="nav-mudar-senha" onclick="navigate('mudar-senha')" style="display:none;"><span class="icon">🔒</span><span class="nav-text">Alterar Minha Senha</span></button>
+      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
     </div>
     <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
       <span id="logged-user-label" style="display:block; color:#ffd43b; font-size:0.75rem; margin-bottom:6px; text-align:center; font-weight:bold;">Sessão: Admin</span>
@@ -115,7 +114,7 @@
     <header>
       <div class="top-title" id="page-title">Dashboard Geral</div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição</button>
+        <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
     </header>
@@ -233,13 +232,13 @@
       <!-- CARTÕES DIGITAIS -->
       <section id="view-cartaodigital" class="view-section">
         <div class="card" style="text-align:center;">
-          <h2>Cartão Digital (Membros e Colaboradores)</h2>
+          <h2>Cartão Digital (Membros e Colaboradores) com Foto</h2>
           <div style="margin-bottom:15px;">
             <select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Colaboradores (Staff)</option></select>
             <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select>
           </div>
           <div id="digital-card-container"></div>
-          <button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+          <button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨️️ Imprimir / Guardar PDF</button>
         </div>
       </section>
 
@@ -321,21 +320,10 @@
           </table>
         </div>
       </section>
-
-      <!-- MUDAR SENHA -->
-      <section id="view-mudar-senha" class="view-section">
-        <div class="card" style="max-width:500px; margin:0 auto;">
-          <h2>Alterar Minha Palavra-passe</h2>
-          <div class="form-grid">
-            <div style="grid-column:1/-1;"><label>Nova Palavra-passe</label><input type="password" id="staff-nova-senha" placeholder="Nova senha"></div>
-          </div>
-          <button class="btn btn-green" onclick="alterarMinhaSenha()" style="margin-top:10px; width:100%;">Guardar Nova Senha</button>
-        </div>
-      </section>
     </main>
   </div>
 
-  <!-- PORTAL DE INSCRIÇÃO ONLINE (MODAL COMPLETO) -->
+  <!-- PORTAL DE INSCRIÇÃO ONLINE (COM FOTO E CONTRATO) -->
   <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
     <div style="background:#fff; width:100%; max-width:600px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
@@ -346,7 +334,7 @@
         <div><label>NIF</label><input type="text" id="portal-nif"></div>
         <div><label>Telemóvel</label><input type="tel" id="portal-phone"></div>
         <div><label>Plano</label><select id="portal-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option></select></div>
-        <div><label>Fotografia Pessoal</label><input type="file" id="portal-foto-file" accept="image/*" onchange="converterFotoPortal(event)"></div>
+        <div><label>Fotografia Pessoal *</label><input type="file" id="portal-foto-file" accept="image/*" onchange="converterFotoPortal(event)"></div>
       </div>
       <input type="hidden" id="portal-foto-b64" value="">
       <div class="contrato-box" style="text-align:left;">
@@ -358,7 +346,7 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT MASTER DEFINITIVO -->
+  <!-- JAVASCRIPT MASTER -->
   <script>
     let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
       { id: 1, name: 'Silvio Cabral', barcode: '112233', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '' }
@@ -375,7 +363,6 @@
       { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: 'Total', user: 'admin', pass: 'admin123', foto: '' }
     ];
     let cartItems = [];
-    let loggedStaff = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
@@ -389,20 +376,8 @@
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
-        loggedStaff = null;
         document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('logged-user-label').innerText = 'Sessão: Admin';
-        document.getElementById('nav-mudar-senha').style.display = 'none';
         navigate('dashboard');
-        return;
-      }
-      const staff = collaborators.find(c => c.user === u && c.pass === p);
-      if (staff) {
-        loggedStaff = staff;
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('logged-user-label').innerText = `Staff: ${staff.name}`;
-        document.getElementById('nav-mudar-senha').style.display = 'flex';
-        navigate('membros');
         return;
       }
       alert('Utilizador ou palavra-passe incorretos.');
@@ -444,7 +419,7 @@
       localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
     }
 
-    // FOTOS
+    // CONVERSÃO DE FOTOS
     function converterFotoMembro(e) {
       const f = e.target.files[0];
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
@@ -769,15 +744,18 @@
     function submeterInscricaoOnline() {
       const name = document.getElementById('portal-name').value.trim();
       const contrato = document.getElementById('portal-contrato').checked;
+      const foto = document.getElementById('portal-foto-b64').value;
       if (!name) { alert('Insira o seu nome para começar.'); return; }
       if (!contrato) { alert('Deve aceitar obrigatoriamente os termos do Contrato de Inscrição KOSMO!'); return; }
+      if (!foto) { alert('A fotografia pessoal é obrigatória para a subscrição online.'); return; }
+
       inscricoesOnline.push({
         id: Date.now(),
         name,
         nif: document.getElementById('portal-nif').value,
         phone: document.getElementById('portal-phone').value,
         plan: document.getElementById('portal-plan').value,
-        foto: document.getElementById('portal-foto-b64').value
+        foto: foto
       });
       alert('Inscrição submetida com sucesso! A equipa irá validá-la.');
       document.getElementById('portal-inscricao-overlay').style.display = 'none';
@@ -796,7 +774,7 @@
     function enviarMsgChat() {
       const txt = document.getElementById('chat-text').value.trim();
       if (!txt) return;
-      chatMsgs.push({ sender: loggedStaff ? loggedStaff.name : 'Admin', text: txt });
+      chatMsgs.push({ sender: 'Admin', text: txt });
       document.getElementById('chat-text').value = '';
       refreshAll();
     }
@@ -805,7 +783,7 @@
       if (!f) return;
       const r = new FileReader();
       r.onload = function(evt) {
-        chatMsgs.push({ sender: loggedStaff ? loggedStaff.name : 'Admin (Mídia)', fileUrl: evt.target.result, fileName: f.name });
+        chatMsgs.push({ sender: 'Admin (Mídia)', fileUrl: evt.target.result, fileName: f.name });
         biblioteca.push({ name: f.name, url: evt.target.result });
         refreshAll();
         alert('Arquivo/Áudio/Vídeo enviado com sucesso!');
@@ -858,7 +836,7 @@
       r.readAsText(f);
     }
 
-    // STAFF (EDITAR, ELIMINAR, FOTO, PERMISSÕES)
+    // STAFF
     function addColab() {
       const editId = document.getElementById('staff-edit-id').value;
       const name = document.getElementById('colab-name').value.trim();
@@ -915,19 +893,6 @@
       document.getElementById('colab-name').value = ''; document.getElementById('colab-barcode').value = '';
     }
 
-    function alterarMinhaSenha() {
-      const novaSenha = document.getElementById('staff-nova-senha').value.trim();
-      if (!novaSenha) { alert('Insira a nova palavra-passe.'); return; }
-      if (loggedStaff) {
-        loggedStaff.pass = novaSenha;
-        const idx = collaborators.findIndex(x => x.id === loggedStaff.id);
-        if (idx !== -1) collaborators[idx].pass = novaSenha;
-        refreshAll();
-        alert('A sua palavra-passe foi alterada com sucesso!');
-        document.getElementById('staff-nova-senha').value = '';
-      }
-    }
-
     function renderColab() {
       const t = document.getElementById('colab-tbody');
       if (!t) return; t.innerHTML = '';
@@ -949,7 +914,7 @@
       });
     }
 
-    // CARTÕES
+    // CARTÕES COM FOTO
     function toggleCardType() { populateCardSelect(); }
     function populateCardSelect() {
       const type = document.getElementById('card-type-select').value;
