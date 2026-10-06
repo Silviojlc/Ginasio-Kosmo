@@ -53,7 +53,7 @@
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
     th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
     th { background: #f8f9fa; font-weight: 600; color: #495057; }
-    .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; }
+    .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; cursor: pointer; }
     .badge-ok { background: var(--success); }
     .badge-warn { background: var(--warning); color: #000; }
     .badge-err { background: var(--danger); }
@@ -77,7 +77,7 @@
     </div>
   </div>
 
-  <!-- MENU LATERAL COMPLETO -->
+  <!-- MENU LATERAL COMPLETO E EXPANDIDO -->
   <aside id="sidebar-panel">
     <div class="gym-header">
       <img src="logo.jpg" alt="KOSMO" class="sidebar-logo" onerror="this.src='src/img/logo.jpg';">
@@ -135,24 +135,31 @@
       <!-- DASHBOARD -->
       <section id="view-dashboard" class="view-section active">
         <div class="card">
-          <h2>Dashboard Geral - KOSMO</h2>
-          <p>Sistema operacional carregado com todas as 1500+ linhas de módulos ativos.</p>
+          <h2>Dashboard de Membros & Estado</h2>
+          <p style="margin-bottom:15px; color:#666;">Clique em cada indicador para revelar a quantidade real e a lista correspondente:</p>
+          <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
+            <div onclick="filtrarMembrosDashboard('Ativo')" class="badge badge-ok" style="padding:15px 25px; font-size:1rem; border-radius:8px;">🟢 Ativos: <span id="count-ativos">0</span></div>
+            <div onclick="filtrarMembrosDashboard('A Vencer')" class="badge badge-warn" style="padding:15px 25px; font-size:1rem; border-radius:8px;">🟡 Faltam 5d: <span id="count-avencer">0</span></div>
+            <div onclick="filtrarMembrosDashboard('Expirado')" class="badge badge-err" style="padding:15px 25px; font-size:1rem; border-radius:8px;">🔴 Expirados: <span id="count-expirados">0</span></div>
+            <div onclick="filtrarMembrosDashboard('Inativo')" class="badge badge-inativo" style="padding:15px 25px; font-size:1rem; border-radius:8px;">⚫ Inativos: <span id="count-inativos">0</span></div>
+          </div>
+          <div id="dashboard-filtro-resultado" style="margin-top:15px;"></div>
         </div>
       </section>
 
       <!-- MEMBROS -->
       <section id="view-membros" class="view-section">
         <div class="card">
-          <h2 id="form-member-title">Registar ou Editar Membro (Contrato KOSMO Completo)</h2>
+          <h2 id="form-member-title">Registar ou Editar Membro</h2>
           <input type="hidden" id="m-edit-id" value="">
           <div class="form-grid">
             <div><label>Nome Completo *</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
-            <div><label>E-mail</label><input type="email" id="m-email" placeholder="aluno@email.com"></div>
+            <div><label>E-mail *</label><input type="email" id="m-email" placeholder="aluno@email.com"></div>
             <div><label>Código / ID Cartão *</label><input type="text" id="m-barcode" placeholder="Ex: 112233"></div>
             <div><label>Telemóvel</label><input type="tel" id="m-phone" placeholder="9988886"></div>
             <div><label>Altura (m)</label><input type="text" id="m-altura" placeholder="Ex: 1.75m"></div>
             <div><label>Peso Atual (kg)</label><input type="text" id="m-peso" placeholder="Ex: 75kg"></div>
-            <div style="grid-column:1/-1;"><label>Patologias, lesões ou doenças especiais?</label><textarea id="m-patologias" rows="2" placeholder="Descreva..."></textarea></div>
+            <div style="grid-column:1/-1;"><label>Patologias, lesões ou doenças especiais?</label><textarea id="m-patologias" rows="2"></textarea></div>
             <div><label>Plano</label><select id="m-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
             <div><label>Estado</label><select id="m-estado"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option><option value="Desativado">Desativado</option></select></div>
             <div><label>Data de Início</label><input type="date" id="m-date"></div>
@@ -163,15 +170,15 @@
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <h2>Lista de Membros (Ativos 🟢, Faltam 5d 🟡, Expirados 🔴, Inativos ⚫)</h2>
+          <h2>Lista de Membros (Com E-mail Visível)</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome & E-mail</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="members-tbody"></tbody>
           </table>
         </div>
       </section>
 
-      <!-- BASE DE DADOS -->
+      <!-- BASE DE DADOS GLOBAL -->
       <section id="view-database" class="view-section">
         <div class="card">
           <h2>Base de Dados & Transações (Editar, Imprimir, Alterar, Excluir)</h2>
@@ -187,7 +194,7 @@
         <div class="card">
           <h2>Inscrições Online Pendentes</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>Telemóvel</th><th>Plano</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome & E-mail</th><th>Telemóvel</th><th>Plano</th><th>Ações</th></tr></thead>
             <tbody id="online-inscricoes-tbody"></tbody>
           </table>
         </div>
@@ -196,9 +203,9 @@
       <!-- CHECK-INS -->
       <section id="view-checkins" class="view-section">
         <div class="card">
-          <h2>Terminal de Check-ins (Leitor ou Manual)</h2>
+          <h2>Terminal de Check-ins (Leitura Direta sem Rato)</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <input type="text" id="chk-input" placeholder="Passe o cartão ou digite o ID e prima Enter..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; flex:1;">
+            <input type="text" id="chk-input" placeholder="Passe o cartão a qualquer momento..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; flex:1;" autofocus>
             <button class="btn btn-green" onclick="checkinManualPrompt()">Check-in Manual</button>
           </div>
           <table>
@@ -265,47 +272,13 @@
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
       <!-- FATURAS -->
-      <section id="view-faturas" class="view-section">
-        <div class="card">
-          <h2>Faturas & Envios (NIF: 283023805)</h2>
-          <table>
-            <thead><tr><th>Nº Fatura</th><th>Cliente</th><th>Valor</th><th>Ações WhatsApp/E-mail</th></tr></thead>
-            <tbody id="invoices-tbody"><tr><td colspan="4" style="text-align:center;">Sem faturas.</td></tr></tbody>
-          </table>
-        </div>
-      </section>
+      <section id="view-faturas" class="view-section"><div class="card"><h2>Faturas & Envios (NIF: 283023805)</h2><table><thead><tr><th>Nº Fatura</th><th>Cliente</th><th>Valor</th><th>WhatsApp</th></tr></thead><tbody id="invoices-tbody"><tr><td colspan="4" style="text-align:center;">Sem faturas.</td></tr></tbody></table></div></section>
 
       <!-- DESPESAS -->
-      <section id="view-despesas" class="view-section">
-        <div class="card">
-          <h2>Registar Despesa</h2>
-          <div class="form-grid">
-            <div><label>Descrição</label><input type="text" id="exp-desc"></div>
-            <div><label>Valor (CVE)</label><input type="number" id="exp-val"></div>
-          </div>
-          <button class="btn" style="background:var(--danger);" onclick="addExpense()">Registar Despesa</button>
-        </div>
-        <div class="card">
-          <h2>Histórico de Despesas</h2>
-          <table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="expenses-tbody"></tbody></table>
-        </div>
-      </section>
+      <section id="view-despesas" class="view-section"><div class="card"><h2>Despesas</h2><div class="form-grid"><div><label>Descrição</label><input type="text" id="exp-desc"></div><div><label>Valor</label><input type="number" id="exp-val"></div></div><button class="btn" style="background:var(--danger);" onclick="addExpense()">Registar</button></div><div class="card"><table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="expenses-tbody"></tbody></table></div></section>
 
       <!-- SALÁRIOS -->
-      <section id="view-salarios" class="view-section">
-        <div class="card">
-          <h2>Registar Salário / Pagamento Staff</h2>
-          <div class="form-grid">
-            <div><label>Staff</label><input type="text" id="sal-name"></div>
-            <div><label>Valor (CVE)</label><input type="number" id="sal-val"></div>
-          </div>
-          <button class="btn" onclick="addSalary()">Registar Salário</button>
-        </div>
-        <div class="card">
-          <h2>Histórico de Salários</h2>
-          <table><thead><tr><th>Staff</th><th>Valor</th></tr></thead><tbody id="salaries-tbody"></tbody></table>
-        </div>
-      </section>
+      <section id="view-salarios" class="view-section"><div class="card"><h2>Salários</h2><div class="form-grid"><div><label>Staff</label><input type="text" id="sal-name"></div><div><label>Valor</label><input type="number" id="sal-val"></div></div><button class="btn" onclick="addSalary()">Registar</button></div><div class="card"><table><thead><tr><th>Staff</th><th>Valor</th></tr></thead><tbody id="salaries-tbody"></tbody></table></div></section>
 
       <!-- CARTÕES -->
       <section id="view-cartaodigital" class="view-section"><div class="card" style="text-align:center;"><h2>Cartões Digitais com Foto</h2><select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Staff</option></select> <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select><div id="digital-card-container" style="margin-top:15px;"></div><button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨 Imprimir</button></div></section>
@@ -316,17 +289,17 @@
       <!-- BIBLIOTECA -->
       <section id="view-biblioteca" class="view-section"><div class="card"><h2>Biblioteca de Arquivos</h2><table><thead><tr><th>Nome</th><th>Ações</th></tr></thead><tbody id="bib-list"><tr><td colspan="2" style="text-align:center;">Sem arquivos.</td></tr></tbody></table></div></section>
 
-      <!-- LEMBRETES -5D -->
-      <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas (-5d / 02 vezes ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
+      <!-- LEMBRETES -->
+      <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas (-5d / 2x dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR -->
-      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Dados / Backups Universais</h2><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div></section>
+      <!-- IMPORTAR BACKUP UNIVERSAL -->
+      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Backup Universal (Carrega Qualquer Ficheiro)</h2><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div></section>
 
       <!-- STAFF -->
-      <section id="view-colab" class="view-section"><div class="card"><h2>Gerir Staff & Funções</h2><div class="form-grid"><div><label>Nome *</label><input type="text" id="colab-name"></div><div><label>Cargo</label><input type="text" id="colab-role"></div><div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div><div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div><div><label>Utilizador</label><input type="text" id="colab-user"></div><div><label>Senha</label><input type="password" id="colab-pass"></div><div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div></div><input type="hidden" id="colab-foto-base64" value=""><button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button></div><div class="card"><table><thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead><tbody id="colab-tbody"></tbody></table></div></section>
+      <section id="view-colab" class="view-section"><div class="card"><h2>Gerir Staff</h2><div class="form-grid"><div><label>Nome *</label><input type="text" id="colab-name"></div><div><label>Cargo</label><input type="text" id="colab-role"></div><div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div><div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div><div><label>Utilizador</label><input type="text" id="colab-user"></div><div><label>Senha</label><input type="password" id="colab-pass"></div><div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div></div><input type="hidden" id="colab-foto-base64" value=""><button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button></div><div class="card"><table><thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead><tbody id="colab-tbody"></tbody></table></div></section>
 
       <!-- PICA PONTO -->
-      <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto (Leitor / Manual)</h2><div style="display:flex; gap:10px; margin-bottom:15px;"><input type="text" id="pica-input" placeholder="Passe o cartão..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;"><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
+      <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto (Leitura Direta sem Rato)</h2><div style="display:flex; gap:10px; margin-bottom:15px;"><input type="text" id="pica-input" placeholder="Passe o cartão do staff..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;" autofocus><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
     </main>
   </div>
 
@@ -379,7 +352,7 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT MASTER COMPLETO (1500+ LINHAS) -->
+  <!-- SCRIPT MASTER COMPLETO -->
   <script>
     let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
       { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '' }
@@ -407,6 +380,7 @@
         document.getElementById('login-overlay').style.display = 'none';
         abrirPortalInscricao();
       }
+      verificarAlertaVencimentos();
     });
 
     function directLogin() {
@@ -440,6 +414,7 @@
 
     function refreshAll() {
       renderMembers();
+      renderDashboardCounts();
       renderProducts();
       renderStock();
       renderSales();
@@ -475,6 +450,46 @@
     function converterFotoPortal(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-foto-b64').value = evt.target.result; r.readAsDataURL(f); } }
     function converterFotoProduto(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('p-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
     function converterFotoStaff(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('colab-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
+
+    function renderDashboardCounts() {
+      const now = new Date();
+      let cAtivos = 0, cAVencer = 0, cExpirados = 0, cInativos = 0;
+      members.forEach(m => {
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        const diff = Math.ceil((d - now)/(1000*60*60*24));
+        if (m.estado === 'Inativo' || m.estado === 'Desativado') cInativos++;
+        else if (d < now) cExpirados++;
+        else if (diff <= 5 && diff >= 0) cAVencer++;
+        else cAtivos++;
+      });
+      document.getElementById('count-ativos').innerText = cAtivos;
+      document.getElementById('count-avencer').innerText = cAVencer;
+      document.getElementById('count-expirados').innerText = cExpirados;
+      document.getElementById('count-inativos').innerText = cInativos;
+    }
+
+    function filtrarMembrosDashboard(filtro) {
+      const res = document.getElementById('dashboard-filtro-resultado');
+      const now = new Date();
+      let html = `<h3>Membros Filtrados: ${filtro}</h3><table><thead><tr><th>Foto</th><th>Nome & E-mail</th><th>Plano</th><th>Validade</th></tr></thead><tbody>`;
+      let achou = false;
+      members.forEach(m => {
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        const diff = Math.ceil((d - now)/(1000*60*60*24));
+        let match = false;
+        if (filtro === 'Ativo' && m.estado === 'Ativo' && d >= now && diff > 5) match = true;
+        if (filtro === 'A Vencer' && m.estado === 'Ativo' && diff <= 5 && diff >= 0) match = true;
+        if (filtro === 'Expirado' && d < now) match = true;
+        if (filtro === 'Inativo' && (m.estado === 'Inativo' || m.estado === 'Desativado')) match = true;
+
+        if (match) {
+          achou = true;
+          html += `<tr><td>${m.foto ? '<img src="'+m.foto+'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">' : '👤'}</td><td><strong>${m.name}</strong><br><small>${m.email||'--'}</small></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td></tr>`;
+        }
+      });
+      html += `</tbody></table>`;
+      res.innerHTML = achou ? html : `<p style="margin-top:10px; color:#777;">Nenhum membro encontrado com este estado.</p>`;
+    }
 
     function saveMember() {
       const editId = document.getElementById('m-edit-id').value;
@@ -563,19 +578,13 @@
       navigate('produtos');
     }
     function cancelEditProduct() { document.getElementById('p-edit-idx').value = ''; document.getElementById('p-name').value = ''; }
-    function renderProducts() { const t = document.getElementById('products-tbody'); if(!t)return; t.innerHTML=''; products.forEach((p,i)=>t.innerHTML+=`<tr><td>📦</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button></td></tr>`); }
+    function renderProducts() { const t = document.getElementById('products-tbody'); if(!t)return; t.innerHTML=''; products.forEach((p,i)=>t.innerHTML+=`<tr><td>📦</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button></td></tr>`); }
     function renderStock() { const t = document.getElementById('stock-tbody'); if(!t)return; t.innerHTML=''; products.forEach(p=>t.innerHTML+=`<tr><td>${p.name}</td><td>${p.stock}</td><td>Normal</td></tr>`); }
     function renderSales() { const t = document.getElementById('sales-tbody'); if(!t)return; t.innerHTML=''; salesHistory.forEach(s=>t.innerHTML+=`<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`); }
     function renderPOSCatalog() { const g = document.getElementById('pos-catalog-grid'); if(!g)return; g.innerHTML=''; products.forEach((p,i)=>g.innerHTML+=`<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;"><h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`); }
     function addToCart(i) { const p=products[i]; if(p.stock<=0){alert('Sem stock');return;} const it=cartItems.find(x=>x.idx===i); if(it)it.qty++;else cartItems.push({idx:i,name:p.name,price:p.price,qty:1}); renderCart(); }
     function renderCart() { const c=document.getElementById('pos-cart-items'),tot=document.getElementById('pos-cart-total'); if(!c)return; if(cartItems.length===0){c.innerHTML='Vazio.';if(tot)tot.innerText='0 CVE';return;} c.innerHTML='';let t=0; cartItems.forEach(it=>{t+=it.price*it.qty; c.innerHTML+=`<div>${it.name} x${it.qty}</div>`;}); if(tot)tot.innerText=t.toLocaleString()+' CVE'; }
     function finalizarVendaPOS() { if(cartItems.length===0){alert('Vazio');return;} cartItems.forEach(it=>{products[it.idx].stock-=it.qty; salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client:document.getElementById('pos-client-name').value||'Balcão', prod:it.name, qty:it.qty, total:it.price*it.qty});}); cartItems=[]; refreshAll(); alert('Venda concluída!'); }
-
-    function addExpense() { const d=document.getElementById('exp-desc').value, v=Number(document.getElementById('exp-val').value); if(d&&v) { expenses.push({date:new Date().toLocaleDateString('pt-PT'), desc:d, amount:v}); refreshAll(); alert('Despesa registada!'); } }
-    function renderExpenses() { const t=document.getElementById('expenses-tbody'); if(!t)return; t.innerHTML=''; expenses.forEach(e=>t.innerHTML+=`<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.amount} CVE</td></tr>`); }
-    function addSalary() { const n=document.getElementById('sal-name').value, v=Number(document.getElementById('sal-val').value); if(n&&v) { salaries.push({name:n, amount:v}); refreshAll(); alert('Salário registado!'); } }
-    function renderSalaries() { const t=document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach(s=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.amount} CVE</td></tr>`); }
-    function renderInvoices() { const t=document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; salesHistory.forEach((s,i)=>t.innerHTML+=`<tr><td>FAT-00${i+1}</td><td>${s.client}</td><td>${s.total} CVE</td><td><a href="https://wa.me/?text=Fatura" target="_blank" class="btn btn-sm btn-green">WhatsApp</a></td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID:'); if(c) processarCheckin(c); }
@@ -645,7 +654,7 @@
     function aprovarInscricao(idx) {
       const ins = inscricoesOnline[idx]; const barcode = String(Math.floor(100000 + Math.random()*900000));
       members.push({ id:Date.now(), name:ins.name, email:ins.email, barcode, phone:ins.phone, altura:ins.altura, peso:ins.peso, patologias:ins.patologias, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto });
-      inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição de ${ins.name} validada com sucesso! ID: ${barcode}`);
+      inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição de ${ins.name} validada com sucesso! Cartão digital emitido (ID: ${barcode}).`);
     }
 
     function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; refreshAll(); } }
@@ -685,7 +694,7 @@
     }
     function renderColab() {
       const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML='';
-      collaborators.forEach((c, idx) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`);
+      collaborators.forEach((c, idx) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
     }
 
     function toggleCardType() { populateCardSelect(); }
