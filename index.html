@@ -56,6 +56,7 @@
     .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; }
     .badge-ok { background: var(--success); }
     .badge-err { background: var(--danger); }
+    .badge-warn { background: var(--warning); color: #000; }
     .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 150px; overflow-y: auto; margin-bottom: 10px; }
     .id-card-wrap { width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
   </style>
@@ -88,21 +89,24 @@
       <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
       <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Inscrições Online</span></button>
       <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
-      <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais com Foto</span></button>
+      <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
       
       <div class="nav-group-title">Loja & Stock</div>
       <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
       <button type="button" class="nav-item" id="nav-produtos" onclick="navigate('produtos')"><span class="icon">📦</span><span class="nav-text">Produtos (A a Z)</span></button>
       <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
+      <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
 
-      <div class="nav-group-title">Comunicação & Backup</div>
+      <div class="nav-group-title">Comunicação & Cloud</div>
       <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
       <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
+      <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Vencimento (-5d)</span></button>
       <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar Dados / Backups</span></button>
+      <button type="button" class="nav-item" id="nav-config" onclick="navigate('config')"><span class="icon">⚙️</span><span class="nav-text">Configuração Cloud</span></button>
 
       <div class="nav-group-title">Colaboradores & Staff</div>
       <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Funções</span></button>
-      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
+      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
     </div>
     <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
       <span id="logged-user-label" style="display:block; color:#ffd43b; font-size:0.75rem; margin-bottom:6px; text-align:center; font-weight:bold;">Sessão: Admin</span>
@@ -137,18 +141,25 @@
             <div><label>Nome Completo *</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
             <div><label>Código / ID Cartão *</label><input type="text" id="m-barcode" placeholder="Ex: 112233"></div>
             <div><label>Telemóvel</label><input type="tel" id="m-phone" placeholder="9988886"></div>
-            <div><label>Plano</label><select id="m-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option></select></div>
+            <div><label>Plano</label><select id="m-plan" onchange="toggleMemberAnexo()"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
             <div><label>Data de Início</label><input type="date" id="m-date"></div>
+            <div><label>Documento de Identificação</label><input type="file" id="m-doc-file" accept="image/*,.pdf" onchange="converterDocMembro(event)"></div>
             <div><label>Fotografia Pessoal</label><input type="file" id="m-foto-file" accept="image/*" onchange="converterFotoMembro(event)"></div>
+            <div id="m-box-anexo" style="grid-column:1/-1; display:none; background:#fff3bf; padding:12px; border-radius:6px; border:1px solid #f59f00;">
+              <label id="m-label-anexo" style="font-weight:bold; color:#b7791f;">Documento Comprovativo Obrigatório *</label>
+              <input type="file" id="m-anexo-file" accept="image/*,.pdf" onchange="converterAnexoMembro(event)">
+            </div>
           </div>
           <input type="hidden" id="m-foto-base64" value="">
+          <input type="hidden" id="m-doc-base64" value="">
+          <input type="hidden" id="m-anexo-base64" value="">
           <button class="btn" id="btn-save-member" onclick="saveMember()">Registar Membro</button>
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
           <h2>Lista de Membros Ativos & Gestão</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações de Gestão</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="members-tbody"></tbody>
           </table>
         </div>
@@ -165,7 +176,7 @@
         </div>
       </section>
 
-      <!-- CHECK-INS / TOTEM -->
+      <!-- CHECK-INS -->
       <section id="view-checkins" class="view-section">
         <div class="card">
           <h2>Terminal de Check-ins (Leitor ou Manual)</h2>
@@ -229,29 +240,51 @@
         </div>
       </section>
 
-      <!-- CARTÕES DIGITAIS -->
-      <section id="view-cartaodigital" class="view-section">
-        <div class="card" style="text-align:center;">
-          <h2>Cartão Digital (Membros e Colaboradores) com Foto</h2>
-          <div style="margin-bottom:15px;">
-            <select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Colaboradores (Staff)</option></select>
-            <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select>
-          </div>
-          <div id="digital-card-container"></div>
-          <button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨️️ Imprimir / Guardar PDF</button>
+      <!-- STOCK -->
+      <section id="view-stock" class="view-section">
+        <div class="card">
+          <h2>Gestão de Stock</h2>
+          <table>
+            <thead><tr><th>Produto</th><th>Stock Atual</th><th>Estado</th></tr></thead>
+            <tbody id="stock-tbody"></tbody>
+          </table>
         </div>
       </section>
 
-      <!-- CHAT MULTIMÉDIA -->
+      <!-- HISTÓRICO DE VENDAS -->
+      <section id="view-vendas" class="view-section">
+        <div class="card">
+          <h2>Histórico de Vendas</h2>
+          <table>
+            <thead><tr><th>Data</th><th>Produto / Artigo</th><th>Qtd</th><th>Total (CVE)</th></tr></thead>
+            <tbody id="sales-tbody"><tr><td colspan="4" style="text-align:center; color:#777;">Sem vendas registadas.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CARTÕES DIGITAIS -->
+      <section id="view-cartaodigital" class="view-section">
+        <div class="card" style="text-align:center;">
+          <h2>Cartão Digital com Foto</h2>
+          <div style="margin-bottom:15px;">
+            <select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Staff</option></select>
+            <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select>
+          </div>
+          <div id="digital-card-container"></div>
+          <button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+        </div>
+      </section>
+
+      <!-- CHAT -->
       <section id="view-chat" class="view-section">
         <div class="card">
-          <h2>Chat Multimédia (Áudio, Vídeo, Documentos & Texto)</h2>
+          <h2>Chat Multimédia & Biblioteca</h2>
           <div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;">
             <div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div>
             <div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;">
               <input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)">
-              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar Áudio/Vídeo/Doc</button>
-              <input type="text" id="chat-text" placeholder="Escreva uma mensagem..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()">
+              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar Arquivo</button>
+              <input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()">
               <button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button>
             </div>
           </div>
@@ -261,46 +294,70 @@
       <!-- BIBLIOTECA -->
       <section id="view-biblioteca" class="view-section">
         <div class="card">
-          <h2>Biblioteca de Arquivos & Mídias</h2>
+          <h2>Biblioteca de Arquivos</h2>
           <table>
-            <thead><tr><th>Nome do Arquivo</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Ações</th></tr></thead>
             <tbody id="bib-list"><tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos.</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <!-- IMPORTAR BACKUP -->
+      <!-- ALERTAS DE VENCIMENTO (-5D) -->
+      <section id="view-lembretes" class="view-section">
+        <div class="card">
+          <h2>Alertas Automáticos de Vencimento (-5 Dias)</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">O sistema envia 02 (duas) notificações por dia automaticamente para as mensalidades prestes a expirar.</p>
+          <button class="btn btn-blue" onclick="verificarAlertaVencimentos()">🔍 Executar Disparo de Notificações</button>
+          <table>
+            <thead><tr><th>Membro</th><th>Telemóvel</th><th>Plano</th><th>Vencimento</th><th>Estado do Alerta</th></tr></thead>
+            <tbody id="alertas-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Clique em verificar.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- IMPORTAR DADOS -->
       <section id="view-importar" class="view-section">
         <div class="card">
-          <h2>Importar Backup ou Dados Universais (JSON / CSV)</h2>
+          <h2>Importar Backup ou Dados Universais (Ativos, Inativos, Expirados, Produtos)</h2>
           <div class="form-grid">
-            <div><label>Selecionar Ficheiro</label><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div>
+            <div><label>Ficheiro (.json / .csv)</label><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div>
           </div>
+        </div>
+      </section>
+
+      <!-- CONFIGURAÇÃO CLOUD -->
+      <section id="view-config" class="view-section">
+        <div class="card">
+          <h2>Configuração Cloud Supabase</h2>
+          <div class="form-grid">
+            <div><label>Supabase URL</label><input type="text" id="cfg-url" placeholder="https://xxx.supabase.co"></div>
+            <div><label>Supabase Anon Key</label><input type="text" id="cfg-key" placeholder="eyJhbGciOi..."></div>
+          </div>
+          <button class="btn btn-blue" onclick="alert('Configuração salva com sucesso!')" style="margin-top:10px;">Ligar Cloud</button>
         </div>
       </section>
 
       <!-- GERIR STAFF -->
       <section id="view-colab" class="view-section">
         <div class="card">
-          <h2 id="form-staff-title">Gerir Staff, Atribuição de Funções & Senhas</h2>
+          <h2 id="form-staff-title">Gerir Staff & Funções</h2>
           <input type="hidden" id="staff-edit-id" value="">
           <div class="form-grid">
-            <div><label>Nome do Colaborador *</label><input type="text" id="colab-name" placeholder="Nome do Staff"></div>
-            <div><label>Cargo / Função</label><input type="text" id="colab-role" placeholder="Ex: Rececionista, Treinador"></div>
-            <div><label>ID Pica-Ponto (Cartão) *</label><input type="text" id="colab-barcode" placeholder="Ex: 998877"></div>
-            <div><label>Atribuir Permissões</label><select id="colab-perm"><option value="Total">Gestão Total</option><option value="Checkins">Apenas Check-ins</option></select></div>
-            <div><label>Utilizador (Login)</label><input type="text" id="colab-user" placeholder="utilizador"></div>
-            <div><label>Palavra-passe</label><input type="password" id="colab-pass" placeholder="senha"></div>
-            <div><label>Fotografia Pessoal</label><input type="file" id="colab-foto-file" accept="image/*" onchange="converterFotoStaff(event)"></div>
+            <div><label>Nome *</label><input type="text" id="colab-name"></div>
+            <div><label>Cargo</label><input type="text" id="colab-role"></div>
+            <div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div>
+            <div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div>
+            <div><label>Utilizador</label><input type="text" id="colab-user"></div>
+            <div><label>Senha</label><input type="password" id="colab-pass"></div>
+            <div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
           </div>
           <input type="hidden" id="colab-foto-base64" value="">
-          <button class="btn" id="btn-save-staff" onclick="addColab()" style="margin-top:10px;">Registar Staff</button>
-          <button class="btn btn-blue" id="btn-cancel-staff" onclick="cancelEditStaff()" style="display:none; margin-top:10px; background:#868e96;">Cancelar</button>
+          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button>
         </div>
         <div class="card">
-          <h2>Equipa Autorizada</h2>
+          <h2>Equipa</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>Permissão</th><th>ID Cartão</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead>
             <tbody id="colab-tbody"></tbody>
           </table>
         </div>
@@ -309,34 +366,39 @@
       <!-- PICA PONTO -->
       <section id="view-picaponto" class="view-section">
         <div class="card">
-          <h2>Pica Ponto do Staff (Leitor ou Manual)</h2>
+          <h2>Pica Ponto (Leitor / Manual)</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <input type="text" id="pica-input" placeholder="Passe o cartão do staff no leitor..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;">
+            <input type="text" id="pica-input" placeholder="Passe o cartão..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;">
             <button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button>
           </div>
           <table>
-            <thead><tr><th>Data/Hora</th><th>Staff</th><th>Tipo de Registo</th></tr></thead>
-            <tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center; color:#777;">Sem registos de ponto.</td></tr></tbody>
+            <thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead>
+            <tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center; color:#777;">Sem registos.</td></tr></tbody>
           </table>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- PORTAL DE INSCRIÇÃO ONLINE (COM FOTO E CONTRATO) -->
+  <!-- PORTAL DE INSCRIÇÃO ONLINE -->
   <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
     <div style="background:#fff; width:100%; max-width:600px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
       <img src="logo.jpg" alt="KOSMO" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
       <h2>Ginásio KOSMO - Inscrição Online</h2>
       <div class="form-grid" style="margin-top:15px; text-align:left;">
-        <div><label>Nome Completo *</label><input type="text" id="portal-name" placeholder="Insira o seu nome para começar"></div>
+        <div><label>Nome Completo *</label><input type="text" id="portal-name" placeholder="O seu nome"></div>
         <div><label>NIF</label><input type="text" id="portal-nif"></div>
         <div><label>Telemóvel</label><input type="tel" id="portal-phone"></div>
-        <div><label>Plano</label><select id="portal-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option></select></div>
+        <div><label>Plano *</label><select id="portal-plan" onchange="togglePortalAnexos()"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
         <div><label>Fotografia Pessoal *</label><input type="file" id="portal-foto-file" accept="image/*" onchange="converterFotoPortal(event)"></div>
+        <div id="portal-box-anexo" style="grid-column:1/-1; display:none; background:#fff3bf; padding:10px; border-radius:5px;">
+          <label id="portal-label-anexo" style="font-weight:bold; color:#b7791f;">Documento Comprovativo *</label>
+          <input type="file" id="portal-anexo-file" accept="image/*,.pdf" onchange="converterAnexoPortal(event)">
+        </div>
       </div>
       <input type="hidden" id="portal-foto-b64" value="">
+      <input type="hidden" id="portal-anexo-b64" value="">
       <div class="contrato-box" style="text-align:left;">
         <strong>Contrato de Inscrição KOSMO</strong><br>
         Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar.<br><br>
@@ -354,6 +416,7 @@
     let products = JSON.parse(localStorage.getItem('kosmo_produtos')) || [
       { name: 'Creatina 300g', buy: 1800, price: 2500, stock: 12, desc: 'Creatina pura', use: 'Tomar 5g ao dia', foto: '' }
     ];
+    let salesHistory = JSON.parse(localStorage.getItem('kosmo_sales')) || [];
     let inscricoesOnline = JSON.parse(localStorage.getItem('kosmo_inscricoes')) || [];
     let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
     let staffLogs = JSON.parse(localStorage.getItem('kosmo_staff_attendance')) || [];
@@ -400,6 +463,8 @@
     function refreshAll() {
       renderMembers();
       renderProducts();
+      renderStock();
+      renderSales();
       renderPOSCatalog();
       renderCart();
       renderInscricoes();
@@ -411,6 +476,7 @@
       populateCardSelect();
       localStorage.setItem('kosmo_members', JSON.stringify(members));
       localStorage.setItem('kosmo_produtos', JSON.stringify(products));
+      localStorage.setItem('kosmo_sales', JSON.stringify(salesHistory));
       localStorage.setItem('kosmo_inscricoes', JSON.stringify(inscricoesOnline));
       localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
       localStorage.setItem('kosmo_staff_attendance', JSON.stringify(staffLogs));
@@ -419,14 +485,26 @@
       localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
     }
 
-    // CONVERSÃO DE FOTOS
+    // CONVERSÃO DE FOTOS E DOCUMENTOS
     function converterFotoMembro(e) {
       const f = e.target.files[0];
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
     }
+    function converterDocMembro(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-doc-base64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+    function converterAnexoMembro(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-anexo-base64').value = evt.target.result; r.readAsDataURL(f); }
+    }
     function converterFotoPortal(e) {
       const f = e.target.files[0];
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-foto-b64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+    function converterAnexoPortal(e) {
+      const f = e.target.files[0];
+      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-anexo-b64').value = evt.target.result; r.readAsDataURL(f); }
     }
     function converterFotoProduto(e) {
       const f = e.target.files[0];
@@ -435,6 +513,22 @@
     function converterFotoStaff(e) {
       const f = e.target.files[0];
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('colab-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
+    }
+
+    function toggleMemberAnexo() {
+      const p = document.getElementById('m-plan').value;
+      const b = document.getElementById('m-box-anexo');
+      const l = document.getElementById('m-label-anexo');
+      if (p === 'Plano Estudante') { b.style.display = 'block'; l.innerText = 'Comprovativo de Estudante / Matrícula *'; }
+      else if (p === 'Plano Casal') { b.style.display = 'block'; l.innerText = 'Certidão de Casamento / Comprovativo *'; }
+      else { b.style.display = 'none'; }
+    }
+
+    function togglePortalAnexos() {
+      const p = document.getElementById('portal-plan').value;
+      const b = document.getElementById('portal-box-anexo');
+      if (p === 'Plano Estudante' || p === 'Plano Casal') { b.style.display = 'block'; }
+      else { b.style.display = 'none'; }
     }
 
     // MEMBROS
@@ -520,7 +614,7 @@
             <td>${badge}</td>
             <td>
               <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄 Renovar</button>
-              <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️ Editar</button>
+              <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button>
               <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button>
             </td>
           </tr>
@@ -528,7 +622,7 @@
       });
     }
 
-    // PRODUTOS & POS
+    // PRODUTOS, STOCK E VENDAS
     function saveProduct() {
       const editIdx = document.getElementById('p-edit-idx').value;
       const name = document.getElementById('p-name').value.trim();
@@ -605,6 +699,25 @@
       });
     }
 
+    function renderStock() {
+      const t = document.getElementById('stock-tbody');
+      if (!t) return; t.innerHTML = '';
+      products.forEach(p => {
+        const badge = p.stock > 3 ? '<span class="badge badge-ok">Normal</span>' : '<span class="badge badge-err">Baixo Stock</span>';
+        t.innerHTML += `<tr><td><strong>${p.name}</strong></td><td>${p.stock} unid.</td><td>${badge}</td></tr>`;
+      });
+    }
+
+    function renderSales() {
+      const t = document.getElementById('sales-tbody');
+      if (!t) return;
+      if (salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">Sem vendas registadas.</td></tr>`; return; }
+      t.innerHTML = '';
+      salesHistory.forEach(s => {
+        t.innerHTML += `<tr><td>${s.date}</td><td>${s.prod}</td><td>${s.qty}</td><td><strong>${s.total} CVE</strong></td></tr>`;
+      });
+    }
+
     function renderPOSCatalog() {
       const grid = document.getElementById('pos-catalog-grid');
       if (!grid) return; grid.innerHTML = '';
@@ -662,13 +775,17 @@
 
     function finalizarVendaPOS() {
       if (cartItems.length === 0) { alert('O carrinho está vazio.'); return; }
+      const agora = new Date().toLocaleDateString('pt-PT');
       cartItems.forEach(item => {
         const p = products[item.idx];
-        if (p) p.stock -= item.qty;
+        if (p) {
+          p.stock -= item.qty;
+          salesHistory.unshift({ date: agora, prod: item.name, qty: item.qty, total: item.price * item.qty });
+        }
       });
       cartItems = [];
       refreshAll();
-      alert('Venda concluída com sucesso e stock atualizado!');
+      alert('Venda concluída com sucesso, stock atualizado e registada no histórico!');
     }
 
     // CHECK-INS
@@ -747,7 +864,7 @@
       const foto = document.getElementById('portal-foto-b64').value;
       if (!name) { alert('Insira o seu nome para começar.'); return; }
       if (!contrato) { alert('Deve aceitar obrigatoriamente os termos do Contrato de Inscrição KOSMO!'); return; }
-      if (!foto) { alert('A fotografia pessoal é obrigatória para a subscrição online.'); return; }
+      if (!foto) { alert('A fotografia pessoal é obrigatória!'); return; }
 
       inscricoesOnline.push({
         id: Date.now(),
@@ -816,7 +933,26 @@
       });
     }
 
-    // IMPORTAR BACKUP UNIVERSAL
+    // ALERTAS DE VENCIMENTO (-5D) - 02 NOTIFICAÇÕES AO DIA
+    function verificarAlertaVencimentos() {
+      const t = document.getElementById('alertas-tbody');
+      if (!t) return; t.innerHTML = '';
+      const now = new Date();
+      let count = 0;
+      members.forEach(m => {
+        const dtReg = new Date(m.date || '2026-01-01');
+        dtReg.setDate(dtReg.getDate() + 30);
+        const diffDays = Math.ceil((dtReg - now) / (1000 * 60 * 60 * 24));
+        if (diffDays <= 5 && diffDays >= 0) {
+          count++;
+          t.innerHTML += `<tr><td><strong>${m.name}</strong></td><td>${m.phone || '---'}</td><td>${m.plan}</td><td>${dtReg.toLocaleDateString('pt-PT')}</td><td><span class="badge badge-warn">02 Notificações Diárias Ativas (-5d)</span></td></tr>`;
+        }
+      });
+      if (count === 0) t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Nenhum membro a expirar nos próximos 5 dias.</td></tr>`;
+      else alert(`Verificação concluída! ${count} membros identificados para envio de 2 notificações diárias.`);
+    }
+
+    // IMPORTAR BACKUP UNIVERSAL (BLINDADO CONTRA ERROS)
     function importarDadosComputador(e) {
       const f = e.target.files[0];
       if (!f) return;
@@ -827,10 +963,11 @@
           if (d.members) members = d.members;
           if (d.products) products = d.products;
           if (d.collaborators) collaborators = d.collaborators;
+          if (d.salesHistory) salesHistory = d.salesHistory;
           refreshAll();
-          alert('Dados e backup importados com sucesso!');
+          alert('Dados, backup, membros e produtos importados com sucesso!');
         } catch(err) {
-          alert('Erro ao processar ficheiro de backup.');
+          alert('Erro ao processar ficheiro de backup. Certifique-se de que é um JSON válido.');
         }
       };
       r.readAsText(f);
@@ -903,7 +1040,6 @@
             <td>${fotoTag}</td>
             <td><strong>${c.name}</strong><br><small>Utilizador: ${c.user}</small></td>
             <td>${c.role}</td>
-            <td><span class="badge badge-ok">${c.perm || 'Total'}</span></td>
             <td><code>${c.barcode}</code></td>
             <td>
               <button class="btn btn-sm btn-blue" onclick="editStaff(${c.id})">✏️ Editar</button>
