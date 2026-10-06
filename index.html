@@ -802,12 +802,68 @@
           iniciarSupabase(savedUrl, savedKey);
         }
 
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('portal') === 'inscricao' || window.location.hash === '#inscricao') {
-          const loginOverlay = document.getElementById('login-overlay');
-          if (loginOverlay) loginOverlay.style.display = 'none';
-          abrirPortalInscricao();
-        }
+       const params = new URLSearchParams(window.location.search);
+      if (params.get('totem') === 'true') {
+        document.body.innerHTML = `
+          <!DOCTYPE html>
+          <html lang="pt">
+          <head>
+            <meta charset="UTF-8">
+            <title>Ginásio KOSMO - Ecrã Totem Gigante</title>
+            <style>
+              body { background: #0b0e11; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; box-sizing: border-box; text-align: center; overflow: hidden; }
+              .badge { padding: 25px 80px; border-radius: 16px; font-size: 3.5rem; font-weight: 900; color: #fff; display: inline-block; margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+            </style>
+          </head>
+          <body>
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #222; padding-bottom:15px;">
+              <div style="font-size:1.8rem; color:#aaa; font-weight:800; letter-spacing:1px;">TERMINAL DE CHECK-IN KOSMO</div>
+              <div id="totem-relogio" style="font-size: 6.5rem; font-family: monospace; color: #ffd43b; font-weight: 900; letter-spacing: 2px;">00:00:00</div>
+            </div>
+            
+            <div id="totem-corpo" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+              <h1 style="color:#ffd43b; font-size:4.5rem; margin:15px 0; font-weight:900;">Aproxime o seu Cartão / QR Code</h1>
+              <p style="font-size:2.2rem; color:#ddd; font-style:italic; max-width:1100px; font-weight:700; line-height:1.4;">"Moldar o seu corpo ao seu estilo através de uma forma correta e saudável"</p>
+            </div>
+
+            <div style="color:#777; font-size:1.2rem; text-align:center; font-weight:bold;">Ginásio KOSMO • Praia, Cabo Verde</div>
+
+            <script>
+              let resetTimer = null;
+              function voltarEcraInicial() {
+                document.getElementById('totem-corpo').innerHTML = \`
+                  <h1 style="color:#ffd43b; font-size:4.5rem; margin:15px 0; font-weight:900;">Aproxime o seu Cartão / QR Code</h1>
+                  <p style="font-size:2.2rem; color:#ddd; font-style:italic; max-width:1100px; font-weight:700; line-height:1.4;">"Moldar o seu corpo ao seu estilo através de uma forma correta e saudável"</p>
+                \`;
+              }
+
+              function processarCheckinTotem(d) {
+                if (resetTimer) clearTimeout(resetTimer);
+                const bgCol = d.auth ? '#2b8a3e' : '#c92a2a';
+                document.getElementById('totem-corpo').innerHTML = \`
+                  <h1 style="color:\${bgCol}; font-size:4.8rem; margin:10px 0; font-weight:900;">\${d.name}</h1>
+                  <p style="font-size:2.2rem; font-weight:bold; margin-bottom:10px;">Plano: \${d.plan}</p>
+                  <div class="badge" style="background:\${bgCol};">ACESSO PERMITIDO</div>
+                \`;
+                resetTimer = setTimeout(() => { voltarEcraInicial(); }, 15000);
+              }
+
+              setInterval(() => {
+                document.getElementById('totem-relogio').innerText = new Date().toLocaleTimeString('pt-PT');
+              }, 1000);
+
+              window.addEventListener('storage', (event) => {
+                if (event.key === 'kosmo_totem_scan') {
+                  try { const d = JSON.parse(event.newValue); if (d) processarCheckinTotem(d); } catch(e) {}
+                }
+              });
+            <\/script>
+          </body>
+          </html>
+        `;
+        return;
+      }
+      
         gerarQRCodeInscricao();
       } catch(e) {}
     });
@@ -1894,6 +1950,15 @@
     function deleteMember(id) {
       if (confirm('Tem a certeza absoluta que deseja eliminar este membro?')) { members = members.filter(x => x.id !== id); refreshAll(); }
     }
-  </script>
+
+function openTotemWindow() {
+      const totemUrl = window.location.href.split('?')[0] + '?totem=true';
+      const novaJanela = window.open(totemUrl, '_blank', 'width=1100,height=800');
+      if (!novaJanela) {
+        alert('O seu navegador bloqueou a janela pop-up do Totem. Por favor, permita pop-ups para este site.');
+      }
+    }
+
+      </script>
 </body>
 </html>
