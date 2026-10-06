@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Completo 1500+ Linhas)</title>
+  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -77,7 +77,7 @@
     </div>
   </div>
 
-  <!-- MENU LATERAL COMPLETO E EXPANDIDO -->
+  <!-- MENU LATERAL -->
   <aside id="sidebar-panel">
     <div class="gym-header">
       <img src="logo.jpg" alt="KOSMO" class="sidebar-logo" onerror="this.src='src/img/logo.jpg';">
@@ -91,6 +91,7 @@
       <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Inscrições Online (<span id="badge-inscricoes-count">0</span>)</span></button>
       <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
       <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
+      <button type="button" class="nav-item" id="nav-qrcode" onclick="navigate('qrcode')"><span class="icon">📷</span><span class="nav-text">QR Code de Inscrição</span></button>
       
       <div class="nav-group-title">Loja & Stock</div>
       <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
@@ -98,10 +99,10 @@
       <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
       <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
 
-      <div class="nav-group-title">Financeiro & Contas</div>
-      <button type="button" class="nav-item" id="nav-faturas" onclick="navigate('faturas')"><span class="icon">📄</span><span class="nav-text">Faturas & WhatsApp (NIF)</span></button>
+      <div class="nav-group-title">Financeiro & Faturas</div>
+      <button type="button" class="nav-item" id="nav-faturas" onclick="navigate('faturas')"><span class="icon">📄</span><span class="nav-text">Faturas & Recibos (NIF)</span></button>
       <button type="button" class="nav-item" id="nav-despesas" onclick="navigate('despesas')"><span class="icon">📉</span><span class="nav-text">Despesas & Contas</span></button>
-      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários</span></button>
+      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & Recibos Staff</span></button>
 
       <div class="nav-group-title">Base de Dados Global</div>
       <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Base de Dados & Transações</span></button>
@@ -147,6 +148,18 @@
         </div>
       </section>
 
+      <!-- QR CODE DE INSCRIÇÃO -->
+      <section id="view-qrcode" class="view-section">
+        <div class="card" style="text-align:center;">
+          <h2>QR Code para Leitura & Inscrição Online</h2>
+          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Os novos clientes podem apontar a câmara do telemóvel a este QR Code para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
+          <div id="qrcode-container" style="display:inline-block; background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;"></div>
+          <div>
+            <button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button>
+          </div>
+        </div>
+      </section>
+
       <!-- MEMBROS -->
       <section id="view-membros" class="view-section">
         <div class="card">
@@ -170,7 +183,7 @@
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <h2>Lista de Membros (Com E-mail Visível)</h2>
+          <h2>Lista de Membros Ativos</h2>
           <table>
             <thead><tr><th>Foto</th><th>Nome & E-mail</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="members-tbody"></tbody>
@@ -178,12 +191,12 @@
         </div>
       </section>
 
-      <!-- BASE DE DADOS GLOBAL -->
+      <!-- BASE DE DADOS -->
       <section id="view-database" class="view-section">
         <div class="card">
-          <h2>Base de Dados & Transações (Editar, Imprimir, Alterar, Excluir)</h2>
+          <h2>Base de Dados & Transações</h2>
           <table>
-            <thead><tr><th>Tipo</th><th>Identificação / Cliente</th><th>Detalhes / Plano</th><th>Data / Registo</th><th>Ações de Gestão</th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Identificação / Cliente</th><th>Detalhes / Plano</th><th>Data / Registo</th><th>Ações</th></tr></thead>
             <tbody id="database-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem dados.</td></tr></tbody>
           </table>
         </div>
@@ -271,8 +284,20 @@
       <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
-      <!-- FATURAS -->
-      <section id="view-faturas" class="view-section"><div class="card"><h2>Faturas & Envios (NIF: 283023805)</h2><table><thead><tr><th>Nº Fatura</th><th>Cliente</th><th>Valor</th><th>WhatsApp</th></tr></thead><tbody id="invoices-tbody"><tr><td colspan="4" style="text-align:center;">Sem faturas.</td></tr></tbody></table></div></section>
+      <!-- FATURAS E RECIBOS (MEMBROS E STAFF) -->
+      <section id="view-faturas" class="view-section">
+        <div class="card">
+          <h2>Emissão de Faturas & Recibos (NIF: 283023805)</h2>
+          <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <button class="btn btn-blue" onclick="gerarFaturaMembroPrompt()">📄 Emitir Fatura de Membro (Mensalidade/Produtos)</button>
+            <button class="btn btn-green" onclick="gerarReciboStaffPrompt()">💵 Emitir Recibo de Ordenado (Staff com Assinatura)</button>
+          </div>
+          <table>
+            <thead><tr><th>Tipo</th><th>Beneficiário</th><th>Detalhes / Descrição</th><th>Valor</th><th>Ações (Imprimir / WhatsApp)</th></tr></thead>
+            <tbody id="invoices-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas emitidas.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
       <!-- DESPESAS -->
       <section id="view-despesas" class="view-section"><div class="card"><h2>Despesas</h2><div class="form-grid"><div><label>Descrição</label><input type="text" id="exp-desc"></div><div><label>Valor</label><input type="number" id="exp-val"></div></div><button class="btn" style="background:var(--danger);" onclick="addExpense()">Registar</button></div><div class="card"><table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="expenses-tbody"></tbody></table></div></section>
@@ -290,10 +315,10 @@
       <section id="view-biblioteca" class="view-section"><div class="card"><h2>Biblioteca de Arquivos</h2><table><thead><tr><th>Nome</th><th>Ações</th></tr></thead><tbody id="bib-list"><tr><td colspan="2" style="text-align:center;">Sem arquivos.</td></tr></tbody></table></div></section>
 
       <!-- LEMBRETES -->
-      <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas (-5d / 2x dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
+      <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
       <!-- IMPORTAR BACKUP UNIVERSAL -->
-      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Backup Universal (Carrega Qualquer Ficheiro)</h2><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div></section>
+      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Backup Universal</h2><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div></section>
 
       <!-- STAFF -->
       <section id="view-colab" class="view-section"><div class="card"><h2>Gerir Staff</h2><div class="form-grid"><div><label>Nome *</label><input type="text" id="colab-name"></div><div><label>Cargo</label><input type="text" id="colab-role"></div><div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div><div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div><div><label>Utilizador</label><input type="text" id="colab-user"></div><div><label>Senha</label><input type="password" id="colab-pass"></div><div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div></div><input type="hidden" id="colab-foto-base64" value=""><button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button></div><div class="card"><table><thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead><tbody id="colab-tbody"></tbody></table></div></section>
@@ -352,7 +377,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER COMPLETO -->
+  <!-- SCRIPT MASTER -->
   <script>
     let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
       { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '' }
@@ -363,6 +388,7 @@
     let salesHistory = JSON.parse(localStorage.getItem('kosmo_sales')) || [];
     let expenses = JSON.parse(localStorage.getItem('kosmo_expenses')) || [];
     let salaries = JSON.parse(localStorage.getItem('kosmo_salaries')) || [];
+    let invoicesList = JSON.parse(localStorage.getItem('kosmo_invoices')) || [];
     let inscricoesOnline = JSON.parse(localStorage.getItem('kosmo_inscricoes')) || [];
     let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
     let staffLogs = JSON.parse(localStorage.getItem('kosmo_staff_attendance')) || [];
@@ -380,8 +406,18 @@
         document.getElementById('login-overlay').style.display = 'none';
         abrirPortalInscricao();
       }
+      gerarQRCodeInscricao();
       verificarAlertaVencimentos();
     });
+
+    function gerarQRCodeInscricao() {
+      const el = document.getElementById('qrcode-container');
+      if (el) {
+        el.innerHTML = '';
+        const urlPortal = window.location.href.split('?')[0] + '?portal=inscricao';
+        new QRCode(el, { text: urlPortal, width: 180, height: 180 });
+      }
+    }
 
     function directLogin() {
       const u = document.getElementById('log-user').value.trim();
@@ -438,6 +474,7 @@
       localStorage.setItem('kosmo_sales', JSON.stringify(salesHistory));
       localStorage.setItem('kosmo_expenses', JSON.stringify(expenses));
       localStorage.setItem('kosmo_salaries', JSON.stringify(salaries));
+      localStorage.setItem('kosmo_invoices', JSON.stringify(invoicesList));
       localStorage.setItem('kosmo_inscricoes', JSON.stringify(inscricoesOnline));
       localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
       localStorage.setItem('kosmo_staff_attendance', JSON.stringify(staffLogs));
@@ -503,7 +540,7 @@
       } else {
         members.push({ id: Date.now(), name, email: document.getElementById('m-email').value, barcode, phone: document.getElementById('m-phone').value, altura: document.getElementById('m-altura').value, peso: document.getElementById('m-peso').value, patologias: document.getElementById('m-patologias').value, plan: document.getElementById('m-plan').value, estado: document.getElementById('m-estado').value, date: document.getElementById('m-date').value || new Date().toISOString().split('T')[0], foto: document.getElementById('m-foto-base64').value });
         alert('Registo criado!');
-        document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+        document.getElementById('m-name').value = ''; document.getElementById('m-email').value = ''; document.getElementById('m-barcode').value = '';
       }
       refreshAll();
     }
@@ -532,7 +569,7 @@
       document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro (Contrato KOSMO Completo)';
       document.getElementById('btn-save-member').innerText = 'Registar Membro';
       document.getElementById('btn-cancel-edit').style.display = 'none';
-      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+      document.getElementById('m-name').value = ''; document.getElementById('m-email').value = ''; document.getElementById('m-barcode').value = '';
     }
 
     function renovarSubscricao(id) { const m = members.find(x => x.id === id); if (m) { m.date = new Date().toISOString().split('T')[0]; m.estado = 'Ativo'; refreshAll(); alert('Renovado!'); } }
@@ -561,11 +598,12 @@
       const idx = document.getElementById('p-edit-idx').value;
       const name = document.getElementById('p-name').value.trim(); const price = Number(document.getElementById('p-price').value);
       if (!name || !price) { alert('Preencha nome e preço.'); return; }
+      const fotoVal = document.getElementById('p-foto-base64').value;
       if (idx !== '') {
-        products[idx] = { name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: document.getElementById('p-foto-base64').value || products[idx].foto };
+        products[idx] = { name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: fotoVal || products[idx].foto };
         alert('Atualizado!'); cancelEditProduct();
       } else {
-        products.push({ name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: document.getElementById('p-foto-base64').value });
+        products.push({ name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: fotoVal });
         alert('Criado!');
       }
       refreshAll();
@@ -575,16 +613,90 @@
       document.getElementById('p-name').value = p.name; document.getElementById('p-buy').value = p.buy;
       document.getElementById('p-price').value = p.price; document.getElementById('p-stock').value = p.stock;
       document.getElementById('p-desc').value = p.desc || ''; document.getElementById('p-use').value = p.use || '';
+      document.getElementById('p-foto-base64').value = p.foto || '';
       navigate('produtos');
     }
     function cancelEditProduct() { document.getElementById('p-edit-idx').value = ''; document.getElementById('p-name').value = ''; }
-    function renderProducts() { const t = document.getElementById('products-tbody'); if(!t)return; t.innerHTML=''; products.forEach((p,i)=>t.innerHTML+=`<tr><td>📦</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button></td></tr>`); }
+    function renderProducts() {
+      const t = document.getElementById('products-tbody'); if(!t)return; t.innerHTML='';
+      products.forEach((p,i)=>{
+        const fTag = p.foto ? '<img src="'+p.foto+'" style="width:38px;height:38px;object-fit:cover;border-radius:4px;">' : '📦';
+        t.innerHTML+=`<tr><td>${fTag}</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button></td></tr>`;
+      });
+    }
     function renderStock() { const t = document.getElementById('stock-tbody'); if(!t)return; t.innerHTML=''; products.forEach(p=>t.innerHTML+=`<tr><td>${p.name}</td><td>${p.stock}</td><td>Normal</td></tr>`); }
     function renderSales() { const t = document.getElementById('sales-tbody'); if(!t)return; t.innerHTML=''; salesHistory.forEach(s=>t.innerHTML+=`<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`); }
-    function renderPOSCatalog() { const g = document.getElementById('pos-catalog-grid'); if(!g)return; g.innerHTML=''; products.forEach((p,i)=>g.innerHTML+=`<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;"><h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`); }
+    function renderPOSCatalog() { const g = document.getElementById('pos-catalog-grid'); if(!g)return; g.innerHTML=''; products.forEach((p,i)=>{ const fTag = p.foto ? '<img src="'+p.foto+'" style="width:100%;height:80px;object-fit:cover;border-radius:4px;margin-bottom:4px;">' : '<div style="font-size:1.5rem;">📦</div>'; g.innerHTML+=`<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;">${fTag}<h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`; }); }
     function addToCart(i) { const p=products[i]; if(p.stock<=0){alert('Sem stock');return;} const it=cartItems.find(x=>x.idx===i); if(it)it.qty++;else cartItems.push({idx:i,name:p.name,price:p.price,qty:1}); renderCart(); }
     function renderCart() { const c=document.getElementById('pos-cart-items'),tot=document.getElementById('pos-cart-total'); if(!c)return; if(cartItems.length===0){c.innerHTML='Vazio.';if(tot)tot.innerText='0 CVE';return;} c.innerHTML='';let t=0; cartItems.forEach(it=>{t+=it.price*it.qty; c.innerHTML+=`<div>${it.name} x${it.qty}</div>`;}); if(tot)tot.innerText=t.toLocaleString()+' CVE'; }
-    function finalizarVendaPOS() { if(cartItems.length===0){alert('Vazio');return;} cartItems.forEach(it=>{products[it.idx].stock-=it.qty; salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client:document.getElementById('pos-client-name').value||'Balcão', prod:it.name, qty:it.qty, total:it.price*it.qty});}); cartItems=[]; refreshAll(); alert('Venda concluída!'); }
+    function finalizarVendaPOS() { if(cartItems.length===0){alert('Vazio');return;} cartItems.forEach(it=>{products[it.idx].stock-=it.qty; salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client:document.getElementById('pos-client-name').value||'Balcão', prod:it.name, qty:it.qty, total:it.price*it.qty}); invoicesList.unshift({type:'Fatura Venda', name:document.getElementById('pos-client-name').value||'Balcão', desc:`Venda de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});}); cartItems=[]; refreshAll(); alert('Venda concluída e fatura gerada!'); }
+
+    // FATURAS E RECIBOS COM NIF 283023805
+    function gerarFaturaMembroPrompt() {
+      const nomeMembro = prompt('Nome do Membro para Fatura:');
+      const descFatura = prompt('Descrição do Serviço / Produto (ex: Mensalidade, Creatina):', 'Mensalidade Ginásio');
+      const valorFatura = prompt('Valor em CVE:', '3000');
+      if (nomeMembro && valorFatura) {
+        invoicesList.unshift({ type: 'Fatura Membro', name: nomeMembro, desc: descFatura, val: Number(valorFatura), date: new Date().toLocaleString('pt-PT') });
+        refreshAll(); alert('Fatura de membro emitida com sucesso!');
+      }
+    }
+
+    function gerarReciboStaffPrompt() {
+      const nomeStaff = prompt('Nome do Colaborador (Staff):');
+      const valorSalario = prompt('Valor do Ordenado em CVE:', '25000');
+      if (nomeStaff && valorSalario) {
+        invoicesList.unshift({ type: 'Recibo Ordenado Staff', name: nomeStaff, desc: 'Pagamento de Ordenado Mensal', val: Number(valorSalario), date: new Date().toLocaleString('pt-PT') });
+        refreshAll(); alert('Recibo de ordenado gerido com sucesso!');
+      }
+    }
+
+    function renderInvoices() {
+      const t = document.getElementById('invoices-tbody'); if(!t)return;
+      if (invoicesList.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas ou recibos emitidos.</td></tr>`; return; }
+      t.innerHTML = '';
+      invoicesList.forEach((inv, i) => {
+        t.innerHTML += `
+          <tr>
+            <td><span class="badge badge-blue">${inv.type}</span></td>
+            <td><strong>${inv.name}</strong></td>
+            <td>${inv.desc}<br><small>${inv.date}</small></td>
+            <td><strong>${inv.val} CVE</strong></td>
+            <td>
+              <button class="btn btn-sm btn-blue" onclick="imprimirFaturaModal('${inv.type}', '${inv.name}', '${inv.desc}', ${inv.val}, '${inv.date}')">🖨 Imprimir</button>
+              <a href="https://wa.me/?text=Ginásio KOSMO - NIF: 283023805%0A${inv.type}%0ABeneficiário: ${inv.name}%0ADescrição: ${inv.desc}%0AValor: ${inv.val} CVE" target="_blank" class="btn btn-sm btn-green">WhatsApp</a>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function imprimirFaturaModal(tipo, nome, desc, val, data) {
+      const win = window.open('', '_blank', 'width=800,height=600');
+      win.document.write(`
+        <html><head><title>Fatura / Recibo - KOSMO</title><style>body{font-family:sans-serif;padding:30px;}</style></head>
+        <body>
+          <h2 style="color:#c92a2a;">GINÁSIO KOSMO</h2>
+          <p>Terra Branca, Frente Escola Amor De Deus<br><strong>NIF: 283023805</strong></p>
+          <hr>
+          <h3>${tipo}</h3>
+          <p><strong>Data/Hora:</strong> ${data}</p>
+          <p><strong>Beneficiário:</strong> ${nome}</p>
+          <p><strong>Descrição:</strong> ${desc}</p>
+          <p><strong>Valor Total:</strong> ${val} CVE</p>
+          <br><br>
+          <p>____________________________________________________</p>
+          <p>Assinatura do Funcionário / Declaração de Receção</p>
+          <script>window.print();<\/script>
+        </body></html>
+      `);
+      win.document.close();
+    }
+
+    function addExpense() { const d=document.getElementById('exp-desc').value, v=Number(document.getElementById('exp-val').value); if(d&&v) { expenses.push({date:new Date().toLocaleDateString('pt-PT'), desc:d, amount:v}); refreshAll(); alert('Despesa registada!'); } }
+    function renderExpenses() { const t=document.getElementById('expenses-tbody'); if(!t)return; t.innerHTML=''; expenses.forEach(e=>t.innerHTML+=`<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.amount} CVE</td></tr>`); }
+    function addSalary() { const n=document.getElementById('sal-name').value, v=Number(document.getElementById('sal-val').value); if(n&&v) { salaries.push({name:n, amount:v}); refreshAll(); alert('Salário registado!'); } }
+    function renderSalaries() { const t=document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach(s=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.amount} CVE</td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID:'); if(c) processarCheckin(c); }
