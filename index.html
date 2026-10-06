@@ -55,9 +55,10 @@
     th { background: #f8f9fa; font-weight: 600; color: #495057; }
     .badge { padding: 3px 7px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; }
     .badge-ok { background: var(--success); }
-    .badge-err { background: var(--danger); }
     .badge-warn { background: var(--warning); color: #000; }
-    .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 150px; overflow-y: auto; margin-bottom: 10px; }
+    .badge-err { background: var(--danger); }
+    .badge-inativo { background: #6c757d; }
+    .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 180px; overflow-y: auto; margin-bottom: 10px; }
     .id-card-wrap { width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
   </style>
 </head>
@@ -97,12 +98,10 @@
       <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
       <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
 
-      <div class="nav-group-title">Comunicação & Cloud</div>
+      <div class="nav-group-title">Comunicação & Backup</div>
       <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
       <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
-      <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Vencimento (-5d)</span></button>
       <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar Dados / Backups</span></button>
-      <button type="button" class="nav-item" id="nav-config" onclick="navigate('config')"><span class="icon">⚙️</span><span class="nav-text">Configuração Cloud</span></button>
 
       <div class="nav-group-title">Colaboradores & Staff</div>
       <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Funções</span></button>
@@ -135,23 +134,34 @@
       <!-- MEMBROS -->
       <section id="view-membros" class="view-section">
         <div class="card">
-          <h2 id="form-member-title">Registar ou Editar Membro</h2>
+          <h2 id="form-member-title">Registar ou Editar Membro (Contrato KOSMO)</h2>
           <input type="hidden" id="m-edit-id" value="">
           <div class="form-grid">
             <div><label>Nome Completo *</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
+            <div><label>Filho(a) de (Pai e Mãe)</label><input type="text" id="m- pais" placeholder="Nome dos pais"></div>
+            <div><label>Data de Nascimento / Idade</label><input type="text" id="m-nascimento" placeholder="DD/MM/AAAA (Idade)"></div>
             <div><label>Código / ID Cartão *</label><input type="text" id="m-barcode" placeholder="Ex: 112233"></div>
             <div><label>Telemóvel</label><input type="tel" id="m-phone" placeholder="9988886"></div>
+            <div><label>Peso Atual (kg)</label><input type="text" id="m-peso" placeholder="Ex: 75kg"></div>
+            <div><label>Possui Patologia / Lesão?</label><input type="text" id="m-patologia" placeholder="Sim/Não e descreva"></div>
+            <div><label>Objetivo Principal</label><input type="text" id="m-objetivo" placeholder="Ex: Hipertrofia, Emagrecimento"></div>
             <div><label>Plano</label><select id="m-plan" onchange="toggleMemberAnexo()"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
+            <div><label>Estado do Aluno</label><select id="m-estado"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option><option value="Desativado">Desativado</option></select></div>
             <div><label>Data de Início</label><input type="date" id="m-date"></div>
-            <div><label>Documento de Identificação</label><input type="file" id="m-doc-file" accept="image/*,.pdf" onchange="converterDocMembro(event)"></div>
             <div><label>Fotografia Pessoal</label><input type="file" id="m-foto-file" accept="image/*" onchange="converterFotoMembro(event)"></div>
             <div id="m-box-anexo" style="grid-column:1/-1; display:none; background:#fff3bf; padding:12px; border-radius:6px; border:1px solid #f59f00;">
               <label id="m-label-anexo" style="font-weight:bold; color:#b7791f;">Documento Comprovativo Obrigatório *</label>
               <input type="file" id="m-anexo-file" accept="image/*,.pdf" onchange="converterAnexoMembro(event)">
             </div>
           </div>
+          <div class="contrato-box">
+            <strong>Contrato de Inscrição KOSMO</strong><br>
+            Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar como a encontrei. Concordo que qualquer material danificado ou destruído propositadamente recairá sobre mim a responsabilidade de o consertar ou indemnizar por completo.<br><br>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer; color:var(--success);">
+              <input type="checkbox" id="m-contrato-check" style="width:18px; height:18px;"> Escrevo na linha: "concordo plenamente" com todas as condições impostas.
+            </label>
+          </div>
           <input type="hidden" id="m-foto-base64" value="">
-          <input type="hidden" id="m-doc-base64" value="">
           <input type="hidden" id="m-anexo-base64" value="">
           <button class="btn" id="btn-save-member" onclick="saveMember()">Registar Membro</button>
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
@@ -202,7 +212,8 @@
             </div>
             <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
               <h3 style="margin-bottom:10px; font-size:0.95rem; color:var(--primary);">🛒 Carrinho</h3>
-              <div id="pos-cart-items" style="max-height:280px; overflow-y:auto; margin-bottom:12px; font-size:0.85rem;">Carrinho vazio.</div>
+              <div style="margin-bottom:10px;"><label>Nome do Cliente</label><input type="text" id="pos-client-name" placeholder="Nome do cliente"></div>
+              <div id="pos-cart-items" style="max-height:240px; overflow-y:auto; margin-bottom:12px; font-size:0.85rem;">Carrinho vazio.</div>
               <div style="border-top:2px solid var(--border); padding-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:1.05rem;">
                 <span>Total:</span>
                 <span id="pos-cart-total" style="color:var(--primary);">0 CVE</span>
@@ -243,7 +254,7 @@
       <!-- STOCK -->
       <section id="view-stock" class="view-section">
         <div class="card">
-          <h2>Gestão de Stock</h2>
+          <h2>Gestão de Stock Atual</h2>
           <table>
             <thead><tr><th>Produto</th><th>Stock Atual</th><th>Estado</th></tr></thead>
             <tbody id="stock-tbody"></tbody>
@@ -254,10 +265,10 @@
       <!-- HISTÓRICO DE VENDAS -->
       <section id="view-vendas" class="view-section">
         <div class="card">
-          <h2>Histórico de Vendas</h2>
+          <h2>Histórico de Vendas (Data, Hora, Funcionário e Cliente)</h2>
           <table>
-            <thead><tr><th>Data</th><th>Produto / Artigo</th><th>Qtd</th><th>Total (CVE)</th></tr></thead>
-            <tbody id="sales-tbody"><tr><td colspan="4" style="text-align:center; color:#777;">Sem vendas registadas.</td></tr></tbody>
+            <thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead>
+            <tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem vendas registadas.</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -265,7 +276,7 @@
       <!-- CARTÕES DIGITAIS -->
       <section id="view-cartaodigital" class="view-section">
         <div class="card" style="text-align:center;">
-          <h2>Cartão Digital com Foto</h2>
+          <h2>Cartão Digital com Fotografia</h2>
           <div style="margin-bottom:15px;">
             <select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Staff</option></select>
             <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select>
@@ -278,12 +289,12 @@
       <!-- CHAT -->
       <section id="view-chat" class="view-section">
         <div class="card">
-          <h2>Chat Multimédia & Biblioteca</h2>
+          <h2>Chat Multimédia & Ficheiros</h2>
           <div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;">
             <div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div>
             <div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;">
               <input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)">
-              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar Arquivo</button>
+              <button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar Ficheiro</button>
               <input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()">
               <button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button>
             </div>
@@ -302,15 +313,14 @@
         </div>
       </section>
 
-      <!-- ALERTAS DE VENCIMENTO (-5D) -->
+      <!-- LEMBRETES -5D (02 NOTIFICAÇÕES AO DIA) -->
       <section id="view-lembretes" class="view-section">
         <div class="card">
-          <h2>Alertas Automáticos de Vencimento (-5 Dias)</h2>
-          <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">O sistema envia 02 (duas) notificações por dia automaticamente para as mensalidades prestes a expirar.</p>
-          <button class="btn btn-blue" onclick="verificarAlertaVencimentos()">🔍 Executar Disparo de Notificações</button>
+          <h2>Alertas de Vencimento (-5 Dias) - 02 Notificações Diárias</h2>
+          <button class="btn btn-blue" onclick="verificarAlertaVencimentos()">Executar Verificação</button>
           <table>
-            <thead><tr><th>Membro</th><th>Telemóvel</th><th>Plano</th><th>Vencimento</th><th>Estado do Alerta</th></tr></thead>
-            <tbody id="alertas-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Clique em verificar.</td></tr></tbody>
+            <thead><tr><th>Membro</th><th>Telemóvel</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead>
+            <tbody id="alertas-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Clique em executar.</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -318,22 +328,10 @@
       <!-- IMPORTAR DADOS -->
       <section id="view-importar" class="view-section">
         <div class="card">
-          <h2>Importar Backup ou Dados Universais (Ativos, Inativos, Expirados, Produtos)</h2>
+          <h2>Importar Backup Universal (Ativos, Inativos, Expirados, Produtos)</h2>
           <div class="form-grid">
             <div><label>Ficheiro (.json / .csv)</label><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div>
           </div>
-        </div>
-      </section>
-
-      <!-- CONFIGURAÇÃO CLOUD -->
-      <section id="view-config" class="view-section">
-        <div class="card">
-          <h2>Configuração Cloud Supabase</h2>
-          <div class="form-grid">
-            <div><label>Supabase URL</label><input type="text" id="cfg-url" placeholder="https://xxx.supabase.co"></div>
-            <div><label>Supabase Anon Key</label><input type="text" id="cfg-key" placeholder="eyJhbGciOi..."></div>
-          </div>
-          <button class="btn btn-blue" onclick="alert('Configuração salva com sucesso!')" style="margin-top:10px;">Ligar Cloud</button>
         </div>
       </section>
 
@@ -346,18 +344,18 @@
             <div><label>Nome *</label><input type="text" id="colab-name"></div>
             <div><label>Cargo</label><input type="text" id="colab-role"></div>
             <div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div>
-            <div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div>
+            <div><label>Funções / Permissões</label><select id="colab-perm"><option value="Total">Gestão Total</option><option value="Checkins">Apenas Check-ins</option></select></div>
             <div><label>Utilizador</label><input type="text" id="colab-user"></div>
             <div><label>Senha</label><input type="password" id="colab-pass"></div>
-            <div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
+            <div><label>Fotografia Pessoal</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
           </div>
           <input type="hidden" id="colab-foto-base64" value="">
-          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button>
+          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar / Atualizar Staff</button>
         </div>
         <div class="card">
           <h2>Equipa</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>Função</th><th>ID</th><th>Ações</th></tr></thead>
             <tbody id="colab-tbody"></tbody>
           </table>
         </div>
@@ -366,7 +364,7 @@
       <!-- PICA PONTO -->
       <section id="view-picaponto" class="view-section">
         <div class="card">
-          <h2>Pica Ponto (Leitor / Manual)</h2>
+          <h2>Pica Ponto (Leitor ou Manual)</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="text" id="pica-input" placeholder="Passe o cartão..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;">
             <button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button>
@@ -385,7 +383,7 @@
     <div style="background:#fff; width:100%; max-width:600px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
       <img src="logo.jpg" alt="KOSMO" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
-      <h2>Ginásio KOSMO - Inscrição Online</h2>
+      <h2>Ginásio KOSMO - Inscrição Online (Contrato KOSMO)</h2>
       <div class="form-grid" style="margin-top:15px; text-align:left;">
         <div><label>Nome Completo *</label><input type="text" id="portal-name" placeholder="O seu nome"></div>
         <div><label>NIF</label><input type="text" id="portal-nif"></div>
@@ -402,13 +400,13 @@
       <div class="contrato-box" style="text-align:left;">
         <strong>Contrato de Inscrição KOSMO</strong><br>
         Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar.<br><br>
-        <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer;"><input type="checkbox" id="portal-contrato"> Concordo com os termos do contrato.</label>
+        <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer;"><input type="checkbox" id="portal-contrato"> Concordo plenamente com os termos do contrato.</label>
       </div>
       <button class="btn" style="width:100%; margin-top:10px;" onclick="submeterInscricaoOnline()">Submeter Inscrição Online</button>
     </div>
   </div>
 
-  <!-- JAVASCRIPT MASTER -->
+  <!-- SCRIPT MASTER -->
   <script>
     let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
       { id: 1, name: 'Silvio Cabral', barcode: '112233', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '' }
@@ -426,6 +424,7 @@
       { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: 'Total', user: 'admin', pass: 'admin123', foto: '' }
     ];
     let cartItems = [];
+    let loggedStaff = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
@@ -439,8 +438,18 @@
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
+        loggedStaff = null;
         document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('logged-user-label').innerText = 'Sessão: Admin';
         navigate('dashboard');
+        return;
+      }
+      const staff = collaborators.find(c => c.user === u && c.pass === p);
+      if (staff) {
+        loggedStaff = staff;
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('logged-user-label', `Staff: ${staff.name}`);
+        navigate('membros');
         return;
       }
       alert('Utilizador ou palavra-passe incorretos.');
@@ -485,26 +494,13 @@
       localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
     }
 
-    // CONVERSÃO DE FOTOS E DOCUMENTOS
     function converterFotoMembro(e) {
       const f = e.target.files[0];
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-foto-base64').value = evt.target.result; r.readAsDataURL(f); }
     }
-    function converterDocMembro(e) {
-      const f = e.target.files[0];
-      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-doc-base64').value = evt.target.result; r.readAsDataURL(f); }
-    }
-    function converterAnexoMembro(e) {
-      const f = e.target.files[0];
-      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-anexo-base64').value = evt.target.result; r.readAsDataURL(f); }
-    }
     function converterFotoPortal(e) {
       const f = e.target.files[0];
       if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-foto-b64').value = evt.target.result; r.readAsDataURL(f); }
-    }
-    function converterAnexoPortal(e) {
-      const f = e.target.files[0];
-      if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-anexo-b64').value = evt.target.result; r.readAsDataURL(f); }
     }
     function converterFotoProduto(e) {
       const f = e.target.files[0];
@@ -531,13 +527,13 @@
       else { b.style.display = 'none'; }
     }
 
-    // MEMBROS
     function saveMember() {
       const editId = document.getElementById('m-edit-id').value;
       const name = document.getElementById('m-name').value.trim();
       const barcode = document.getElementById('m-barcode').value.trim();
       const phone = document.getElementById('m-phone').value.trim();
       const plan = document.getElementById('m-plan').value;
+      const estado = document.getElementById('m-estado').value;
       const date = document.getElementById('m-date').value || new Date().toISOString().split('T')[0];
       const foto = document.getElementById('m-foto-base64').value;
 
@@ -546,13 +542,13 @@
       if (editId) {
         const m = members.find(x => x.id == editId);
         if (m) {
-          m.name = name; m.barcode = barcode; m.phone = phone; m.plan = plan; m.date = date;
+          m.name = name; m.barcode = barcode; m.phone = phone; m.plan = plan; m.estado = estado; m.date = date;
           if (foto) m.foto = foto;
         }
         alert('Membro atualizado com sucesso!');
         cancelEditMember();
       } else {
-        members.push({ id: Date.now(), name, barcode, phone, plan, estado: 'Ativo', date, foto: foto || '' });
+        members.push({ id: Date.now(), name, barcode, phone, plan, estado, date, foto: foto || '' });
         alert('Membro registado com sucesso!');
         document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
         document.getElementById('m-phone').value = ''; document.getElementById('m-foto-base64').value = '';
@@ -568,6 +564,7 @@
       document.getElementById('m-barcode').value = m.barcode;
       document.getElementById('m-phone').value = m.phone || '';
       document.getElementById('m-plan').value = m.plan;
+      document.getElementById('m-estado').value = m.estado || 'Ativo';
       document.getElementById('m-date').value = m.date || '';
       document.getElementById('m-foto-base64').value = m.foto || '';
       document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
@@ -578,7 +575,7 @@
 
     function cancelEditMember() {
       document.getElementById('m-edit-id').value = '';
-      document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro';
+      document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro (Contrato KOSMO)';
       document.getElementById('btn-save-member').innerText = 'Registar Membro';
       document.getElementById('btn-cancel-edit').style.display = 'none';
       document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
@@ -588,6 +585,7 @@
       const m = members.find(x => x.id === id);
       if (m) {
         m.date = new Date().toISOString().split('T')[0];
+        m.estado = 'Ativo';
         refreshAll();
         alert(`Subscrição de ${m.name} renovada com sucesso por mais 30 dias!`);
       }
@@ -600,8 +598,14 @@
       members.forEach(m => {
         const dtReg = new Date(m.date || '2026-01-01');
         dtReg.setDate(dtReg.getDate() + 30);
-        const isAtivo = dtReg >= now;
-        const badge = isAtivo ? '<span class="badge badge-ok">Ativo</span>' : '<span class="badge badge-err">Expirado</span>';
+        const diffDays = Math.ceil((dtReg - now) / (1000 * 60 * 60 * 24));
+        
+        let badge = '<span class="badge badge-ok">Ativo</span>';
+        if (m.estado === 'Inativo') badge = '<span class="badge badge-inativo">Inativo</span>';
+        else if (m.estado === 'Desativado') badge = '<span class="badge badge-inativo">Desativado</span>';
+        else if (dtReg < now) badge = '<span class="badge badge-err">Expirado</span>';
+        else if (diffDays <= 5 && diffDays >= 0) badge = `<span class="badge badge-warn">Faltam ${diffDays} dias</span>`;
+
         const fotoTag = m.foto ? `<img src="${m.foto}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">` : '👤';
 
         t.innerHTML += `
@@ -613,7 +617,7 @@
             <td>${dtReg.toLocaleDateString('pt-PT')}</td>
             <td>${badge}</td>
             <td>
-              <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄 Renovar</button>
+              <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button>
               <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button>
               <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button>
             </td>
@@ -622,7 +626,6 @@
       });
     }
 
-    // PRODUTOS, STOCK E VENDAS
     function saveProduct() {
       const editIdx = document.getElementById('p-edit-idx').value;
       const name = document.getElementById('p-name').value.trim();
@@ -634,21 +637,15 @@
       const foto = document.getElementById('p-foto-base64').value;
 
       if (!name || !price) { alert('Insira o nome e o preço de venda.'); return; }
-
       if (editIdx !== '') {
         const p = products[editIdx];
-        if (p) {
-          p.name = name; p.buy = buy; p.price = price; p.stock = stock; p.desc = desc; p.use = use;
-          if (foto) p.foto = foto;
-        }
+        if (p) { p.name = name; p.buy = buy; p.price = price; p.stock = stock; p.desc = desc; p.use = use; if (foto) p.foto = foto; }
         alert('Produto atualizado!');
         cancelEditProduct();
       } else {
         products.push({ name, buy, price, stock, desc, use, foto: foto || '' });
         alert('Produto registado!');
-        document.getElementById('p-name').value = ''; document.getElementById('p-buy').value = '';
-        document.getElementById('p-price').value = ''; document.getElementById('p-desc').value = '';
-        document.getElementById('p-use').value = ''; document.getElementById('p-foto-base64').value = '';
+        document.getElementById('p-name').value = ''; document.getElementById('p-price').value = '';
       }
       refreshAll();
     }
@@ -683,19 +680,7 @@
       if (!t) return; t.innerHTML = '';
       products.forEach((p, idx) => {
         const fotoTag = p.foto ? `<img src="${p.foto}" style="width:38px;height:38px;object-fit:cover;border-radius:4px;">` : '📦';
-        t.innerHTML += `
-          <tr>
-            <td>${fotoTag}</td>
-            <td><strong>${p.name}</strong><br><small>📝 ${p.desc || '---'}</small></td>
-            <td><small style="color:var(--primary); font-weight:bold;">${p.use || '---'}</small></td>
-            <td>Compra: ${p.buy} CVE<br><strong>Venda: ${p.price} CVE</strong></td>
-            <td>${p.stock} unid.</td>
-            <td>
-              <button class="btn btn-sm btn-blue" onclick="editProduct(${idx})">✏️</button>
-              <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${idx},1); refreshAll();">🗑️</button>
-            </td>
-          </tr>
-        `;
+        t.innerHTML += `<tr><td>${fotoTag}</td><td><strong>${p.name}</strong><br><small>${p.desc || ''}</small></td><td>${p.use || ''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${idx})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
       });
     }
 
@@ -703,18 +688,18 @@
       const t = document.getElementById('stock-tbody');
       if (!t) return; t.innerHTML = '';
       products.forEach(p => {
-        const badge = p.stock > 3 ? '<span class="badge badge-ok">Normal</span>' : '<span class="badge badge-err">Baixo Stock</span>';
-        t.innerHTML += `<tr><td><strong>${p.name}</strong></td><td>${p.stock} unid.</td><td>${badge}</td></tr>`;
+        const badge = p.stock > 3 ? '<span class="badge badge-ok">Normal</span>' : '<span class="badge badge-err">Baixo</span>';
+        t.innerHTML += `<tr><td><strong>${p.name}</strong></td><td>${p.stock}</td><td>${badge}</td></tr>`;
       });
     }
 
     function renderSales() {
       const t = document.getElementById('sales-tbody');
       if (!t) return;
-      if (salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">Sem vendas registadas.</td></tr>`; return; }
+      if (salesHistory.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem vendas.</td></tr>`; return; }
       t.innerHTML = '';
       salesHistory.forEach(s => {
-        t.innerHTML += `<tr><td>${s.date}</td><td>${s.prod}</td><td>${s.qty}</td><td><strong>${s.total} CVE</strong></td></tr>`;
+        t.innerHTML += `<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`;
       });
     }
 
@@ -722,73 +707,47 @@
       const grid = document.getElementById('pos-catalog-grid');
       if (!grid) return; grid.innerHTML = '';
       products.forEach((p, idx) => {
-        const fotoTag = p.foto ? `<img src="${p.foto}" style="width:100%; height:90px; object-fit:cover; border-radius:6px; margin-bottom:6px;">` : `<div style="width:100%; height:90px; background:#e9ecef; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:6px;">📦</div>`;
-        grid.innerHTML += `
-          <div style="background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px; text-align:center; display:flex; flex-direction:column; justify-content:space-between;">
-            <div>
-              ${fotoTag}
-              <h4 style="font-size:0.9rem; font-weight:bold; color:var(--dark);">${p.name}</h4>
-              <p style="font-size:0.85rem; color:var(--success); font-weight:bold; margin-top:2px;">${p.price} CVE</p>
-              <small style="color:#666;">Stock: ${p.stock}</small>
-            </div>
-            <button class="btn btn-sm btn-blue" style="width:100%; margin-top:8px;" onclick="addToCart(${idx})">➕ Adicionar</button>
-          </div>
-        `;
+        grid.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;"><h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" style="margin-top:5px;" onclick="addToCart(${idx})">Adicionar</button></div>`;
       });
     }
 
     function addToCart(idx) {
       const p = products[idx];
-      if (p.stock <= 0) { alert('Produto sem stock!'); return; }
+      if (p.stock <= 0) { alert('Sem stock!'); return; }
       const item = cartItems.find(x => x.idx === idx);
-      if (item) {
-        if (item.qty < p.stock) item.qty++;
-        else alert('Stock máximo atingido.');
-      } else {
-        cartItems.push({ idx, name: p.name, price: p.price, qty: 1 });
-      }
+      if (item) item.qty++;
+      else cartItems.push({ idx, name: p.name, price: p.price, qty: 1 });
       renderCart();
     }
 
     function renderCart() {
-      const container = document.getElementById('pos-cart-items');
-      const totalEl = document.getElementById('pos-cart-total');
-      if (!container) return;
-      if (cartItems.length === 0) { container.innerHTML = 'Carrinho vazio.'; if (totalEl) totalEl.innerText = '0 CVE'; return; }
-      container.innerHTML = '';
-      let total = 0;
+      const c = document.getElementById('pos-cart-items'), tot = document.getElementById('pos-cart-total');
+      if (!c) return;
+      if (cartItems.length === 0) { c.innerHTML = 'Carrinho vazio.'; if (tot) tot.innerText = '0 CVE'; return; }
+      c.innerHTML = ''; let total = 0;
       cartItems.forEach((item, i) => {
-        let sub = item.price * item.qty;
-        total += sub;
-        container.innerHTML += `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #ddd; padding-bottom:4px;">
-            <div><strong>${item.name}</strong><br><small>${item.price} CVE x ${item.qty}</small></div>
-            <div style="display:flex; gap:6px; align-items:center;">
-              <strong>${sub} CVE</strong>
-              <button class="btn-sm" style="background:var(--danger);" onclick="cartItems.splice(${i},1); renderCart();">❌</button>
-            </div>
-          </div>
-        `;
+        let sub = item.price * item.qty; total += sub;
+        c.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>${item.name} x${item.qty}</span> <span>${sub} CVE</span></div>`;
       });
-      if (totalEl) totalEl.innerText = total.toLocaleString() + ' CVE';
+      if (tot) tot.innerText = total.toLocaleString() + ' CVE';
     }
 
     function finalizarVendaPOS() {
-      if (cartItems.length === 0) { alert('O carrinho está vazio.'); return; }
-      const agora = new Date().toLocaleDateString('pt-PT');
+      if (cartItems.length === 0) { alert('Carrinho vazio.'); return; }
+      const client = document.getElementById('pos-client-name').value.trim() || 'Cliente Balcão';
+      const funcName = loggedStaff ? loggedStaff.name : 'Administrador';
+      const agora = new Date().toLocaleString('pt-PT');
       cartItems.forEach(item => {
         const p = products[item.idx];
         if (p) {
           p.stock -= item.qty;
-          salesHistory.unshift({ date: agora, prod: item.name, qty: item.qty, total: item.price * item.qty });
+          salesHistory.unshift({ date: agora, func: funcName, client: client, prod: item.name, qty: item.qty, total: item.price * item.qty });
         }
       });
-      cartItems = [];
-      refreshAll();
-      alert('Venda concluída com sucesso, stock atualizado e registada no histórico!');
+      cartItems = []; document.getElementById('pos-client-name').value = '';
+      refreshAll(); alert('Venda concluída com sucesso!');
     }
 
-    // CHECK-INS
     function onScan(e) {
       if (e.key === 'Enter') {
         const code = document.getElementById('chk-input').value.trim();
@@ -798,308 +757,121 @@
       }
     }
     function checkinManualPrompt() {
-      const code = prompt('Insira o ID ou Código de Barras do Membro:');
+      const code = prompt('ID do Membro:');
       if (code) processarCheckinCodigo(code);
     }
     function processarCheckinCodigo(code) {
       const m = members.find(x => x.barcode === code);
-      const now = new Date();
-      let isAtivo = false;
-      let nomeMembro = 'Membro Desconhecido';
-      let planoMembro = 'Geral';
-
+      const now = new Date(); let isAtivo = false; let nome = 'Desconhecido'; let plano = 'Geral';
       if (m) {
-        nomeMembro = m.name;
-        planoMembro = m.plan;
-        const dtReg = new Date(m.date || '2026-01-01');
-        dtReg.setDate(dtReg.getDate() + 30);
-        isAtivo = dtReg >= now;
+        nome = m.name; plano = m.plan;
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        isAtivo = d >= now;
       }
-
-      const log = { data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nomeMembro, barcode: code, status: isAtivo ? 'Ativo' : 'Expirado' };
-      attendanceLogs.unshift(log);
+      attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nome, barcode: code, status: isAtivo ? 'Ativo' : 'Expirado' });
       renderAttendance();
-      localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: nomeMembro, plan: planoMembro, auth: isAtivo, time: Date.now() }));
+      localStorage.setItem('kosmo_totem_scan', JSON.stringify({ name: nome, plan: plano, auth: isAtivo, time: Date.now() }));
     }
     function renderAttendance() {
       const t = document.getElementById('attendance-tbody');
       if (!t) return; t.innerHTML = '';
-      attendanceLogs.forEach(a => {
-        const col = a.status === 'Ativo' ? 'badge-ok' : 'badge-err';
-        t.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td><strong>${a.name}</strong></td><td><code>${a.barcode}</code></td><td><span class="badge ${col}">${a.status}</span></td></tr>`;
-      });
+      attendanceLogs.forEach(a => t.innerHTML += `<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td><span class="badge ${a.status === 'Ativo' ? 'badge-ok' : 'badge-err'}">${a.status}</span></td></tr>`);
     }
 
-    // PICA PONTO STAFF
-    function onScanStaff(e) {
-      if (e.key === 'Enter') {
-        const code = document.getElementById('pica-input').value.trim();
-        if (!code) return;
-        processarPicaStaff(code);
-        document.getElementById('pica-input').value = '';
-      }
-    }
-    function picaManualPrompt() {
-      const code = prompt('Insira o ID de Pica-Ponto do Colaborador:');
-      if (code) processarPicaStaff(code);
-    }
+    function onScanStaff(e) { if (e.key === 'Enter') { processarPicaStaff(document.getElementById('pica-input').value.trim()); document.getElementById('pica-input').value = ''; } }
+    function picaManualPrompt() { const c = prompt('ID do Staff:'); if (c) processarPicaStaff(c); }
     function processarPicaStaff(code) {
-      const c = collaborators.find(x => x.barcode === code);
-      const now = new Date();
-      staffLogs.unshift({ time: now.toLocaleDateString('pt-PT') + ' ' + now.toLocaleTimeString('pt-PT'), name: c ? c.name : 'Staff ('+code+')', type: 'Entrada/Saída' });
+      const s = collaborators.find(x => x.barcode === code);
+      staffLogs.unshift({ time: new Date().toLocaleTimeString('pt-PT'), name: s ? s.name : code, type: 'Ponto Registado' });
       renderStaffAttendance();
-      alert('Ponto registado para: ' + (c ? c.name : code));
     }
     function renderStaffAttendance() {
       const t = document.getElementById('pica-tbody');
       if (!t) return; t.innerHTML = '';
-      staffLogs.forEach(s => t.innerHTML += `<tr><td>${s.time}</td><td><strong>${s.name}</strong></td><td><span class="badge badge-ok">${s.type}</span></td></tr>`);
+      staffLogs.forEach(s => t.innerHTML += `<tr><td>${s.time}</td><td>${s.name}</td><td>OK</td></tr>`);
     }
 
-    // INSCRIÇÃO ONLINE
     function abrirPortalInscricao() { document.getElementById('portal-inscricao-overlay').style.display = 'flex'; }
     function submeterInscricaoOnline() {
       const name = document.getElementById('portal-name').value.trim();
       const contrato = document.getElementById('portal-contrato').checked;
       const foto = document.getElementById('portal-foto-b64').value;
-      if (!name) { alert('Insira o seu nome para começar.'); return; }
-      if (!contrato) { alert('Deve aceitar obrigatoriamente os termos do Contrato de Inscrição KOSMO!'); return; }
-      if (!foto) { alert('A fotografia pessoal é obrigatória!'); return; }
-
-      inscricoesOnline.push({
-        id: Date.now(),
-        name,
-        nif: document.getElementById('portal-nif').value,
-        phone: document.getElementById('portal-phone').value,
-        plan: document.getElementById('portal-plan').value,
-        foto: foto
-      });
-      alert('Inscrição submetida com sucesso! A equipa irá validá-la.');
-      document.getElementById('portal-inscricao-overlay').style.display = 'none';
-      refreshAll();
+      if (!name || !contrato || !foto) { alert('Preencha o nome, aceite o contrato e adicione a foto.'); return; }
+      inscricoesOnline.push({ id: Date.now(), name, nif: document.getElementById('portal-nif').value, phone: document.getElementById('portal-phone').value, plan: document.getElementById('portal-plan').value, foto });
+      alert('Inscrição submetida!'); document.getElementById('portal-inscricao-overlay').style.display = 'none'; refreshAll();
     }
     function renderInscricoes() {
       const t = document.getElementById('online-inscricoes-tbody');
       if (!t) return; t.innerHTML = '';
       inscricoesOnline.forEach((ins, idx) => {
-        const fotoTag = ins.foto ? `<img src="${ins.foto}" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">` : '👤';
-        t.innerHTML += `<tr><td>${fotoTag}</td><td>${ins.name}</td><td>${ins.phone || '---'}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="members.push({id:Date.now(),name:'${ins.name}',barcode:'9999',plan:'${ins.plan}',estado:'Ativo',date:'2026-01-01',foto:'${ins.foto}'}); inscricoesOnline.splice(${idx},1); refreshAll();">Aprovar</button></td></tr>`;
+        t.innerHTML += `<tr><td>👤</td><td>${ins.name}</td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="members.push({id:Date.now(),name:'${ins.name}',barcode:'9999',plan:'${ins.plan}',estado:'Ativo',date:'2026-01-01',foto:'${ins.foto}'}); inscricoesOnline.splice(${idx},1); refreshAll();">Aprovar</button></td></tr>`;
       });
     }
 
-    // CHAT & BIBLIOTECA
-    function enviarMsgChat() {
-      const txt = document.getElementById('chat-text').value.trim();
-      if (!txt) return;
-      chatMsgs.push({ sender: 'Admin', text: txt });
-      document.getElementById('chat-text').value = '';
-      refreshAll();
-    }
+    function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; refreshAll(); } }
     function enviarArquivoChat(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      const r = new FileReader();
-      r.onload = function(evt) {
-        chatMsgs.push({ sender: 'Admin (Mídia)', fileUrl: evt.target.result, fileName: f.name });
-        biblioteca.push({ name: f.name, url: evt.target.result });
-        refreshAll();
-        alert('Arquivo/Áudio/Vídeo enviado com sucesso!');
-      };
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileUrl:evt.target.result, fileName:f.name}); refreshAll(); alert('Enviado!'); };
       r.readAsDataURL(f);
     }
     function renderChat() {
-      const area = document.getElementById('chat-msgs');
-      if (!area) return; area.innerHTML = '';
-      chatMsgs.forEach(m => {
-        let content = m.text ? `<p>${m.text}</p>` : `<a href="${m.fileUrl}" target="_blank" download="${m.fileName}" style="color:var(--primary); font-weight:bold;">📎 Mídia/Arquivo: ${m.fileName}</a>`;
-        area.innerHTML += `<div style="background:#fff; border:1px solid #ddd; padding:8px; border-radius:6px;"><strong>${m.sender}:</strong> ${content}</div>`;
-      });
+      const a = document.getElementById('chat-msgs'); if (!a) return; a.innerHTML = '';
+      chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`);
     }
     function renderBiblioteca() {
-      const b = document.getElementById('bib-list');
-      if (!b) return; b.innerHTML = '';
-      if (biblioteca.length === 0) { b.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos.</td></tr>`; return; }
-      biblioteca.forEach((item, idx) => {
-        b.innerHTML += `
-          <tr>
-            <td><a href="${item.url}" target="_blank" download="${item.name}">📁 ${item.name}</a></td>
-            <td>
-              <a href="${item.url}" target="_blank" class="btn btn-sm btn-blue">👁️ Visualizar</a>
-              <a href="${item.url}" target="_blank" download="${item.name}" class="btn btn-sm btn-green">📥 Baixar</a>
-              <button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); refreshAll();">🗑️ Eliminar</button>
-            </td>
-          </tr>
-        `;
-      });
+      const b = document.getElementById('bib-list'); if (!b) return; b.innerHTML = '';
+      biblioteca.forEach((i, idx) => b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}">${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
     }
 
-    // ALERTAS DE VENCIMENTO (-5D) - 02 NOTIFICAÇÕES AO DIA
     function verificarAlertaVencimentos() {
-      const t = document.getElementById('alertas-tbody');
-      if (!t) return; t.innerHTML = '';
-      const now = new Date();
-      let count = 0;
+      const t = document.getElementById('alertas-tbody'); if (!t) return; t.innerHTML = '';
+      const now = new Date(); let count = 0;
       members.forEach(m => {
-        const dtReg = new Date(m.date || '2026-01-01');
-        dtReg.setDate(dtReg.getDate() + 30);
-        const diffDays = Math.ceil((dtReg - now) / (1000 * 60 * 60 * 24));
-        if (diffDays <= 5 && diffDays >= 0) {
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        const diff = Math.ceil((d - now)/(1000*60*60*24));
+        if (diff <= 5 && diff >= 0) {
           count++;
-          t.innerHTML += `<tr><td><strong>${m.name}</strong></td><td>${m.phone || '---'}</td><td>${m.plan}</td><td>${dtReg.toLocaleDateString('pt-PT')}</td><td><span class="badge badge-warn">02 Notificações Diárias Ativas (-5d)</span></td></tr>`;
+          t.innerHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td><span class="badge badge-warn">02 Notificações Diárias Ativas</span></td></tr>`;
         }
       });
-      if (count === 0) t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Nenhum membro a expirar nos próximos 5 dias.</td></tr>`;
-      else alert(`Verificação concluída! ${count} membros identificados para envio de 2 notificações diárias.`);
+      if (count === 0) t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum alerta pendente.</td></tr>`;
+      else alert(`${count} membros notificados (02 vezes ao dia).`);
     }
 
-    // IMPORTAR BACKUP UNIVERSAL (BLINDADO CONTRA ERROS)
     function importarDadosComputador(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      const r = new FileReader();
-      r.onload = function(evt) {
-        try {
-          const d = JSON.parse(evt.target.result);
-          if (d.members) members = d.members;
-          if (d.products) products = d.products;
-          if (d.collaborators) collaborators = d.collaborators;
-          if (d.salesHistory) salesHistory = d.salesHistory;
-          refreshAll();
-          alert('Dados, backup, membros e produtos importados com sucesso!');
-        } catch(err) {
-          alert('Erro ao processar ficheiro de backup. Certifique-se de que é um JSON válido.');
-        }
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = e => {
+        try { const d = JSON.parse(e.target.result); if (d.members) members = d.members; if (d.products) products = d.products; refreshAll(); alert('Importado com sucesso!'); } catch(err) { alert('Erro no ficheiro.'); }
       };
       r.readAsText(f);
     }
 
-    // STAFF
     function addColab() {
-      const editId = document.getElementById('staff-edit-id').value;
       const name = document.getElementById('colab-name').value.trim();
-      const role = document.getElementById('colab-role').value.trim();
       const barcode = document.getElementById('colab-barcode').value.trim();
-      const perm = document.getElementById('colab-perm').value;
-      const user = document.getElementById('colab-user').value.trim();
-      const pass = document.getElementById('colab-pass').value.trim();
-      const foto = document.getElementById('colab-foto-base64').value;
-
-      if (!name || !barcode) { alert('Insira o nome e o ID de cartão.'); return; }
-
-      if (editId) {
-        const c = collaborators.find(x => x.id == editId);
-        if (c) {
-          c.name = name; c.role = role || 'Staff'; c.barcode = barcode; c.perm = perm;
-          if (user) c.user = user;
-          if (pass) c.pass = pass;
-          if (foto) c.foto = foto;
-        }
-        alert('Colaborador atualizado com sucesso!');
-        cancelEditStaff();
-      } else {
-        collaborators.push({ id: Date.now(), name, role: role || 'Staff', barcode, perm, user: user || name.toLowerCase(), pass: pass || '1234', foto: foto || '' });
-        alert('Colaborador registado com sucesso!');
-        document.getElementById('colab-name').value = ''; document.getElementById('colab-barcode').value = '';
-        document.getElementById('colab-user').value = ''; document.getElementById('colab-pass').value = '';
-      }
-      refreshAll();
+      if (!name || !barcode) { alert('Preencha os campos.'); return; }
+      collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, perm: document.getElementById('colab-perm').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value });
+      refreshAll(); alert('Staff registado!');
     }
-
-    function editStaff(id) {
-      const c = collaborators.find(x => x.id === id);
-      if (!c) return;
-      document.getElementById('staff-edit-id').value = c.id;
-      document.getElementById('colab-name').value = c.name;
-      document.getElementById('colab-role').value = c.role;
-      document.getElementById('colab-barcode').value = c.barcode;
-      document.getElementById('colab-perm').value = c.perm || 'Total';
-      document.getElementById('colab-user').value = c.user || '';
-      document.getElementById('colab-pass').value = c.pass || '';
-      document.getElementById('colab-foto-base64').value = c.foto || '';
-      document.getElementById('form-staff-title').innerText = 'Editar Colaborador: ' + c.name;
-      document.getElementById('btn-save-staff').innerText = 'Guardar Alterações';
-      document.getElementById('btn-cancel-staff').style.display = 'inline-flex';
-      navigate('colab');
-    }
-
-    function cancelEditStaff() {
-      document.getElementById('staff-edit-id').value = '';
-      document.getElementById('form-staff-title').innerText = 'Gerir Staff, Atribuição de Funções & Senhas';
-      document.getElementById('btn-save-staff').innerText = 'Registar Staff';
-      document.getElementById('btn-cancel-staff').style.display = 'none';
-      document.getElementById('colab-name').value = ''; document.getElementById('colab-barcode').value = '';
-    }
-
     function renderColab() {
-      const t = document.getElementById('colab-tbody');
-      if (!t) return; t.innerHTML = '';
-      collaborators.forEach((c) => {
-        const fotoTag = c.foto ? `<img src="${c.foto}" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">` : '👤';
-        t.innerHTML += `
-          <tr>
-            <td>${fotoTag}</td>
-            <td><strong>${c.name}</strong><br><small>Utilizador: ${c.user}</small></td>
-            <td>${c.role}</td>
-            <td><code>${c.barcode}</code></td>
-            <td>
-              <button class="btn btn-sm btn-blue" onclick="editStaff(${c.id})">✏️ Editar</button>
-              <button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators=collaborators.filter(x=>x.id!==${c.id}); refreshAll();">🗑️ Eliminar</button>
-            </td>
-          </tr>
-        `;
-      });
+      const t = document.getElementById('colab-tbody'); if (!t) return; t.innerHTML = '';
+      collaborators.forEach((c, idx) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td>${c.perm}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
     }
 
-    // CARTÕES COM FOTO
     function toggleCardType() { populateCardSelect(); }
     function populateCardSelect() {
-      const type = document.getElementById('card-type-select').value;
-      const sel = document.getElementById('card-member-select');
-      if (!sel) return; sel.innerHTML = '';
-      if (type === 'membro') {
-        members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
-      } else {
-        collaborators.forEach(c => sel.innerHTML += `<option value="${c.name}">${c.name} (${c.role})</option>`);
-      }
+      const sel = document.getElementById('card-member-select'); if (!sel) return; sel.innerHTML = '';
+      if (document.getElementById('card-type-select').value === 'membro') members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+      else collaborators.forEach(c => sel.innerHTML += `<option value="${c.name}">${c.name}</option>`);
       renderDigitalCard();
     }
     function renderDigitalCard() {
-      const type = document.getElementById('card-type-select').value;
-      const name = document.getElementById('card-member-select').value;
-      const z = document.getElementById('digital-card-container');
+      const z = document.getElementById('digital-card-container'), name = document.getElementById('card-member-select').value;
       if (!z) return;
-
-      if (type === 'membro') {
-        const m = members.find(x => x.name === name);
-        if (!m) { z.innerHTML = 'Nenhum membro selecionado.'; return; }
-        const fotoTag = m.foto ? `<img src="${m.foto}" style="width:75px;height:75px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);">` : '👤';
-        z.innerHTML = `
-          <div class="id-card-wrap">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="color:#ffd43b;">Ginásio KOSMO</h3><small>NIF: 283023805</small></div>
-            <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
-              <div>${fotoTag}</div>
-              <div style="text-align:left;"><h2>${m.name}</h2><p style="font-size:0.85rem; color:#ccc;">Plano: ${m.plan}</p><p style="font-size:0.8rem; color:#2b8a3e; font-weight:bold;">Membro Oficial</p></div>
-            </div>
-            <div style="background:#fff; padding:6px; border-radius:6px; text-align:center;"><svg id="card-bc"></svg></div>
-          </div>
-        `;
-        setTimeout(() => { if (window.JsBarcode) JsBarcode("#card-bc", m.barcode, { format: "CODE128", width: 2, height: 40, displayValue: true }); }, 100);
-      } else {
-        const c = collaborators.find(x => x.name === name);
-        if (!c) { z.innerHTML = 'Nenhum colaborador selecionado.'; return; }
-        const fotoTagStaff = c.foto ? `<img src="${c.foto}" style="width:75px;height:75px;border-radius:50%;object-fit:cover;border:2px solid #ffd43b;">` : '👤';
-        z.innerHTML = `
-          <div class="id-card-wrap" style="border:2px solid #ffd43b;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="color:#ffd43b;">Ginásio KOSMO - Staff Pica-Ponto</h3><small>ID: ${c.barcode}</small></div>
-            <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
-              <div>${fotoTagStaff}</div>
-              <div style="text-align:left;"><h2>${c.name}</h2><p style="font-size:0.85rem; color:#ccc;">Cargo: ${c.role}</p><p style="font-size:0.8rem; color:#ffd43b;">Função: ${c.perm}</p></div>
-            </div>
-            <div style="background:#fff; padding:6px; border-radius:6px; text-align:center;"><svg id="staff-bc"></svg></div>
-          </div>
-        `;
-        setTimeout(() => { if (window.JsBarcode) JsBarcode("#staff-bc", c.barcode, { format: "CODE128", width: 2, height: 40, displayValue: true }); }, 100);
-      }
+      const obj = document.getElementById('card-type-select').value === 'membro' ? members.find(x=>x.name===name) : collaborators.find(x=>x.name===name);
+      if (!obj) { z.innerHTML = 'Selecione.'; return; }
+      z.innerHTML = `<div class="id-card-wrap"><h3>Ginásio KOSMO</h3><h2>${obj.name}</h2><p>ID: ${obj.barcode}</p><svg id="card-bc"></svg></div>`;
+      setTimeout(() => { if (window.JsBarcode) JsBarcode("#card-bc", obj.barcode, { format: "CODE128", width: 2, height: 40, displayValue: true }); }, 100);
     }
 
     window.onload = () => { refreshAll(); };
