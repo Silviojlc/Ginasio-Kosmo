@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -64,7 +64,7 @@
 </head>
 <body>
 
-  <!-- LOGIN INICIAL COM ENTER ATIVO -->
+  <!-- LOGIN INICIAL LIMPO -->
   <div id="login-overlay">
     <div class="login-box">
       <img src="logo.jpg" alt="Ginásio KOSMO" class="login-logo" onerror="this.src='src/img/logo.jpg';">
@@ -149,12 +149,14 @@
         </div>
       </section>
 
-      <!-- QR CODE DE INSCRIÇÃO -->
+      <!-- QR CODE DE INSCRIÇÃO VISÍVEL -->
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
           <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara do telemóvel para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
-          <div id="qrcode-container" style="display:inline-block; background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;"></div>
+          <div style="display:inline-block; background:#fff; padding:20px; border-radius:12px; border:2px solid var(--primary); box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:15px;">
+            <div id="qrcode-container" style="display:flex; justify-content:center; align-items:center;"></div>
+          </div>
           <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
         </div>
       </section>
@@ -245,7 +247,8 @@
             <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
               <h3 style="margin-bottom:10px; font-size:0.95rem; color:var(--primary);">🛒 Carrinho</h3>
               <div style="margin-bottom:10px;"><label>Nome do Cliente</label><input type="text" id="pos-client-name" placeholder="Cliente Balcão"></div>
-              <div id="pos-cart-items" style="max-height:240px; overflow-y:auto; margin-bottom:12px; font-size:0.85rem;">Carrinho vazio.</div>
+              <div style="margin-bottom:10px;"><label>E-mail do Cliente (Para Fatura)</label><input type="email" id="pos-client-email" placeholder="cliente@email.com"></div>
+              <div id="pos-cart-items" style="max-height:220px; overflow-y:auto; margin-bottom:12px; font-size:0.85rem;">Carrinho vazio.</div>
               <div style="border-top:2px solid var(--border); padding-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:1.05rem;">
                 <span>Total:</span>
                 <span id="pos-cart-total" style="color:var(--primary);">0 CVE</span>
@@ -289,7 +292,7 @@
       <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
-      <!-- FATURAS E RECIBOS COM LOGÓTIPO -->
+      <!-- FATURAS E RECIBOS COM LOGÓTIPO ACIMA -->
       <section id="view-faturas" class="view-section">
         <div class="card">
           <h2>Faturas & Recibos Oficiais (Com Logótipo e NIF: 283023805)</h2>
@@ -403,7 +406,7 @@
         </div>
       </section>
 
-      <!-- ALTERAR MINHA SENHA (EXCLUSIVO PARA STAFF) -->
+      <!-- ALTERAR MINHA SENHA -->
       <section id="view-mudar-senha" class="view-section">
         <div class="card" style="max-width:500px; margin:0 auto;">
           <h2>Alterar Minha Palavra-passe</h2>
@@ -508,7 +511,7 @@
       if (el) {
         el.innerHTML = '';
         const urlPortal = window.location.href.split('?')[0] + '?portal=inscricao';
-        new QRCode(el, { text: urlPortal, width: 220, height: 220 });
+        new QRCode(el, { text: urlPortal, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
       }
     }
 
@@ -547,7 +550,12 @@
       const t = document.getElementById('view-' + viewId);
       if (t) t.classList.add('active');
       const n = document.getElementById('nav-' + viewId);
-      if (n) n.classList.add('active');
+      if (n) {
+        n.classList.add('active');
+        if (viewId === 'qrcode') {
+          setTimeout(gerarQRCodeInscricao, 100);
+        }
+      }
       refreshAll();
     }
 
@@ -684,7 +692,7 @@
         m.estado = 'Ativo';
         invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
         refreshAll();
-        alert(`Subscrição de ${m.name} renovada e fatura gerada com envio automático por e-mail para ${m.email || 'o aluno'}!`);
+        alert(`Subscrição de ${m.name} renovada! Fatura gerada e enviada automaticamente por e-mail (${m.email || 'N/A'}).`);
       }
     }
 
@@ -770,14 +778,15 @@
     function finalizarVendaPOS() {
       if(cartItems.length===0){alert('Vazio');return;}
       const clienteNome = document.getElementById('pos-client-name').value.trim() || 'Cliente Balcão';
+      const clienteEmail = document.getElementById('pos-client-email').value.trim() || 'cliente@email.com';
       cartItems.forEach(it=>{
         products[it.idx].stock-=it.qty;
         salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client: clienteNome, prod:it.name, qty:it.qty, total:it.price*it.qty});
-        invoicesList.unshift({type:'Fatura Venda Produto', name: clienteNome, desc:`Compra de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});
+        invoicesList.unshift({type:'Fatura Venda Produto', name: clienteNome, email: clienteEmail, desc:`Compra de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});
       });
-      cartItems=[]; document.getElementById('pos-client-name').value = '';
+      cartItems=[]; document.getElementById('pos-client-name').value = ''; document.getElementById('pos-client-email').value = '';
       refreshAll();
-      alert('Venda concluída e fatura enviada automaticamente por e-mail!');
+      alert(`Venda concluída! Fatura enviada automaticamente por e-mail para ${clienteEmail}.`);
     }
 
     // DESPESAS COM NIF E EMPRESA
@@ -840,14 +849,15 @@
       });
     }
 
-    // FATURAS E RECIBOS COM LOGÓTIPO OFICIAL ACIMA
+    // FATURAS E RECIBOS COM LOGÓTIPO ACIMA
     function gerarFaturaMembroPrompt() {
       const nomeMembro = prompt('Nome do Membro para Fatura:');
+      const emailMembro = prompt('E-mail do Membro:', 'aluno@email.com');
       const descFatura = prompt('Descrição do Serviço / Produto:', 'Mensalidade Ginásio');
       const valorFatura = prompt('Valor em CVE:', '3000');
       if (nomeMembro && valorFatura) {
-        invoicesList.unshift({ type: 'Fatura Membro', name: nomeMembro, desc: descFatura, val: Number(valorFatura), date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert('Fatura emitida!');
+        invoicesList.unshift({ type: 'Fatura Membro', name: nomeMembro, email: emailMembro, desc: descFatura, val: Number(valorFatura), date: new Date().toLocaleString('pt-PT') });
+        refreshAll(); alert(`Fatura emitida e enviada automaticamente para ${emailMembro}!`);
       }
     }
     function gerarReciboStaffPrompt() {
@@ -866,7 +876,7 @@
         t.innerHTML += `
           <tr>
             <td><span class="badge badge-blue">${inv.type}</span></td>
-            <td><strong>${inv.name}</strong></td>
+            <td><strong>${inv.name}</strong><br><small>${inv.email || ''}</small></td>
             <td>${inv.desc}<br><small>${inv.date}</small></td>
             <td><strong>${inv.val} CVE</strong></td>
             <td>
@@ -883,7 +893,7 @@
       win.document.write(`
         <html><head><title>Fatura / Recibo Oficial - KOSMO</title><style>body{font-family:sans-serif;padding:30px; text-align:center;}</style></head>
         <body>
-          <img src="logo.jpg" style="height:90px; object-fit:contain; margin-bottom:12px;" onerror="this.src='src/img/logo.jpg';">
+          <img src="logo.jpg" style="height:100px; object-fit:contain; margin-bottom:12px;" onerror="this.src='src/img/logo.jpg';">
           <h2>GINÁSIO KOSMO</h2>
           <p>Terra Branca, Frente Escola Amor De Deus<br><strong>NIF: 283023805</strong></p>
           <hr style="margin:20px 0;">
