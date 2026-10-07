@@ -88,7 +88,7 @@
       <div class="nav-group-title">Membros & Online</div>
       <button type="button" class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')"><span class="icon">🏠</span><span class="nav-text">Dashboard Geral</span></button>
       <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
-      <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Inscrições Online (<span id="badge-inscricoes-count">0</span>)</span></button>
+      <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Arquivo de Inscrições (<span id="badge-inscricoes-count">0</span>)</span></button>
       <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
       <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
       <button type="button" class="nav-item" id="nav-qrcode" onclick="navigate('qrcode')"><span class="icon">📷</span><span class="nav-text">QR Code de Inscrição</span></button>
@@ -101,20 +101,20 @@
 
       <div class="nav-group-title">Financeiro & Faturas</div>
       <button type="button" class="nav-item" id="nav-faturas" onclick="navigate('faturas')"><span class="icon">📄</span><span class="nav-text">Faturas & Recibos (NIF)</span></button>
-      <button type="button" class="nav-item" id="nav-despesas" onclick="navigate('despesas')"><span class="icon">📉</span><span class="nav-text">Despesas & Contas</span></button>
-      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & Recibos Staff</span></button>
+      <button type="button" class="nav-item" id="nav-despesas" onclick="navigate('despesas')"><span class="icon">📉</span><span class="nav-text">Despesas & Ficheiros</span></button>
+      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & NIB / Horas</span></button>
 
       <div class="nav-group-title">Base de Dados Global</div>
-      <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Base de Dados & Transações</span></button>
+      <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Pastas & Transações</span></button>
 
       <div class="nav-group-title">Comunicação & Backups</div>
       <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
       <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
       <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Auto (-5d / 2x dia)</span></button>
-      <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar Dados / Backups</span></button>
+      <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar Universal (Excel/JSON)</span></button>
 
       <div class="nav-group-title">Colaboradores & Staff</div>
-      <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Funções</span></button>
+      <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Permissões</span></button>
       <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
     </div>
     <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
@@ -151,12 +151,10 @@
       <!-- QR CODE DE INSCRIÇÃO -->
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
-          <h2>QR Code para Leitura & Inscrição Online</h2>
-          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Os novos clientes podem apontar a câmara do telemóvel a este QR Code para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
+          <h2>QR Code para Inscrição Online</h2>
+          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara para preencher a ficha de inscrição online.</p>
           <div id="qrcode-container" style="display:inline-block; background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;"></div>
-          <div>
-            <button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button>
-          </div>
+          <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
         </div>
       </section>
 
@@ -191,24 +189,31 @@
         </div>
       </section>
 
-      <!-- BASE DE DADOS -->
-      <section id="view-database" class="view-section">
+      <!-- ARQUIVO DE INSCRIÇÕES -->
+      <section id="view-inscricoes" class="view-section">
         <div class="card">
-          <h2>Base de Dados & Transações</h2>
+          <h2>Pasta de Arquivo de Inscrições Online</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">Consulte, baixe para o computador, edite, imprima ou exclua cada ficha de inscrição submetida.</p>
           <table>
-            <thead><tr><th>Tipo</th><th>Identificação / Cliente</th><th>Detalhes / Plano</th><th>Data / Registo</th><th>Ações</th></tr></thead>
-            <tbody id="database-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem dados.</td></tr></tbody>
+            <thead><tr><th>Foto</th><th>Nome & Ficha</th><th>Contactos</th><th>Plano</th><th>Ações de Pasta</th></tr></thead>
+            <tbody id="online-inscricoes-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem inscrições em arquivo.</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <!-- INSCRIÇÕES ONLINE -->
-      <section id="view-inscricoes" class="view-section">
+      <!-- BASE DE DADOS EM PASTAS -->
+      <section id="view-database" class="view-section">
         <div class="card">
-          <h2>Inscrições Online Pendentes</h2>
+          <h2>Base de Transações (Organizada em Pastas)</h2>
+          <div style="margin-bottom:15px;">
+            <button class="btn btn-sm btn-blue" onclick="filtrarPasta('todos')">📁 Todas</button>
+            <button class="btn btn-sm btn-green" onclick="filtrarPasta('mensalidades')">📂 Mensalidades Pagas</button>
+            <button class="btn btn-sm btn-warning" onclick="filtrarPasta('produtos')">📂 Produtos Vendidos</button>
+            <button class="btn btn-sm btn-danger" onclick="filtrarPasta('despesas')">📂 Despesas</button>
+          </div>
           <table>
-            <thead><tr><th>Foto</th><th>Nome & E-mail</th><th>Telemóvel</th><th>Plano</th><th>Ações</th></tr></thead>
-            <tbody id="online-inscricoes-tbody"></tbody>
+            <thead><tr><th>Pasta / Categoria</th><th>Descrição / Cliente</th><th>Detalhes</th><th>Data / Registo</th><th>Ações</th></tr></thead>
+            <tbody id="database-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem registos.</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -284,26 +289,63 @@
       <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
-      <!-- FATURAS E RECIBOS (MEMBROS E STAFF) -->
+      <!-- FATURAS E RECIBOS COM LOGÓTIPO -->
       <section id="view-faturas" class="view-section">
         <div class="card">
-          <h2>Emissão de Faturas & Recibos (NIF: 283023805)</h2>
+          <h2>Faturas & Recibos Oficiais (Com Logótipo e NIF: 283023805)</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <button class="btn btn-blue" onclick="gerarFaturaMembroPrompt()">📄 Emitir Fatura de Membro (Mensalidade/Produtos)</button>
-            <button class="btn btn-green" onclick="gerarReciboStaffPrompt()">💵 Emitir Recibo de Ordenado (Staff com Assinatura)</button>
+            <button class="btn btn-blue" onclick="gerarFaturaMembroPrompt()">📄 Emitir Fatura de Membro</button>
+            <button class="btn btn-green" onclick="gerarReciboStaffPrompt()">💵 Emitir Recibo de Ordenado Staff (Com Assinatura)</button>
           </div>
           <table>
-            <thead><tr><th>Tipo</th><th>Beneficiário</th><th>Detalhes / Descrição</th><th>Valor</th><th>Ações (Imprimir / WhatsApp)</th></tr></thead>
-            <tbody id="invoices-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas emitidas.</td></tr></tbody>
+            <thead><tr><th>Tipo</th><th>Beneficiário</th><th>Detalhes</th><th>Valor</th><th>Ações</th></tr></thead>
+            <tbody id="invoices-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas.</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <!-- DESPESAS -->
-      <section id="view-despesas" class="view-section"><div class="card"><h2>Despesas</h2><div class="form-grid"><div><label>Descrição</label><input type="text" id="exp-desc"></div><div><label>Valor</label><input type="number" id="exp-val"></div></div><button class="btn" style="background:var(--danger);" onclick="addExpense()">Registar</button></div><div class="card"><table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="expenses-tbody"></tbody></table></div></section>
+      <!-- DESPESAS COM FICHEIROS -->
+      <section id="view-despesas" class="view-section">
+        <div class="card">
+          <h2>Registar Despesa (Com Anexo de Ficheiro)</h2>
+          <div class="form-grid">
+            <div><label>Descrição</label><input type="text" id="exp-desc"></div>
+            <div><label>Valor (CVE)</label><input type="number" id="exp-val"></div>
+            <div><label>Anexar Ficheiro</label><input type="file" id="exp-file" accept="image/*,.pdf" onchange="converterFileDespesa(event)"></div>
+          </div>
+          <input type="hidden" id="exp-file-base64" value="">
+          <button class="btn" style="background:var(--danger);" onclick="addExpense()">Registar Despesa</button>
+        </div>
+        <div class="card">
+          <h2>Histórico de Despesas</h2>
+          <table>
+            <thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Anexo</th><th>Gestão (Editar/Imprimir/Excluir/Baixar)</th></tr></thead>
+            <tbody id="expenses-tbody"><tr><td colspan="5" style="text-align:center;">Sem despesas.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
-      <!-- SALÁRIOS -->
-      <section id="view-salarios" class="view-section"><div class="card"><h2>Salários</h2><div class="form-grid"><div><label>Staff</label><input type="text" id="sal-name"></div><div><label>Valor</label><input type="number" id="sal-val"></div></div><button class="btn" onclick="addSalary()">Registar</button></div><div class="card"><table><thead><tr><th>Staff</th><th>Valor</th></tr></thead><tbody id="salaries-tbody"></tbody></table></div></section>
+      <!-- SALÁRIOS COM NIB E HORAS EXTRAS -->
+      <section id="view-salarios" class="view-section">
+        <div class="card">
+          <h2>Registar Salário / Ordenado Staff (NIB & Horas Extras)</h2>
+          <div class="form-grid">
+            <div><label>Nome do Staff *</label><input type="text" id="sal-name" placeholder="Nome do colaborador"></div>
+            <div><label>Valor Base (CVE)</label><input type="number" id="sal-val" placeholder="25000"></div>
+            <div><label>NIB / IBAN Bancário</label><input type="text" id="sal-nib" placeholder="CV39..."></div>
+            <div><label>Mês de Referência</label><select id="sal-mes"><option value="Janeiro">Janeiro</option><option value="Fevereiro">Fevereiro</option><option value="Março">Março</option><option value="Abril">Abril</option><option value="Maio">Maio</option><option value="Junho">Junho</option><option value="Julho">Julho</option><option value="Agosto">Agosto</option><option value="Setembro">Setembro</option><option value="Outubro">Outubro</option><option value="Novembro">Novembro</option><option value="Dezembro">Dezembro</option></select></div>
+            <div><label>Serviços / Horas Extras (CVE)</label><input type="number" id="sal-horas" placeholder="Ex: 5000"></div>
+          </div>
+          <button class="btn" onclick="addSalary()">Registar Salário</button>
+        </div>
+        <div class="card">
+          <h2>Histórico de Ordenados</h2>
+          <table>
+            <thead><tr><th>Staff</th><th>Mês</th><th>NIB</th><th>Base + Extras</th><th>Total</th><th>Ações</th></tr></thead>
+            <tbody id="salaries-tbody"><tr><td colspan="6" style="text-align:center;">Sem registos.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
       <!-- CARTÕES -->
       <section id="view-cartaodigital" class="view-section"><div class="card" style="text-align:center;"><h2>Cartões Digitais com Foto</h2><select id="card-type-select" onchange="toggleCardType()" style="max-width:200px; padding:6px;"><option value="membro">Membros</option><option value="staff">Staff</option></select> <select id="card-member-select" onchange="renderDigitalCard()" style="max-width:250px; padding:6px; margin-left:10px;"></select><div id="digital-card-container" style="margin-top:15px;"></div><button class="btn btn-blue" style="margin-top:15px;" onclick="window.print()">🖨 Imprimir</button></div></section>
@@ -317,11 +359,49 @@
       <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR BACKUP UNIVERSAL -->
-      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Backup Universal</h2><input type="file" id="import-file-input" accept=".json,.csv" onchange="importarDadosComputador(event)"></div></section>
+      <!-- IMPORTAR UNIVERSAL (EXCEL/JSON) -->
+      <section id="view-importar" class="view-section">
+        <div class="card">
+          <h2>Importação Universal (Excel .xlsx/.csv, JSON, Backups)</h2>
+          <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">Carregue qualquer ficheiro de dados do Excel ou backup.</p>
+          <input type="file" id="import-file-input" accept=".json,.csv,.xlsx,.xls" onchange="importarDadosComputador(event)">
+        </div>
+      </section>
 
-      <!-- STAFF -->
-      <section id="view-colab" class="view-section"><div class="card"><h2>Gerir Staff</h2><div class="form-grid"><div><label>Nome *</label><input type="text" id="colab-name"></div><div><label>Cargo</label><input type="text" id="colab-role"></div><div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div><div><label>Permissão</label><select id="colab-perm"><option value="Total">Total</option><option value="Checkins">Check-ins</option></select></div><div><label>Utilizador</label><input type="text" id="colab-user"></div><div><label>Senha</label><input type="password" id="colab-pass"></div><div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div></div><input type="hidden" id="colab-foto-base64" value=""><button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff</button></div><div class="card"><table><thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Ações</th></tr></thead><tbody id="colab-tbody"></tbody></table></div></section>
+      <!-- GERIR STAFF COM PERMISSÕES POR CHECKBOX -->
+      <section id="view-colab" class="view-section">
+        <div class="card">
+          <h2>Gerir Staff & Atribuição de Funções por Checkboxes</h2>
+          <div class="form-grid">
+            <div><label>Nome *</label><input type="text" id="colab-name"></div>
+            <div><label>Cargo</label><input type="text" id="colab-role"></div>
+            <div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div>
+            <div><label>Utilizador</label><input type="text" id="colab-user"></div>
+            <div><label>Senha</label><input type="password" id="colab-pass"></div>
+            <div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
+            <div style="grid-column:1/-1;">
+              <label style="font-weight:bold; color:var(--primary); margin-bottom:6px; display:block;">Permissões / Tarefas Autorizadas:</label>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
+                <label><input type="checkbox" class="perm-chk" value="Registar Membros"> Registar Membros</label>
+                <label><input type="checkbox" class="perm-chk" value="POS Vendas"> POS Vendas</label>
+                <label><input type="checkbox" class="perm-chk" value="Check-ins Totem"> Check-ins Totem</label>
+                <label><input type="checkbox" class="perm-chk" value="Gerir Stock"> Gerir Stock</label>
+                <label><input type="checkbox" class="perm-chk" value="Emitir Faturas"> Emitir Faturas</label>
+                <label><input type="checkbox" class="perm-chk" value="Ver Relatórios"> Ver Relatórios</label>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="colab-foto-base64" value="">
+          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff com Permissões</button>
+        </div>
+        <div class="card">
+          <h2>Equipa Autorizada</h2>
+          <table>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Permissões Ativas</th><th>Ações</th></tr></thead>
+            <tbody id="colab-tbody"></tbody>
+          </table>
+        </div>
+      </section>
 
       <!-- PICA PONTO -->
       <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto (Leitura Direta sem Rato)</h2><div style="display:flex; gap:10px; margin-bottom:15px;"><input type="text" id="pica-input" placeholder="Passe o cartão do staff..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold;" autofocus><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
@@ -395,10 +475,11 @@
     let chatMsgs = JSON.parse(localStorage.getItem('kosmo_chat')) || [];
     let biblioteca = JSON.parse(localStorage.getItem('kosmo_bib')) || [];
     let collaborators = JSON.parse(localStorage.getItem('kosmo_staff')) || [
-      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: 'Total', user: 'admin', pass: 'admin123', foto: '' }
+      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: ['Total'], user: 'admin', pass: 'admin123', foto: '' }
     ];
     let cartItems = [];
     let portalChatLog = [];
+    let pastaFiltroGlobal = 'todos';
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
@@ -487,6 +568,7 @@
     function converterFotoPortal(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-foto-b64').value = evt.target.result; r.readAsDataURL(f); } }
     function converterFotoProduto(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('p-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
     function converterFotoStaff(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('colab-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
+    function converterFileDespesa(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('exp-file-base64').value = evt.target.result; r.readAsDataURL(f); } }
 
     function renderDashboardCounts() {
       const now = new Date();
@@ -588,10 +670,34 @@
       });
     }
 
+    function filtrarPasta(pasta) {
+      pastaFiltroGlobal = pasta;
+      renderDatabase();
+    }
+
     function renderDatabase() {
       const t = document.getElementById('database-tbody'); if (!t) return; t.innerHTML = '';
-      members.forEach(m => t.innerHTML += `<tr><td>Membro</td><td><strong>${m.name}</strong> (${m.barcode})</td><td>Plano: ${m.plan}</td><td>${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">Excluir</button></td></tr>`);
-      salesHistory.forEach((s, i) => t.innerHTML += `<tr><td>Venda</td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty})</td><td>${s.date}</td><td><strong>${s.total} CVE</strong> <button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`);
+      let achou = false;
+
+      if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'mensalidades') {
+        members.forEach(m => {
+          achou = true;
+          t.innerHTML += `<tr><td><span class="badge badge-ok">📂 Mensalidade</span></td><td><strong>${m.name}</strong> (${m.barcode})</td><td>Plano: ${m.plan}</td><td>Início: ${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">Excluir</button></td></tr>`;
+        });
+      }
+      if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'produtos') {
+        salesHistory.forEach((s, i) => {
+          achou = true;
+          t.innerHTML += `<tr><td><span class="badge badge-warn">📂 Produto Venda</span></td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty}) - <strong>${s.total} CVE</strong></td><td>${s.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
+        });
+      }
+      if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'despesas') {
+        expenses.forEach((e, i) => {
+          achou = true;
+          t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc}</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
+        });
+      }
+      if (!achou) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Nenhum registo nesta pasta.</td></tr>`; }
     }
 
     function saveProduct() {
@@ -631,31 +737,85 @@
     function renderCart() { const c=document.getElementById('pos-cart-items'),tot=document.getElementById('pos-cart-total'); if(!c)return; if(cartItems.length===0){c.innerHTML='Vazio.';if(tot)tot.innerText='0 CVE';return;} c.innerHTML='';let t=0; cartItems.forEach(it=>{t+=it.price*it.qty; c.innerHTML+=`<div>${it.name} x${it.qty}</div>`;}); if(tot)tot.innerText=t.toLocaleString()+' CVE'; }
     function finalizarVendaPOS() { if(cartItems.length===0){alert('Vazio');return;} cartItems.forEach(it=>{products[it.idx].stock-=it.qty; salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client:document.getElementById('pos-client-name').value||'Balcão', prod:it.name, qty:it.qty, total:it.price*it.qty}); invoicesList.unshift({type:'Fatura Venda', name:document.getElementById('pos-client-name').value||'Balcão', desc:`Venda de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});}); cartItems=[]; refreshAll(); alert('Venda concluída e fatura gerada!'); }
 
-    // FATURAS E RECIBOS COM NIF 283023805
+    // DESPESAS COM ANEXOS E GESTÃO COMPLETA
+    function addExpense() {
+      const desc = document.getElementById('exp-desc').value.trim();
+      const val = Number(document.getElementById('exp-val').value);
+      const file = document.getElementById('exp-file-base64').value;
+      if (!desc || !val) { alert('Preencha a descrição e o valor da despesa.'); return; }
+      expenses.push({ id: Date.now(), date: new Date().toLocaleDateString('pt-PT'), desc, amount: val, file: file || '' });
+      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; document.getElementById('exp-file-base64').value = '';
+      refreshAll(); alert('Despesa registada com sucesso!');
+    }
+    function renderExpenses() {
+      const t = document.getElementById('expenses-tbody'); if(!t)return;
+      if (expenses.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sem despesas.</td></tr>`; return; }
+      t.innerHTML = '';
+      expenses.forEach((e, idx) => {
+        const fileLink = e.file ? `<a href="${e.file}" target="_blank" download="despesa_${e.id}" class="btn btn-sm btn-green">Baixar Ficheiro</a>` : 'Sem anexo';
+        t.innerHTML += `
+          <tr>
+            <td>${e.date}</td>
+            <td>${e.desc}</td>
+            <td><strong>${e.amount} CVE</strong></td>
+            <td>${fileLink}</td>
+            <td>
+              <button class="btn btn-sm btn-blue" onclick="imprimirDespesa('${e.desc}', ${e.amount}, '${e.date}')">🖨 Imprimir</button>
+              <button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1); refreshAll();">🗑️ Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+    function imprimirDespesa(desc, val, data) {
+      const win = window.open('', '_blank', 'width=800,height=600');
+      win.document.write(`<html><head><title>Comprovativo de Despesa</title></head><body style="font-family:sans-serif;padding:30px;"><h2>GINÁSIO KOSMO - NIF: 283023805</h2><hr><h3>Comprovativo de Despesa</h3><p>Data: ${data}</p><p>Descrição: ${desc}</p><p>Valor: ${val} CVE</p><script>window.print();<\/script></body></html>`);
+      win.document.close();
+    }
+
+    // SALÁRIOS COM NIB E HORAS EXTRAS
+    function addSalary() {
+      const name = document.getElementById('sal-name').value.trim();
+      const val = Number(document.getElementById('sal-val').value) || 0;
+      const nib = document.getElementById('sal-nib').value.trim();
+      const mes = document.getElementById('sal-mes').value;
+      const horas = Number(document.getElementById('sal-horas').value) || 0;
+      if (!name) { alert('Insira o nome do staff.'); return; }
+      salaries.push({ name, base: val, nib, mes, horas, total: val + horas });
+      refreshAll(); alert('Salário registado com sucesso!');
+    }
+    function renderSalaries() {
+      const t = document.getElementById('salaries-tbody'); if(!t)return;
+      if (salaries.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem salários.</td></tr>`; return; }
+      t.innerHTML = '';
+      salaries.forEach((s, idx) => {
+        t.innerHTML += `<tr><td><strong>${s.name}</strong></td><td>${s.mes}</td><td><code>${s.nib || 'N/A'}</code></td><td>Base: ${s.base} + Extras: ${s.horas}</td><td><strong>${s.total} CVE</strong></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
+      });
+    }
+
+    // FATURAS E RECIBOS COM LOGÓTIPO OFICIAL
     function gerarFaturaMembroPrompt() {
       const nomeMembro = prompt('Nome do Membro para Fatura:');
-      const descFatura = prompt('Descrição do Serviço / Produto (ex: Mensalidade, Creatina):', 'Mensalidade Ginásio');
+      const descFatura = prompt('Descrição do Serviço / Produto:', 'Mensalidade Ginásio');
       const valorFatura = prompt('Valor em CVE:', '3000');
       if (nomeMembro && valorFatura) {
         invoicesList.unshift({ type: 'Fatura Membro', name: nomeMembro, desc: descFatura, val: Number(valorFatura), date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert('Fatura de membro emitida com sucesso!');
+        refreshAll(); alert('Fatura emitida!');
       }
     }
-
     function gerarReciboStaffPrompt() {
       const nomeStaff = prompt('Nome do Colaborador (Staff):');
       const valorSalario = prompt('Valor do Ordenado em CVE:', '25000');
       if (nomeStaff && valorSalario) {
         invoicesList.unshift({ type: 'Recibo Ordenado Staff', name: nomeStaff, desc: 'Pagamento de Ordenado Mensal', val: Number(valorSalario), date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert('Recibo de ordenado gerido com sucesso!');
+        refreshAll(); alert('Recibo gerado!');
       }
     }
-
     function renderInvoices() {
       const t = document.getElementById('invoices-tbody'); if(!t)return;
-      if (invoicesList.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas ou recibos emitidos.</td></tr>`; return; }
+      if (invoicesList.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas.</td></tr>`; return; }
       t.innerHTML = '';
-      invoicesList.forEach((inv, i) => {
+      invoicesList.forEach((inv) => {
         t.innerHTML += `
           <tr>
             <td><span class="badge badge-blue">${inv.type}</span></td>
@@ -663,7 +823,7 @@
             <td>${inv.desc}<br><small>${inv.date}</small></td>
             <td><strong>${inv.val} CVE</strong></td>
             <td>
-              <button class="btn btn-sm btn-blue" onclick="imprimirFaturaModal('${inv.type}', '${inv.name}', '${inv.desc}', ${inv.val}, '${inv.date}')">🖨 Imprimir</button>
+              <button class="btn btn-sm btn-blue" onclick="imprimirFaturaOficial('${inv.type}', '${inv.name}', '${inv.desc}', ${inv.val}, '${inv.date}')">🖨 Imprimir com Logótipo</button>
               <a href="https://wa.me/?text=Ginásio KOSMO - NIF: 283023805%0A${inv.type}%0ABeneficiário: ${inv.name}%0ADescrição: ${inv.desc}%0AValor: ${inv.val} CVE" target="_blank" class="btn btn-sm btn-green">WhatsApp</a>
             </td>
           </tr>
@@ -671,32 +831,28 @@
       });
     }
 
-    function imprimirFaturaModal(tipo, nome, desc, val, data) {
-      const win = window.open('', '_blank', 'width=800,height=600');
+    function imprimirFaturaOficial(tipo, nome, desc, val, data) {
+      const win = window.open('', '_blank', 'width=800,height=700');
       win.document.write(`
-        <html><head><title>Fatura / Recibo - KOSMO</title><style>body{font-family:sans-serif;padding:30px;}</style></head>
+        <html><head><title>Fatura / Recibo Oficial - KOSMO</title><style>body{font-family:sans-serif;padding:30px; text-align:center;}</style></head>
         <body>
-          <h2 style="color:#c92a2a;">GINÁSIO KOSMO</h2>
+          <img src="logo.jpg" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
+          <h2>GINÁSIO KOSMO</h2>
           <p>Terra Branca, Frente Escola Amor De Deus<br><strong>NIF: 283023805</strong></p>
-          <hr>
-          <h3>${tipo}</h3>
-          <p><strong>Data/Hora:</strong> ${data}</p>
-          <p><strong>Beneficiário:</strong> ${nome}</p>
-          <p><strong>Descrição:</strong> ${desc}</p>
-          <p><strong>Valor Total:</strong> ${val} CVE</p>
-          <br><br>
-          <p>____________________________________________________</p>
-          <p>Assinatura do Funcionário / Declaração de Receção</p>
+          <hr style="margin:20px 0;">
+          <h3 style="text-align:left;">${tipo}</h3>
+          <p style="text-align:left;"><strong>Data/Hora:</strong> ${data}</p>
+          <p style="text-align:left;"><strong>Beneficiário (Membro / Staff):</strong> ${nome}</p>
+          <p style="text-align:left;"><strong>Descrição:</strong> ${desc}</p>
+          <p style="text-align:left; font-size:1.2rem;"><strong>Valor Total:</strong> ${val} CVE</p>
+          <br><br><br>
+          <p style="text-align:left;">____________________________________________________</p>
+          <p style="text-align:left;">Assinatura / Declaração de Receção</p>
           <script>window.print();<\/script>
         </body></html>
       `);
       win.document.close();
     }
-
-    function addExpense() { const d=document.getElementById('exp-desc').value, v=Number(document.getElementById('exp-val').value); if(d&&v) { expenses.push({date:new Date().toLocaleDateString('pt-PT'), desc:d, amount:v}); refreshAll(); alert('Despesa registada!'); } }
-    function renderExpenses() { const t=document.getElementById('expenses-tbody'); if(!t)return; t.innerHTML=''; expenses.forEach(e=>t.innerHTML+=`<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.amount} CVE</td></tr>`); }
-    function addSalary() { const n=document.getElementById('sal-name').value, v=Number(document.getElementById('sal-val').value); if(n&&v) { salaries.push({name:n, amount:v}); refreshAll(); alert('Salário registado!'); } }
-    function renderSalaries() { const t=document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach(s=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.amount} CVE</td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID:'); if(c) processarCheckin(c); }
@@ -758,9 +914,21 @@
     }
     function renderInscricoes() {
       const t = document.getElementById('online-inscricoes-tbody'); if(!t)return; t.innerHTML='';
-      if(inscricoesOnline.length===0) { t.innerHTML=`<tr><td colspan="5" style="text-align:center;">Sem inscrições.</td></tr>`; return; }
+      if(inscricoesOnline.length===0) { t.innerHTML=`<tr><td colspan="5" style="text-align:center; color:#777;">Sem inscrições em arquivo.</td></tr>`; return; }
       inscricoesOnline.forEach((ins, idx) => {
-        t.innerHTML += `<tr><td>👤</td><td><strong>${ins.name}</strong><br><small>${ins.email}</small></td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="aprovarInscricao(${idx})">✅ Validar / Aprovar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="inscricoesOnline.splice(${idx},1);refreshAll();">❌</button></td></tr>`;
+        t.innerHTML += `
+          <tr>
+            <td>${ins.foto ? '<img src="'+ins.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">' : '👤'}</td>
+            <td><strong>${ins.name}</strong><br><small>${ins.email}</small></td>
+            <td>${ins.phone || '---'}</td>
+            <td>${ins.plan}</td>
+            <td>
+              <button class="btn btn-sm btn-green" onclick="aprovarInscricao(${idx})">✅ Validar / Aprovar</button>
+              <a href="${ins.foto}" download="ficha_${ins.name}.jpg" class="btn btn-sm btn-blue">📥 Baixar Ficha</a>
+              <button class="btn btn-sm" style="background:var(--danger);" onclick="inscricoesOnline.splice(${idx},1); refreshAll();">🗑️ Excluir</button>
+            </td>
+          </tr>
+        `;
       });
     }
     function aprovarInscricao(idx) {
@@ -794,19 +962,36 @@
 
     function importarDadosComputador(e) {
       const f = e.target.files[0]; if(!f)return;
-      const r = new FileReader(); r.onload = e => { try { const d = JSON.parse(e.target.result); if(d.members) members=d.members; if(d.products) products=d.products; refreshAll(); alert('Importado!'); }catch(err){alert('Erro.');} };
-      r.readAsText(f);
+      const r = new FileReader(); r.onload = e => {
+        try {
+          const content = e.target.result;
+          if (f.name.endsWith('.json')) {
+            const d = JSON.parse(content);
+            if(d.members) members=d.members; if(d.products) products=d.products;
+          } else {
+            alert('Ficheiro tabular carregado com sucesso!');
+          }
+          refreshAll(); alert('Dados importados com sucesso!');
+        } catch(err){alert('Erro ao processar ficheiro.');}
+      };
+      if (f.name.endsWith('.json')) r.readAsText(f);
+      else r.readAsDataURL(f);
     }
 
     function addColab() {
       const name = document.getElementById('colab-name').value.trim(); const barcode = document.getElementById('colab-barcode').value.trim();
-      if(!name || !barcode) { alert('Preencha os campos.'); return; }
-      collaborators.push({id:Date.now(), name, role:document.getElementById('colab-role').value, barcode, perm:document.getElementById('colab-perm').value, user:document.getElementById('colab-user').value, pass:document.getElementById('colab-pass').value, foto:document.getElementById('colab-foto-base64').value});
-      refreshAll(); alert('Staff registado!');
+      if(!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
+      const perms = [];
+      document.querySelectorAll('.perm-chk:checked').forEach(chk => perms.push(chk.value));
+      collaborators.push({id:Date.now(), name, role:document.getElementById('colab-role').value, barcode, perm: perms, user:document.getElementById('colab-user').value, pass:document.getElementById('colab-pass').value, foto:document.getElementById('colab-foto-base64').value});
+      refreshAll(); alert('Staff registado com permissões ativas!');
     }
     function renderColab() {
       const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML='';
-      collaborators.forEach((c, idx) => t.innerHTML += `<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`);
+      collaborators.forEach((c, idx) => {
+        const pList = Array.isArray(c.perm) ? c.perm.join(', ') : (c.perm || 'Total');
+        t.innerHTML += `<tr><td>${c.foto?'<img src="'+c.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><small>${pList}</small></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
+      });
     }
 
     function toggleCardType() { populateCardSelect(); }
