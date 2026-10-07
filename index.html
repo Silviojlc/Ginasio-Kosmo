@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Substituindo por um gerador QR Code via API SVG garantido e infalível -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     :root { --primary: #c92a2a; --primary-dark: #a61e1e; --sidebar-bg: #1e2227; --sidebar-hover: #2a3038; --sidebar-text: #c2c7d0; --bg: #f4f6f9; --card: #ffffff; --success: #2b8a3e; --danger: #d9480f; --warning: #f59f00; --dark: #212529; --border: #dee2e6; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -117,7 +117,7 @@
       <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
       <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
       <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Auto (-5d / 2x dia)</span></button>
-      <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar Universal (Excel/JSON)</span></button>
+      <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar / Exportar Universal</span></button>
 
       <div class="nav-group-title">Colaboradores & Staff</div>
       <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Permissões</span></button>
@@ -155,7 +155,7 @@
         </div>
       </section>
 
-      <!-- QR CODE DE INSCRIÇÃO VISÍVEL (VIA API GOOGLE CHARTS NATIVA INFALÍVEL) -->
+      <!-- QR CODE DE INSCRIÇÃO VISÍVEL -->
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
@@ -376,8 +376,17 @@
       <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR -->
-      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Universal (Excel/JSON)</h2><input type="file" id="import-file-input" accept=".json,.csv,.xlsx,.xls" onchange="importarDadosComputador(event)"></div></section>
+      <!-- IMPORTAR / EXPORTAR UNIVERSAL -->
+      <section id="view-importar" class="view-section">
+        <div class="card">
+          <h2>Importar / Exportar Universal (Excel/JSON)</h2>
+          <p style="margin-bottom:12px; color:#666; font-size:0.85rem;">Faça backup de todos os dados do sistema ou importe ficheiros externos.</p>
+          <div style="display:flex; gap:15px; align-items:center;">
+            <div><label>Carregar Backup (.json / .csv)</label><input type="file" id="import-file-input" accept=".json,.csv,.xlsx,.xls" onchange="importarDadosComputador(event)"></div>
+            <div><button class="btn btn-blue" style="margin-top:22px;" onclick="exportarBackupUniversal()">📥 Exportar Dados Completos</button></div>
+          </div>
+        </div>
+      </section>
 
       <!-- GERIR STAFF COM NIF, EDIÇÃO E ALTERAÇÃO DE SENHA -->
       <section id="view-colab" class="view-section">
@@ -522,16 +531,28 @@
       if (el) {
         el.innerHTML = '';
         const urlPortal = window.location.href.split('?')[0] + '?portal=inscricao';
-        // Gerador de QR Code infalível baseado em imagem SVG da API oficial pública do Google Chart
+        // Gerador direto por imagem via API infalível (sem depender de scripts locais bloqueados)
         const qrImg = document.createElement('img');
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(urlPortal)}`;
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(urlPortal)}`;
         qrImg.alt = "QR Code Inscrição KOSMO";
-        qrImg.style.width = "240px";
-        qrImg.style.height = "240px";
+        qrImg.style.width = "250px";
+        qrImg.style.height = "250px";
         qrImg.style.display = "block";
         qrImg.style.margin = "0 auto";
         el.appendChild(qrImg);
       }
+    }
+
+    function exportarBackupUniversal() {
+      const dataObj = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, collaborators };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "kosmo_backup_universal.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      alert('Backup universal exportado com sucesso!');
     }
 
     function onLoginKey(e) {
