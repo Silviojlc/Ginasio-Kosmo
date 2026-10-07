@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -64,14 +64,14 @@
 </head>
 <body>
 
-  <!-- LOGIN INICIAL LIMPO -->
+  <!-- LOGIN INICIAL COM ENTER ATIVO -->
   <div id="login-overlay">
     <div class="login-box">
       <img src="logo.jpg" alt="Ginásio KOSMO" class="login-logo" onerror="this.src='src/img/logo.jpg';">
       <h3 style="margin-bottom: 6px; color: var(--dark);">Painel de Gestão - KOSMO</h3>
-      <p style="font-size: 0.78rem; color: #666; margin-bottom: 15px;">Insira as suas credenciais para aceder</p>
-      <div style="margin-bottom: 10px; text-align: left;"><label>Utilizador</label><input type="text" id="log-user" placeholder="Insira o utilizador"></div>
-      <div style="margin-bottom: 15px; text-align: left;"><label>Palavra-passe</label><input type="password" id="log-pass" placeholder="Insira a senha"></div>
+      <p style="font-size: 0.78rem; color: #666; margin-bottom: 15px;">Insira as suas credenciais e prima Enter</p>
+      <div style="margin-bottom: 10px; text-align: left;"><label>Utilizador</label><input type="text" id="log-user" placeholder="utilizador" onkeydown="onLoginKey(event)"></div>
+      <div style="margin-bottom: 15px; text-align: left;"><label>Palavra-passe</label><input type="password" id="log-pass" placeholder="senha" onkeydown="onLoginKey(event)"></div>
       <button type="button" class="btn" style="width: 100%; padding: 12px;" onclick="directLogin()">Entrar no Sistema</button>
       <button type="button" class="btn btn-blue" style="width: 100%; padding: 10px; margin-top: 8px;" onclick="abrirPortalInscricao()">🌐 Abrir Portal de Inscrição Online</button>
     </div>
@@ -153,7 +153,7 @@
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
-          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
+          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara do telemóvel para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
           <div id="qrcode-container" style="display:inline-block; background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;"></div>
           <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
         </div>
@@ -512,6 +512,10 @@
       }
     }
 
+    function onLoginKey(e) {
+      if (e.key === 'Enter') directLogin();
+    }
+
     function directLogin() {
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
@@ -680,7 +684,7 @@
         m.estado = 'Ativo';
         invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
         refreshAll();
-        alert(`Subscrição de ${m.name} renovada e fatura gerada com sucesso!`);
+        alert(`Subscrição de ${m.name} renovada e fatura gerada com envio automático por e-mail para ${m.email || 'o aluno'}!`);
       }
     }
 
@@ -773,7 +777,7 @@
       });
       cartItems=[]; document.getElementById('pos-client-name').value = '';
       refreshAll();
-      alert('Venda concluída, stock atualizado e fatura gerada com envio automático!');
+      alert('Venda concluída e fatura enviada automaticamente por e-mail!');
     }
 
     // DESPESAS COM NIF E EMPRESA
@@ -811,7 +815,7 @@
     }
     function imprimirDespesa(desc, val, data, emp, nif) {
       const win = window.open('', '_blank', 'width=800,height=600');
-      win.document.write(`<html><head><title>Comprovativo de Despesa</title></head><body style="font-family:sans-serif;padding:30px; text-align:center;"><img src="logo.jpg" style="height:60px;object-fit:contain;" onerror="this.src='src/img/logo.jpg';"><h2>GINÁSIO KOSMO</h2><p>NIF: 283023805</p><hr><h3>Comprovativo de Despesa</h3><p>Data: ${data}</p><p>Empresa: ${emp} | NIF: ${nif}</p><p>Descrição: ${desc}</p><p>Valor: ${val} CVE</p><script>window.print();<\/script></body></html>`);
+      win.document.write(`<html><head><title>Comprovativo de Despesa</title></head><body style="font-family:sans-serif;padding:30px; text-align:center;"><img src="logo.jpg" style="height:90px;object-fit:contain;margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';"><h2>GINÁSIO KOSMO</h2><p>NIF: 283023805</p><hr><h3>Comprovativo de Despesa</h3><p>Data: ${data}</p><p>Empresa: ${emp} | NIF: ${nif}</p><p>Descrição: ${desc}</p><p>Valor: ${val} CVE</p><script>window.print();<\/script></body></html>`);
       win.document.close();
     }
 
