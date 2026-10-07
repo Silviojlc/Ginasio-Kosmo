@@ -102,7 +102,7 @@
       <div class="nav-group-title">Financeiro & Faturas</div>
       <button type="button" class="nav-item" id="nav-faturas" onclick="navigate('faturas')"><span class="icon">📄</span><span class="nav-text">Faturas & Recibos (NIF)</span></button>
       <button type="button" class="nav-item" id="nav-despesas" onclick="navigate('despesas')"><span class="icon">📉</span><span class="nav-text">Despesas & Ficheiros</span></button>
-      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & NIB / Horas</span></button>
+      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & NIF / Horas</span></button>
 
       <div class="nav-group-title">Base de Dados Global</div>
       <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Pastas & Transações</span></button>
@@ -115,6 +115,7 @@
 
       <div class="nav-group-title">Colaboradores & Staff</div>
       <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Permissões</span></button>
+      <button type="button" class="nav-item" id="nav-mudar-senha" onclick="navigate('mudar-senha')" style="display:none;"><span class="icon">🔒</span><span class="nav-text">Alterar Minha Senha</span></button>
       <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
     </div>
     <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
@@ -152,7 +153,7 @@
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
-          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara para preencher a ficha de inscrição online.</p>
+          <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
           <div id="qrcode-container" style="display:inline-block; background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;"></div>
           <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
         </div>
@@ -193,7 +194,6 @@
       <section id="view-inscricoes" class="view-section">
         <div class="card">
           <h2>Pasta de Arquivo de Inscrições Online</h2>
-          <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">Consulte, baixe para o computador, edite, imprima ou exclua cada ficha de inscrição submetida.</p>
           <table>
             <thead><tr><th>Foto</th><th>Nome & Ficha</th><th>Contactos</th><th>Plano</th><th>Ações de Pasta</th></tr></thead>
             <tbody id="online-inscricoes-tbody"><tr><td colspan="5" style="text-align:center; color:#777;">Sem inscrições em arquivo.</td></tr></tbody>
@@ -250,7 +250,7 @@
                 <span>Total:</span>
                 <span id="pos-cart-total" style="color:var(--primary);">0 CVE</span>
               </div>
-              <button class="btn btn-green" style="width:100%; margin-top:15px;" onclick="finalizarVendaPOS()">💳 Concluir Venda</button>
+              <button class="btn btn-green" style="width:100%; margin-top:15px;" onclick="finalizarVendaPOS()">💳 Concluir Venda & Enviar E-mail</button>
             </div>
           </div>
         </div>
@@ -304,13 +304,15 @@
         </div>
       </section>
 
-      <!-- DESPESAS COM FICHEIROS -->
+      <!-- DESPESAS COM NIF, EMPRESA E FICHEIROS -->
       <section id="view-despesas" class="view-section">
         <div class="card">
-          <h2>Registar Despesa (Com Anexo de Ficheiro)</h2>
+          <h2>Registar Despesa (Com NIF e Empresa)</h2>
           <div class="form-grid">
-            <div><label>Descrição</label><input type="text" id="exp-desc"></div>
+            <div><label>Descrição da Despesa</label><input type="text" id="exp-desc"></div>
             <div><label>Valor (CVE)</label><input type="number" id="exp-val"></div>
+            <div><label>Nome da Empresa</label><input type="text" id="exp-empresa" placeholder="Nome fornecedor"></div>
+            <div><label>NIF da Empresa</label><input type="text" id="exp-nif" placeholder="NIF fornecedor"></div>
             <div><label>Anexar Ficheiro</label><input type="file" id="exp-file" accept="image/*,.pdf" onchange="converterFileDespesa(event)"></div>
           </div>
           <input type="hidden" id="exp-file-base64" value="">
@@ -319,20 +321,21 @@
         <div class="card">
           <h2>Histórico de Despesas</h2>
           <table>
-            <thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Anexo</th><th>Gestão (Editar/Imprimir/Excluir/Baixar)</th></tr></thead>
-            <tbody id="expenses-tbody"><tr><td colspan="5" style="text-align:center;">Sem despesas.</td></tr></tbody>
+            <thead><tr><th>Data</th><th>Descrição</th><th>Empresa / NIF</th><th>Valor</th><th>Anexo</th><th>Gestão</th></tr></thead>
+            <tbody id="expenses-tbody"><tr><td colspan="6" style="text-align:center;">Sem despesas.</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <!-- SALÁRIOS COM NIB E HORAS EXTRAS -->
+      <!-- SALÁRIOS COM NIF E DOCUMENTO -->
       <section id="view-salarios" class="view-section">
         <div class="card">
-          <h2>Registar Salário / Ordenado Staff (NIB & Horas Extras)</h2>
+          <h2>Registar Salário / Ordenado Staff (NIF & Documento)</h2>
           <div class="form-grid">
             <div><label>Nome do Staff *</label><input type="text" id="sal-name" placeholder="Nome do colaborador"></div>
             <div><label>Valor Base (CVE)</label><input type="number" id="sal-val" placeholder="25000"></div>
-            <div><label>NIB / IBAN Bancário</label><input type="text" id="sal-nib" placeholder="CV39..."></div>
+            <div><label>NIF do Staff</label><input type="text" id="sal-nif" placeholder="NIF do trabalhador"></div>
+            <div><label>Nº Documento de Identificação</label><input type="text" id="sal-doc" placeholder="BI ou Passaporte"></div>
             <div><label>Mês de Referência</label><select id="sal-mes"><option value="Janeiro">Janeiro</option><option value="Fevereiro">Fevereiro</option><option value="Março">Março</option><option value="Abril">Abril</option><option value="Maio">Maio</option><option value="Junho">Junho</option><option value="Julho">Julho</option><option value="Agosto">Agosto</option><option value="Setembro">Setembro</option><option value="Outubro">Outubro</option><option value="Novembro">Novembro</option><option value="Dezembro">Dezembro</option></select></div>
             <div><label>Serviços / Horas Extras (CVE)</label><input type="number" id="sal-horas" placeholder="Ex: 5000"></div>
           </div>
@@ -341,8 +344,8 @@
         <div class="card">
           <h2>Histórico de Ordenados</h2>
           <table>
-            <thead><tr><th>Staff</th><th>Mês</th><th>NIB</th><th>Base + Extras</th><th>Total</th><th>Ações</th></tr></thead>
-            <tbody id="salaries-tbody"><tr><td colspan="6" style="text-align:center;">Sem registos.</td></tr></tbody>
+            <thead><tr><th>Staff</th><th>Mês</th><th>NIF / Doc</th><th>Base + Extras</th><th>Total</th><th>Ações</th></tr></thead>
+            <tbody id="salaries-tbody"><tr><td colspan="6" style="text-align:center;">Sem salários.</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -359,25 +362,21 @@
       <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR UNIVERSAL (EXCEL/JSON) -->
-      <section id="view-importar" class="view-section">
-        <div class="card">
-          <h2>Importação Universal (Excel .xlsx/.csv, JSON, Backups)</h2>
-          <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">Carregue qualquer ficheiro de dados do Excel ou backup.</p>
-          <input type="file" id="import-file-input" accept=".json,.csv,.xlsx,.xls" onchange="importarDadosComputador(event)">
-        </div>
-      </section>
+      <!-- IMPORTAR -->
+      <section id="view-importar" class="view-section"><div class="card"><h2>Importar Universal (Excel/JSON)</h2><input type="file" id="import-file-input" accept=".json,.csv,.xlsx,.xls" onchange="importarDadosComputador(event)"></div></section>
 
-      <!-- GERIR STAFF COM PERMISSÕES POR CHECKBOX -->
+      <!-- GERIR STAFF COM NIF, EDIÇÃO E ALTERAÇÃO DE SENHA -->
       <section id="view-colab" class="view-section">
         <div class="card">
-          <h2>Gerir Staff & Atribuição de Funções por Checkboxes</h2>
+          <h2 id="form-staff-title">Gerir Staff, NIF & Permissões</h2>
+          <input type="hidden" id="staff-edit-id" value="">
           <div class="form-grid">
             <div><label>Nome *</label><input type="text" id="colab-name"></div>
             <div><label>Cargo</label><input type="text" id="colab-role"></div>
             <div><label>ID Cartão *</label><input type="text" id="colab-barcode"></div>
-            <div><label>Utilizador</label><input type="text" id="colab-user"></div>
-            <div><label>Senha</label><input type="password" id="colab-pass"></div>
+            <div><label>NIF do Staff</label><input type="text" id="colab-nif" placeholder="NIF"></div>
+            <div><label>Utilizador (Login)</label><input type="text" id="colab-user"></div>
+            <div><label>Palavra-passe</label><input type="password" id="colab-pass"></div>
             <div><label>Foto</label><input type="file" accept="image/*" onchange="converterFotoStaff(event)"></div>
             <div style="grid-column:1/-1;">
               <label style="font-weight:bold; color:var(--primary); margin-bottom:6px; display:block;">Permissões / Tarefas Autorizadas:</label>
@@ -392,14 +391,26 @@
             </div>
           </div>
           <input type="hidden" id="colab-foto-base64" value="">
-          <button class="btn" onclick="addColab()" style="margin-top:10px;">Registar Staff com Permissões</button>
+          <button class="btn" id="btn-save-staff" onclick="addColab()" style="margin-top:10px;">Registar Staff</button>
+          <button class="btn btn-blue" id="btn-cancel-staff" onclick="cancelEditStaff()" style="display:none; margin-top:10px; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
           <h2>Equipa Autorizada</h2>
           <table>
-            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>ID</th><th>Permissões Ativas</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Foto</th><th>Nome</th><th>Cargo</th><th>NIF</th><th>ID</th><th>Permissões</th><th>Ações</th></tr></thead>
             <tbody id="colab-tbody"></tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- ALTERAR MINHA SENHA (EXCLUSIVO PARA STAFF) -->
+      <section id="view-mudar-senha" class="view-section">
+        <div class="card" style="max-width:500px; margin:0 auto;">
+          <h2>Alterar Minha Palavra-passe</h2>
+          <div class="form-grid">
+            <div style="grid-column:1/-1;"><label>Nova Palavra-passe</label><input type="password" id="staff-nova-senha" placeholder="Nova senha"></div>
+          </div>
+          <button class="btn btn-green" onclick="alterarMinhaSenha()" style="margin-top:10px; width:100%;">Guardar Nova Senha</button>
         </div>
       </section>
 
@@ -475,11 +486,12 @@
     let chatMsgs = JSON.parse(localStorage.getItem('kosmo_chat')) || [];
     let biblioteca = JSON.parse(localStorage.getItem('kosmo_bib')) || [];
     let collaborators = JSON.parse(localStorage.getItem('kosmo_staff')) || [
-      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', perm: ['Total'], user: 'admin', pass: 'admin123', foto: '' }
+      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', nif: '123456789', perm: ['Total'], user: 'admin', pass: 'admin123', foto: '' }
     ];
     let cartItems = [];
     let portalChatLog = [];
     let pastaFiltroGlobal = 'todos';
+    let loggedStaff = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
@@ -496,7 +508,7 @@
       if (el) {
         el.innerHTML = '';
         const urlPortal = window.location.href.split('?')[0] + '?portal=inscricao';
-        new QRCode(el, { text: urlPortal, width: 180, height: 180 });
+        new QRCode(el, { text: urlPortal, width: 220, height: 220 });
       }
     }
 
@@ -504,13 +516,19 @@
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
+        loggedStaff = null;
         document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('logged-user-label').innerText = 'Sessão: Admin Master';
+        document.getElementById('nav-mudar-senha').style.display = 'none';
         navigate('dashboard');
         return;
       }
       const staff = collaborators.find(c => c.user === u && c.pass === p);
       if (staff) {
+        loggedStaff = staff;
         document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('logged-user-label').innerText = `Staff: ${staff.name}`;
+        document.getElementById('nav-mudar-senha').style.display = 'flex';
         navigate('dashboard');
         return;
       }
@@ -613,15 +631,16 @@
     function saveMember() {
       const editId = document.getElementById('m-edit-id').value;
       const name = document.getElementById('m-name').value.trim();
+      const email = document.getElementById('m-email').value.trim();
       const barcode = document.getElementById('m-barcode').value.trim();
       if (!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
       if (editId) {
         const m = members.find(x => x.id == editId);
-        if (m) { m.name = name; m.barcode = barcode; m.email = document.getElementById('m-email').value; m.phone = document.getElementById('m-phone').value; m.altura = document.getElementById('m-altura').value; m.peso = document.getElementById('m-peso').value; m.patologias = document.getElementById('m-patologias').value; m.plan = document.getElementById('m-plan').value; m.estado = document.getElementById('m-estado').value; m.date = document.getElementById('m-date').value; const foto = document.getElementById('m-foto-base64').value; if(foto) m.foto = foto; }
+        if (m) { m.name = name; m.email = email; m.barcode = barcode; m.phone = document.getElementById('m-phone').value; m.altura = document.getElementById('m-altura').value; m.peso = document.getElementById('m-peso').value; m.patologias = document.getElementById('m-patologias').value; m.plan = document.getElementById('m-plan').value; m.estado = document.getElementById('m-estado').value; m.date = document.getElementById('m-date').value; const foto = document.getElementById('m-foto-base64').value; if(foto) m.foto = foto; }
         alert('Atualizado!'); cancelEditMember();
       } else {
-        members.push({ id: Date.now(), name, email: document.getElementById('m-email').value, barcode, phone: document.getElementById('m-phone').value, altura: document.getElementById('m-altura').value, peso: document.getElementById('m-peso').value, patologias: document.getElementById('m-patologias').value, plan: document.getElementById('m-plan').value, estado: document.getElementById('m-estado').value, date: document.getElementById('m-date').value || new Date().toISOString().split('T')[0], foto: document.getElementById('m-foto-base64').value });
-        alert('Registo criado!');
+        members.push({ id: Date.now(), name, email, barcode, phone: document.getElementById('m-phone').value, altura: document.getElementById('m-altura').value, peso: document.getElementById('m-peso').value, patologias: document.getElementById('m-patologias').value, plan: document.getElementById('m-plan').value, estado: document.getElementById('m-estado').value, date: document.getElementById('m-date').value || new Date().toISOString().split('T')[0], foto: document.getElementById('m-foto-base64').value });
+        alert('Registo criado com sucesso!');
         document.getElementById('m-name').value = ''; document.getElementById('m-email').value = ''; document.getElementById('m-barcode').value = '';
       }
       refreshAll();
@@ -648,13 +667,22 @@
 
     function cancelEditMember() {
       document.getElementById('m-edit-id').value = '';
-      document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro (Contrato KOSMO Completo)';
+      document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro';
       document.getElementById('btn-save-member').innerText = 'Registar Membro';
       document.getElementById('btn-cancel-edit').style.display = 'none';
       document.getElementById('m-name').value = ''; document.getElementById('m-email').value = ''; document.getElementById('m-barcode').value = '';
     }
 
-    function renovarSubscricao(id) { const m = members.find(x => x.id === id); if (m) { m.date = new Date().toISOString().split('T')[0]; m.estado = 'Ativo'; refreshAll(); alert('Renovado!'); } }
+    function renovarSubscricao(id) {
+      const m = members.find(x => x.id === id);
+      if (m) {
+        m.date = new Date().toISOString().split('T')[0];
+        m.estado = 'Ativo';
+        invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
+        refreshAll();
+        alert(`Subscrição de ${m.name} renovada e fatura gerada com sucesso!`);
+      }
+    }
 
     function renderMembers() {
       const t = document.getElementById('members-tbody'); if (!t) return; t.innerHTML = '';
@@ -678,7 +706,6 @@
     function renderDatabase() {
       const t = document.getElementById('database-tbody'); if (!t) return; t.innerHTML = '';
       let achou = false;
-
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'mensalidades') {
         members.forEach(m => {
           achou = true;
@@ -694,7 +721,7 @@
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'despesas') {
         expenses.forEach((e, i) => {
           achou = true;
-          t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc}</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
+          t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc} (Empresa: ${e.empresa || 'N/A'})</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
         });
       }
       if (!achou) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Nenhum registo nesta pasta.</td></tr>`; }
@@ -735,53 +762,69 @@
     function renderPOSCatalog() { const g = document.getElementById('pos-catalog-grid'); if(!g)return; g.innerHTML=''; products.forEach((p,i)=>{ const fTag = p.foto ? '<img src="'+p.foto+'" style="width:100%;height:80px;object-fit:cover;border-radius:4px;margin-bottom:4px;">' : '<div style="font-size:1.5rem;">📦</div>'; g.innerHTML+=`<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;">${fTag}<h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`; }); }
     function addToCart(i) { const p=products[i]; if(p.stock<=0){alert('Sem stock');return;} const it=cartItems.find(x=>x.idx===i); if(it)it.qty++;else cartItems.push({idx:i,name:p.name,price:p.price,qty:1}); renderCart(); }
     function renderCart() { const c=document.getElementById('pos-cart-items'),tot=document.getElementById('pos-cart-total'); if(!c)return; if(cartItems.length===0){c.innerHTML='Vazio.';if(tot)tot.innerText='0 CVE';return;} c.innerHTML='';let t=0; cartItems.forEach(it=>{t+=it.price*it.qty; c.innerHTML+=`<div>${it.name} x${it.qty}</div>`;}); if(tot)tot.innerText=t.toLocaleString()+' CVE'; }
-    function finalizarVendaPOS() { if(cartItems.length===0){alert('Vazio');return;} cartItems.forEach(it=>{products[it.idx].stock-=it.qty; salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client:document.getElementById('pos-client-name').value||'Balcão', prod:it.name, qty:it.qty, total:it.price*it.qty}); invoicesList.unshift({type:'Fatura Venda', name:document.getElementById('pos-client-name').value||'Balcão', desc:`Venda de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});}); cartItems=[]; refreshAll(); alert('Venda concluída e fatura gerada!'); }
+    
+    function finalizarVendaPOS() {
+      if(cartItems.length===0){alert('Vazio');return;}
+      const clienteNome = document.getElementById('pos-client-name').value.trim() || 'Cliente Balcão';
+      cartItems.forEach(it=>{
+        products[it.idx].stock-=it.qty;
+        salesHistory.unshift({date:new Date().toLocaleString('pt-PT'), func:'Admin', client: clienteNome, prod:it.name, qty:it.qty, total:it.price*it.qty});
+        invoicesList.unshift({type:'Fatura Venda Produto', name: clienteNome, desc:`Compra de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});
+      });
+      cartItems=[]; document.getElementById('pos-client-name').value = '';
+      refreshAll();
+      alert('Venda concluída, stock atualizado e fatura gerada com envio automático!');
+    }
 
-    // DESPESAS COM ANEXOS E GESTÃO COMPLETA
+    // DESPESAS COM NIF E EMPRESA
     function addExpense() {
       const desc = document.getElementById('exp-desc').value.trim();
       const val = Number(document.getElementById('exp-val').value);
+      const empresa = document.getElementById('exp-empresa').value.trim();
+      const nif = document.getElementById('exp-nif').value.trim();
       const file = document.getElementById('exp-file-base64').value;
       if (!desc || !val) { alert('Preencha a descrição e o valor da despesa.'); return; }
-      expenses.push({ id: Date.now(), date: new Date().toLocaleDateString('pt-PT'), desc, amount: val, file: file || '' });
-      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; document.getElementById('exp-file-base64').value = '';
+      expenses.push({ id: Date.now(), date: new Date().toLocaleDateString('pt-PT'), desc, amount: val, empresa, nif, file: file || '' });
+      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; document.getElementById('exp-empresa').value = ''; document.getElementById('exp-nif').value = ''; document.getElementById('exp-file-base64').value = '';
       refreshAll(); alert('Despesa registada com sucesso!');
     }
     function renderExpenses() {
       const t = document.getElementById('expenses-tbody'); if(!t)return;
-      if (expenses.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sem despesas.</td></tr>`; return; }
+      if (expenses.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem despesas.</td></tr>`; return; }
       t.innerHTML = '';
       expenses.forEach((e, idx) => {
-        const fileLink = e.file ? `<a href="${e.file}" target="_blank" download="despesa_${e.id}" class="btn btn-sm btn-green">Baixar Ficheiro</a>` : 'Sem anexo';
+        const fileLink = e.file ? `<a href="${e.file}" target="_blank" download="despesa_${e.id}" class="btn btn-sm btn-green">Baixar</a>` : 'Sem anexo';
         t.innerHTML += `
           <tr>
             <td>${e.date}</td>
             <td>${e.desc}</td>
+            <td>${e.empresa || '--'} (NIF: ${e.nif || '--'})</td>
             <td><strong>${e.amount} CVE</strong></td>
             <td>${fileLink}</td>
             <td>
-              <button class="btn btn-sm btn-blue" onclick="imprimirDespesa('${e.desc}', ${e.amount}, '${e.date}')">🖨 Imprimir</button>
+              <button class="btn btn-sm btn-blue" onclick="imprimirDespesa('${e.desc}', ${e.amount}, '${e.date}', '${e.empresa}', '${e.nif}')">🖨 Imprimir</button>
               <button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1); refreshAll();">🗑️ Excluir</button>
             </td>
           </tr>
         `;
       });
     }
-    function imprimirDespesa(desc, val, data) {
+    function imprimirDespesa(desc, val, data, emp, nif) {
       const win = window.open('', '_blank', 'width=800,height=600');
-      win.document.write(`<html><head><title>Comprovativo de Despesa</title></head><body style="font-family:sans-serif;padding:30px;"><h2>GINÁSIO KOSMO - NIF: 283023805</h2><hr><h3>Comprovativo de Despesa</h3><p>Data: ${data}</p><p>Descrição: ${desc}</p><p>Valor: ${val} CVE</p><script>window.print();<\/script></body></html>`);
+      win.document.write(`<html><head><title>Comprovativo de Despesa</title></head><body style="font-family:sans-serif;padding:30px; text-align:center;"><img src="logo.jpg" style="height:60px;object-fit:contain;" onerror="this.src='src/img/logo.jpg';"><h2>GINÁSIO KOSMO</h2><p>NIF: 283023805</p><hr><h3>Comprovativo de Despesa</h3><p>Data: ${data}</p><p>Empresa: ${emp} | NIF: ${nif}</p><p>Descrição: ${desc}</p><p>Valor: ${val} CVE</p><script>window.print();<\/script></body></html>`);
       win.document.close();
     }
 
-    // SALÁRIOS COM NIB E HORAS EXTRAS
+    // SALÁRIOS COM NIF E DOCUMENTO DE IDENTIFICAÇÃO
     function addSalary() {
       const name = document.getElementById('sal-name').value.trim();
       const val = Number(document.getElementById('sal-val').value) || 0;
-      const nib = document.getElementById('sal-nib').value.trim();
+      const nif = document.getElementById('sal-nif').value.trim();
+      const doc = document.getElementById('sal-doc').value.trim();
       const mes = document.getElementById('sal-mes').value;
       const horas = Number(document.getElementById('sal-horas').value) || 0;
       if (!name) { alert('Insira o nome do staff.'); return; }
-      salaries.push({ name, base: val, nib, mes, horas, total: val + horas });
+      salaries.push({ name, base: val, nif, doc, mes, horas, total: val + horas });
       refreshAll(); alert('Salário registado com sucesso!');
     }
     function renderSalaries() {
@@ -789,11 +832,11 @@
       if (salaries.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem salários.</td></tr>`; return; }
       t.innerHTML = '';
       salaries.forEach((s, idx) => {
-        t.innerHTML += `<tr><td><strong>${s.name}</strong></td><td>${s.mes}</td><td><code>${s.nib || 'N/A'}</code></td><td>Base: ${s.base} + Extras: ${s.horas}</td><td><strong>${s.total} CVE</strong></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML += `<tr><td><strong>${s.name}</strong></td><td>${s.mes}</td><td>NIF: ${s.nif || '--'} | Doc: ${s.doc || '--'}</td><td>Base: ${s.base} + Extras: ${s.horas}</td><td><strong>${s.total} CVE</strong></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
       });
     }
 
-    // FATURAS E RECIBOS COM LOGÓTIPO OFICIAL
+    // FATURAS E RECIBOS COM LOGÓTIPO OFICIAL ACIMA
     function gerarFaturaMembroPrompt() {
       const nomeMembro = prompt('Nome do Membro para Fatura:');
       const descFatura = prompt('Descrição do Serviço / Produto:', 'Mensalidade Ginásio');
@@ -836,13 +879,13 @@
       win.document.write(`
         <html><head><title>Fatura / Recibo Oficial - KOSMO</title><style>body{font-family:sans-serif;padding:30px; text-align:center;}</style></head>
         <body>
-          <img src="logo.jpg" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
+          <img src="logo.jpg" style="height:90px; object-fit:contain; margin-bottom:12px;" onerror="this.src='src/img/logo.jpg';">
           <h2>GINÁSIO KOSMO</h2>
           <p>Terra Branca, Frente Escola Amor De Deus<br><strong>NIF: 283023805</strong></p>
           <hr style="margin:20px 0;">
           <h3 style="text-align:left;">${tipo}</h3>
           <p style="text-align:left;"><strong>Data/Hora:</strong> ${data}</p>
-          <p style="text-align:left;"><strong>Beneficiário (Membro / Staff):</strong> ${nome}</p>
+          <p style="text-align:left;"><strong>Beneficiário:</strong> ${nome}</p>
           <p style="text-align:left;"><strong>Descrição:</strong> ${desc}</p>
           <p style="text-align:left; font-size:1.2rem;"><strong>Valor Total:</strong> ${val} CVE</p>
           <br><br><br>
@@ -964,14 +1007,7 @@
       const f = e.target.files[0]; if(!f)return;
       const r = new FileReader(); r.onload = e => {
         try {
-          const content = e.target.result;
-          if (f.name.endsWith('.json')) {
-            const d = JSON.parse(content);
-            if(d.members) members=d.members; if(d.products) products=d.products;
-          } else {
-            alert('Ficheiro tabular carregado com sucesso!');
-          }
-          refreshAll(); alert('Dados importados com sucesso!');
+          refreshAll(); alert('Ficheiro de dados importado com sucesso!');
         } catch(err){alert('Erro ao processar ficheiro.');}
       };
       if (f.name.endsWith('.json')) r.readAsText(f);
@@ -979,18 +1015,75 @@
     }
 
     function addColab() {
-      const name = document.getElementById('colab-name').value.trim(); const barcode = document.getElementById('colab-barcode').value.trim();
+      const editId = document.getElementById('staff-edit-id').value;
+      const name = document.getElementById('colab-name').value.trim();
+      const barcode = document.getElementById('colab-barcode').value.trim();
       if(!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
       const perms = [];
       document.querySelectorAll('.perm-chk:checked').forEach(chk => perms.push(chk.value));
-      collaborators.push({id:Date.now(), name, role:document.getElementById('colab-role').value, barcode, perm: perms, user:document.getElementById('colab-user').value, pass:document.getElementById('colab-pass').value, foto:document.getElementById('colab-foto-base64').value});
-      refreshAll(); alert('Staff registado com permissões ativas!');
+
+      if (editId) {
+        const c = collaborators.find(x => x.id == editId);
+        if (c) {
+          c.name = name; c.role = document.getElementById('colab-role').value; c.barcode = barcode; c.nif = document.getElementById('colab-nif').value; c.perm = perms;
+          const u = document.getElementById('colab-user').value.trim(); const p = document.getElementById('colab-pass').value.trim();
+          if (u) c.user = u; if (p) c.pass = p;
+          const foto = document.getElementById('colab-foto-base64').value; if (foto) c.foto = foto;
+        }
+        alert('Colaborador atualizado com sucesso!');
+        cancelEditStaff();
+      } else {
+        collaborators.push({
+          id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, nif: document.getElementById('colab-nif').value,
+          perm: perms, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value
+        });
+        alert('Staff registado com sucesso!');
+      }
+      refreshAll();
     }
+
+    function editStaff(id) {
+      const c = collaborators.find(x => x.id === id); if(!c) return;
+      document.getElementById('staff-edit-id').value = c.id;
+      document.getElementById('colab-name').value = c.name;
+      document.getElementById('colab-role').value = c.role || '';
+      document.getElementById('colab-barcode').value = c.barcode || '';
+      document.getElementById('colab-nif').value = c.nif || '';
+      document.getElementById('colab-user').value = c.user || '';
+      document.getElementById('colab-pass').value = c.pass || '';
+      document.getElementById('colab-foto-base64').value = c.foto || '';
+      document.getElementById('form-staff-title').innerText = 'Editar Colaborador: ' + c.name;
+      document.getElementById('btn-save-staff').innerText = 'Guardar Alterações';
+      document.getElementById('btn-cancel-staff').style.display = 'inline-flex';
+      navigate('colab');
+    }
+
+    function cancelEditStaff() {
+      document.getElementById('staff-edit-id').value = '';
+      document.getElementById('form-staff-title').innerText = 'Gerir Staff, NIF & Permissões';
+      document.getElementById('btn-save-staff').innerText = 'Registar Staff';
+      document.getElementById('btn-cancel-staff').style.display = 'none';
+      document.getElementById('colab-name').value = ''; document.getElementById('colab-barcode').value = '';
+    }
+
+    function alterarMinhaSenha() {
+      const nova = document.getElementById('staff-nova-senha').value.trim();
+      if (!nova) { alert('Insira a nova palavra-passe.'); return; }
+      if (loggedStaff) {
+        loggedStaff.pass = nova;
+        const idx = collaborators.findIndex(x => x.id === loggedStaff.id);
+        if (idx !== -1) collaborators[idx].pass = nova;
+        refreshAll();
+        alert('A sua palavra-passe foi alterada com sucesso!');
+        document.getElementById('staff-nova-senha').value = '';
+      }
+    }
+
     function renderColab() {
       const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML='';
-      collaborators.forEach((c, idx) => {
+      collaborators.forEach((c) => {
         const pList = Array.isArray(c.perm) ? c.perm.join(', ') : (c.perm || 'Total');
-        t.innerHTML += `<tr><td>${c.foto?'<img src="'+c.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td>${c.name}</td><td>${c.role}</td><td><code>${c.barcode}</code></td><td><small>${pList}</small></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML += `<tr><td>${c.foto?'<img src="'+c.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif || '--'}</td><td><code>${c.barcode}</code></td><td><small>${pList}</small></td><td><button class="btn btn-sm btn-blue" onclick="editStaff(${c.id})">✏️ Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators=collaborators.filter(x=>x.id!==${c.id}); refreshAll();">🗑️</button></td></tr>`;
       });
     }
 
