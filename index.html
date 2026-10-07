@@ -61,7 +61,6 @@
     .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 180px; overflow-y: auto; margin-bottom: 10px; }
     .id-card-wrap { width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
 
-    /* ESTILO EXCLUSIVO PARA IMPRESSÃO LIMPA DO QR CODE */
     @media print {
       body * { visibility: hidden; }
       #printable-qrcode-area, #printable-qrcode-area * { visibility: visible; }
@@ -162,11 +161,11 @@
           <h2>QR Code para Inscrição Online</h2>
           <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara do telemóvel para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
           
-          <div id="printable-qrcode-area" style="display:inline-block; background:#fff; padding:25px; border-radius:12px; border:2px solid var(--primary); box-shadow:0 5px 20px rgba(0,0,0,0.15); margin-bottom:15px;">
-            <img src="logo.jpg" alt="KOSMO" style="height:65px; object-fit:contain; margin-bottom:12px; display:block; margin-left:auto; margin-right:auto;" onerror="this.src='src/img/logo.jpg';">
-            <h3 style="margin-bottom:10px; color:#212529;">INSCRIÇÃO ONLINE - KOSMO</h3>
-            <div id="qrcode-container" style="display:flex; justify-content:center; align-items:center; margin:10px 0;"></div>
-            <p style="font-size:0.8rem; color:#666; margin-top:10px;">Aponte a câmara do telemóvel para se inscrever</p>
+          <div id="printable-qrcode-area" style="display:inline-block; background:#fff; padding:30px; border-radius:12px; border:3px solid var(--primary); box-shadow:0 5px 20px rgba(0,0,0,0.15); margin-bottom:15px;">
+            <img src="logo.jpg" alt="KOSMO" style="height:80px; object-fit:contain; margin-bottom:15px; display:block; margin-left:auto; margin-right:auto;" onerror="this.src='src/img/logo.jpg';">
+            <h3 style="margin-bottom:12px; color:#212529; font-size:1.4rem;">INSCRIÇÃO ONLINE - KOSMO</h3>
+            <div id="qrcode-container" style="display:flex; justify-content:center; align-items:center; margin:15px auto; min-width:240px; min-height:240px; background:#fff;"></div>
+            <p style="font-size:0.95rem; font-weight:bold; color:#444; margin-top:15px;">Aponte a câmara do telemóvel para se inscrever</p>
           </div>
 
           <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
@@ -523,7 +522,15 @@
       if (el) {
         el.innerHTML = '';
         const urlPortal = window.location.href.split('?')[0] + '?portal=inscricao';
-        new QRCode(el, { text: urlPortal, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+        // Gerador nativo e infalível com qrcodejs
+        new QRCode(el, {
+          text: urlPortal,
+          width: 240,
+          height: 240,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
       }
     }
 
@@ -565,7 +572,7 @@
       if (n) {
         n.classList.add('active');
         if (viewId === 'qrcode') {
-          setTimeout(gerarQRCodeInscricao, 150);
+          setTimeout(gerarQRCodeInscricao, 100);
         }
       }
       refreshAll();
