@@ -60,6 +60,13 @@
     .badge-inativo { background: #6c757d; }
     .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 180px; overflow-y: auto; margin-bottom: 10px; }
     .id-card-wrap { width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
+
+    /* ESTILO EXCLUSIVO PARA IMPRESSÃO LIMPA DO QR CODE */
+    @media print {
+      body * { visibility: hidden; }
+      #printable-qrcode-area, #printable-qrcode-area * { visibility: visible; }
+      #printable-qrcode-area { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -154,9 +161,14 @@
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
           <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara do telemóvel para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
-          <div style="display:inline-block; background:#fff; padding:20px; border-radius:12px; border:2px solid var(--primary); box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:15px;">
-            <div id="qrcode-container" style="display:flex; justify-content:center; align-items:center;"></div>
+          
+          <div id="printable-qrcode-area" style="display:inline-block; background:#fff; padding:25px; border-radius:12px; border:2px solid var(--primary); box-shadow:0 5px 20px rgba(0,0,0,0.15); margin-bottom:15px;">
+            <img src="logo.jpg" alt="KOSMO" style="height:65px; object-fit:contain; margin-bottom:12px; display:block; margin-left:auto; margin-right:auto;" onerror="this.src='src/img/logo.jpg';">
+            <h3 style="margin-bottom:10px; color:#212529;">INSCRIÇÃO ONLINE - KOSMO</h3>
+            <div id="qrcode-container" style="display:flex; justify-content:center; align-items:center; margin:10px 0;"></div>
+            <p style="font-size:0.8rem; color:#666; margin-top:10px;">Aponte a câmara do telemóvel para se inscrever</p>
           </div>
+
           <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
         </div>
       </section>
@@ -292,7 +304,7 @@
       <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
-      <!-- FATURAS E RECIBOS COM LOGÓTIPO ACIMA -->
+      <!-- FATURAS E RECIBOS COM LOGÓTIPO -->
       <section id="view-faturas" class="view-section">
         <div class="card">
           <h2>Faturas & Recibos Oficiais (Com Logótipo e NIF: 283023805)</h2>
@@ -553,7 +565,7 @@
       if (n) {
         n.classList.add('active');
         if (viewId === 'qrcode') {
-          setTimeout(gerarQRCodeInscricao, 100);
+          setTimeout(gerarQRCodeInscricao, 150);
         }
       }
       refreshAll();
@@ -690,7 +702,7 @@
       if (m) {
         m.date = new Date().toISOString().split('T')[0];
         m.estado = 'Ativo';
-        invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
+        invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, email: m.email, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
         refreshAll();
         alert(`Subscrição de ${m.name} renovada! Fatura gerada e enviada automaticamente por e-mail (${m.email || 'N/A'}).`);
       }
@@ -857,7 +869,7 @@
       const valorFatura = prompt('Valor em CVE:', '3000');
       if (nomeMembro && valorFatura) {
         invoicesList.unshift({ type: 'Fatura Membro', name: nomeMembro, email: emailMembro, desc: descFatura, val: Number(valorFatura), date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert(`Fatura emitida e enviada automaticamente para ${emailMembro}!`);
+        refreshAll(); alert('Fatura emitida!');
       }
     }
     function gerarReciboStaffPrompt() {
