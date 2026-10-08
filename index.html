@@ -18,27 +18,27 @@
     .login-box { background: #fff; padding: 25px 30px; border-radius: 10px; width: 100%; max-width: 440px; text-align: center; border-top: 5px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .login-logo { width: 100%; height: 85px; object-fit: contain; margin-bottom: 12px; background: #fff; border-radius: 6px; padding: 4px; }
 
-    aside { width: 260px; min-width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; height: 100%; border-right: 1px solid #14171a; transition: transform 0.3s ease; z-index: 1000; }
+    aside { width: 260px; min-width: 260px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; height: 100%; border-right: 1px solid #14171a; transition: transform 0.3s ease; z-index: 1000; will-change: transform; }
     .gym-header { padding: 15px; text-align: center; background: #14171a; border-bottom: 1px solid rgba(255,255,255,0.08); }
     .sidebar-logo { width: 100%; height: 50px; object-fit: contain; background: #fff; border-radius: 6px; padding: 4px; margin-bottom: 6px; }
     .gym-header h3 { font-size: 1.1rem; color: #fff; font-weight: 800; }
     .gym-header p { font-size: 0.72rem; color: #88929b; }
 
-    .menu-scroll { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .menu-scroll { flex: 1; overflow-y: auto; padding: 8px 0; -webkit-overflow-scrolling: touch; }
     .nav-group-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px; color: #6c7884; padding: 12px 16px 4px; font-weight: 700; }
-    .nav-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; font-size: 0.88rem; color: var(--sidebar-text); cursor: pointer; font-weight: 500; border: none; background: transparent; text-align: left; transition: background 0.15s; }
+    .nav-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; font-size: 0.88rem; color: var(--sidebar-text); cursor: pointer; font-weight: 500; border: none; background: transparent; text-align: left; transition: background 0.1s; }
     .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
     .nav-item.active { background: var(--primary); color: #fff; font-weight: 700; }
     .nav-item .icon { font-size: 1.15rem; width: 26px; text-align: center; margin-right: 10px; }
 
-    .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; min-width: 0; }
     header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
     .top-title { font-size: 1.15rem; font-weight: 700; }
 
     .mobile-menu-btn { display: none; background: var(--primary); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; margin-right: 10px; }
 
-    main { flex: 1; overflow-y: auto; padding: 20px; }
-    .view-section { display: none; }
+    main { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+    .view-section { display: none; will-change: contents; }
     .view-section.active { display: block; }
     .card { background: var(--card); border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); overflow-x: auto; }
     h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 8px; }
@@ -47,7 +47,7 @@
     label { font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #495057; }
     input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 0.9rem; background-color: #fff; }
 
-    .btn { background: var(--primary); color: #fff; border: none; padding: 9px 18px; border-radius: 5px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 9px 18px; border-radius: 5px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.1s; }
     .btn:hover { background: var(--primary-dark); }
     .btn-green { background: var(--success); }
     .btn-blue { background: #1971c2; }
@@ -62,7 +62,11 @@
     .badge-err { background: var(--danger); }
     .badge-inativo { background: #6c757d; }
     .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 180px; overflow-y: auto; margin-bottom: 10px; }
-    .id-card-wrap { width: 100%; max-width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
+    
+    .id-card-wrap { width: 100%; max-width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; display: flex; flex-direction: column; align-items: center; }
+    .id-card-top { display: flex; width: 100%; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .id-card-avatar { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #aaa; }
+    .id-card-info { flex: 1; text-align: left; overflow: hidden; }
 
     @media (max-width: 768px) {
       aside { position: fixed; left: -260px; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
@@ -75,6 +79,7 @@
 </head>
 <body>
 
+  <!-- LOGIN INICIAL -->
   <div id="login-overlay">
     <div class="login-box">
       <img src="logo.jpg" alt="Ginásio KOSMO" class="login-logo" onerror="this.src='src/img/logo.jpg';">
@@ -87,6 +92,7 @@
     </div>
   </div>
 
+  <!-- MENU LATERAL -->
   <aside id="sidebar-panel">
     <div class="gym-header">
       <img src="logo.jpg" alt="KOSMO" class="sidebar-logo" onerror="this.src='src/img/logo.jpg';">
@@ -147,20 +153,22 @@
     </header>
 
     <main>
+      <!-- DASHBOARD -->
       <section id="view-dashboard" class="view-section active">
         <div class="card">
           <h2>Dashboard de Membros & Estado</h2>
           <p style="margin-bottom:15px; color:#666;">Clique em cada indicador para revelar a quantidade real e a lista correspondente:</p>
           <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
-            <div onclick="filtrarMembrosDashboard('Ativo')" class="badge badge-ok" style="padding:15px 25px; font-size:1rem; border-radius:8px;">🟢 Ativos: <span id="count-ativos">0</span></div>
-            <div onclick="filtrarMembrosDashboard('A Vencer')" class="badge badge-warn" style="padding:15px 25px; font-size:1rem; border-radius:8px;">🟡 Faltam 5d: <span id="count-avencer">0</span></div>
-            <div onclick="filtrarMembrosDashboard('Expirado')" class="badge badge-err" style="padding:15px 25px; font-size:1rem; border-radius:8px;">🔴 Expirados: <span id="count-expirados">0</span></div>
-            <div onclick="filtrarMembrosDashboard('Inativo')" class="badge badge-inativo" style="padding:15px 25px; font-size:1rem; border-radius:8px;">⚫ Inativos: <span id="count-inativos">0</span></div>
+            <div onclick="filtrarMembrosDashboard('Ativo')" class="badge badge-ok" style="padding:15px 25px; font-size:1rem; border-radius:8px; cursor:pointer;">🟢 Ativos: <span id="count-ativos">0</span></div>
+            <div onclick="filtrarMembrosDashboard('A Vencer')" class="badge badge-warn" style="padding:15px 25px; font-size:1rem; border-radius:8px; cursor:pointer;">🟡 Faltam 5d: <span id="count-avencer">0</span></div>
+            <div onclick="filtrarMembrosDashboard('Expirado')" class="badge badge-err" style="padding:15px 25px; font-size:1rem; border-radius:8px; cursor:pointer;">🔴 Expirados: <span id="count-expirados">0</span></div>
+            <div onclick="filtrarMembrosDashboard('Inativo')" class="badge badge-inativo" style="padding:15px 25px; font-size:1rem; border-radius:8px; cursor:pointer;">⚫ Inativos: <span id="count-inativos">0</span></div>
           </div>
           <div id="dashboard-filtro-resultado" style="margin-top:15px;"></div>
         </div>
       </section>
 
+      <!-- QR CODE DE INSCRIÇÃO -->
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
@@ -175,6 +183,7 @@
         </div>
       </section>
 
+      <!-- MEMBROS -->
       <section id="view-membros" class="view-section">
         <div class="card">
           <h2 id="form-member-title">Registar ou Editar Membro</h2>
@@ -183,31 +192,52 @@
             <div><label>Nome Completo *</label><input type="text" id="m-name" placeholder="Nome do Aluno"></div>
             <div><label>E-mail *</label><input type="email" id="m-email" placeholder="aluno@email.com"></div>
             <div><label>Código / ID Cartão *</label><input type="text" id="m-barcode" placeholder="Ex: 112233"></div>
+            <div><label>NIF do Membro</label><input type="text" id="m-nif" placeholder="NIF"></div>
             <div><label>Telemóvel</label><input type="tel" id="m-phone" placeholder="9988886"></div>
             <div><label>Altura (m)</label><input type="text" id="m-altura" placeholder="Ex: 1.75m"></div>
             <div><label>Peso Atual (kg)</label><input type="text" id="m-peso" placeholder="Ex: 75kg"></div>
             <div style="grid-column:1/-1;"><label>Patologias, lesões ou doenças especiais?</label><textarea id="m-patologias" rows="2"></textarea></div>
-            <div><label>Plano</label><select id="m-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
+            <div>
+              <label>Plano</label>
+              <select id="m-plan" onchange="tratarMudancaPlano()">
+                <option value="Mensal Trabalhador">Mensal Trabalhador</option>
+                <option value="Musculação Mensal">Musculação Mensal</option>
+                <option value="Plano Casal">Plano Casal</option>
+                <option value="Plano Estudante">Plano Estudante</option>
+              </select>
+            </div>
             <div><label>Estado</label><select id="m-estado"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option><option value="Desativado">Desativado</option></select></div>
             <div><label>Data de Início</label><input type="date" id="m-date"></div>
             <div><label>Fotografia Pessoal</label><input type="file" id="m-foto-file" accept="image/*" onchange="converterFotoMembro(event)"></div>
+            <div><label>Documento de Identificação (BI / Passaporte)</label><input type="file" id="m-doc-file" accept="image/*,.pdf" onchange="converterDocMembro(event)"></div>
+            <div id="div-comprovativo-extra" style="grid-column:1/-1; display:none; background:#f8f9fa; padding:10px; border-radius:6px; border:1px dashed var(--primary);">
+              <label id="label-comprovativo-extra" style="color:var(--primary); font-weight:bold;">Comprovativo Específico:</label>
+              <input type="file" id="m-comprovativo-file" accept="image/*,.pdf" onchange="converterComprovativoMembro(event)">
+            </div>
           </div>
           <input type="hidden" id="m-foto-base64" value="">
+          <input type="hidden" id="m-doc-base64" value="">
+          <input type="hidden" id="m-comprovativo-base64" value="">
           <button class="btn" id="btn-save-member" onclick="saveMember()">Registar Membro</button>
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
             <h2>Lista de Membros Ativos</h2>
-            <button class="btn btn-sm" style="background:var(--danger);" onclick="eliminarMembrosSelecionados()">🗑️ Apagar Selecionados</button>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="text" id="input-pesquisa-membros" placeholder="🔍 Pesquisar membro..." oninput="renderMembers()" style="max-width:220px; padding:6px 10px;">
+              <button class="btn btn-sm btn-blue" onclick="ordenarMembrosAZ()">🔤 Ordenar A/Z</button>
+              <button class="btn btn-sm" style="background:var(--danger);" onclick="eliminarMembrosSelecionados()">🗑️ Apagar Selecionados</button>
+            </div>
           </div>
           <table>
-            <thead><tr><th><input type="checkbox" id="selectAllMembers" onclick="toggleSelectAllMembers(this)"></th><th>Foto</th><th>Nome & E-mail</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
+            <thead><tr><th><input type="checkbox" id="selectAllMembers" onclick="toggleSelectAllMembers(this)"></th><th>Foto</th><th>Nome & E-mail</th><th>NIF & ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="members-tbody"></tbody>
           </table>
         </div>
       </section>
 
+      <!-- ARQUIVO DE INSCRIÇÕES -->
       <section id="view-inscricoes" class="view-section">
         <div class="card">
           <h2>Pasta de Arquivo de Inscrições Online</h2>
@@ -218,6 +248,7 @@
         </div>
       </section>
 
+      <!-- BASE DE DADOS EM PASTAS -->
       <section id="view-database" class="view-section">
         <div class="card">
           <h2>Base de Transações (Organizada em Pastas)</h2>
@@ -234,6 +265,7 @@
         </div>
       </section>
 
+      <!-- CHECK-INS -->
       <section id="view-checkins" class="view-section">
         <div class="card">
           <h2>Terminal de Check-ins</h2>
@@ -249,6 +281,7 @@
         </div>
       </section>
 
+      <!-- POS -->
       <section id="view-pos" class="view-section">
         <div class="card">
           <h2>POS - Ponto de Venda & Carrinho</h2>
@@ -272,6 +305,7 @@
         </div>
       </section>
 
+      <!-- PRODUTOS -->
       <section id="view-produtos" class="view-section">
         <div class="card">
           <h2 id="form-prod-title">Registar ou Editar Produto</h2>
@@ -301,10 +335,13 @@
         </div>
       </section>
 
+      <!-- STOCK -->
       <section id="view-stock" class="view-section"><div class="card"><h2>Gestão de Stock</h2><table><thead><tr><th>Produto</th><th>Stock</th><th>Estado</th></tr></thead><tbody id="stock-tbody"></tbody></table></div></section>
 
+      <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
+      <!-- FATURAS -->
       <section id="view-faturas" class="view-section">
         <div class="card">
           <h2>Faturas & Recibos Oficiais (Com Logótipo e NIF: 283023805)</h2>
@@ -319,6 +356,7 @@
         </div>
       </section>
 
+      <!-- DESPESAS -->
       <section id="view-despesas" class="view-section">
         <div class="card">
           <h2>Registar Despesa (Com NIF e Empresa)</h2>
@@ -341,6 +379,7 @@
         </div>
       </section>
 
+      <!-- SALÁRIOS -->
       <section id="view-salarios" class="view-section">
         <div class="card">
           <h2>Registar Salário / Ordenado Staff (NIF & Documento)</h2>
@@ -363,6 +402,7 @@
         </div>
       </section>
 
+      <!-- CARTÕES -->
       <section id="view-cartaodigital" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>Cartões Digitais com Foto</h2>
@@ -375,8 +415,10 @@
         </div>
       </section>
 
+      <!-- CHAT -->
       <section id="view-chat" class="view-section"><div class="card"><h2>Chat Multimédia</h2><div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;"><div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div><div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;"><input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)"><button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar</button><input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()"><button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button></div></div></div></section>
 
+      <!-- BIBLIOTECA -->
       <section id="view-biblioteca" class="view-section">
         <div class="card">
           <h2>Biblioteca de Arquivos & Documentos</h2>
@@ -388,8 +430,10 @@
         </div>
       </section>
 
+      <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
+      <!-- IMPORTAR / EXPORTAR -->
       <section id="view-importar" class="view-section">
         <div class="card">
           <h2>Importação e Exportação por Categorias (GYMMER & KOSMO)</h2>
@@ -427,6 +471,7 @@
         </div>
       </section>
 
+      <!-- GERIR STAFF -->
       <section id="view-colab" class="view-section">
         <div class="card">
           <h2 id="form-staff-title">Gerir Staff, NIF & Permissões</h2>
@@ -464,6 +509,7 @@
         </div>
       </section>
 
+      <!-- ALTERAR SENHA -->
       <section id="view-mudar-senha" class="view-section">
         <div class="card" style="max-width:500px; margin:0 auto;">
           <h2>Alterar Minha Palavra-passe</h2>
@@ -474,10 +520,12 @@
         </div>
       </section>
 
+      <!-- PICA PONTO -->
       <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto</h2><div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;"><input type="text" id="pica-input" placeholder="Passe o cartão do staff..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold; min-width:200px;" autofocus><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
     </main>
   </div>
 
+  <!-- PORTAL INSCRIÇÃO -->
   <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
     <div style="background:#fff; width:100%; max-width:650px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
@@ -509,6 +557,7 @@
     </div>
   </div>
 
+  <!-- MODAL DE CHECK-IN MANUAL POR LISTA -->
   <div id="modal-checkin-lista" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:95000; display:none; justify-content:center; align-items:center; padding:15px;">
     <div style="background:#fff; width:100%; max-width:550px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:85vh; overflow-y:auto; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -527,13 +576,14 @@
     </div>
   </div>
 
+  <!-- SCRIPT MASTER -->
   <script>
     const SUPABASE_URL = 'https://htyhbtbayxreoundolac.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_2Fy-0tjG0UszGVLoHnBdOQ_OtNFPQfY';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
-      { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '' }
+      { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', nif: '123456789', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '', doc: '', comprovativo: '' }
     ];
     let products = JSON.parse(localStorage.getItem('kosmo_produtos')) || [
       { name: 'Creatina 300g', buy: 1800, price: 2500, stock: 12, desc: 'Creatina pura', use: 'Tomar 5g ao dia', foto: '' }
@@ -582,6 +632,7 @@
       }
     }
 
+    // --- CORREÇÃO DO BACKUP UNIVERSAL ---
     function exportarBackupUniversal() {
       const dataObj = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, collaborators };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj, null, 2));
@@ -594,7 +645,6 @@
       alert('Backup universal exportado com sucesso!');
     }
 
-    // --- FUNÇÕES DE ELIMINAÇÃO MÚLTIPLA E INDIVIDUAL CORRIGIDAS ---
     function toggleSelectAllMembers(master) {
       document.querySelectorAll('.member-checkbox').forEach(chk => chk.checked = master.checked);
     }
@@ -621,7 +671,6 @@
       }
     }
 
-    // --- IMPORTAÇÃO E EXPORTAÇÃO POR CATEGORIAS ---
     function importarPorCategoria(tipo) {
       const inputId = tipo === 'ativos' ? 'file-import-ativos' : (tipo === 'expirados' ? 'file-import-expirados' : 'file-import-produtos');
       const inputEl = document.getElementById(inputId);
@@ -673,11 +722,12 @@
                   name: row.Nome || row.name || 'Membro Importado',
                   email: row.Email || row.email || '',
                   barcode: String(row.Codigo || row.barcode || Math.floor(100000 + Math.random()*900000)),
+                  nif: String(row.Nif || row.nif || ''),
                   plan: row.Plano || row.plan || 'Musculação Mensal',
                   estado: tipo === 'expirados' ? 'Inativo' : 'Ativo',
                   phone: String(row.Telemovel || row.phone || ''),
                   date: row.Data || new Date().toISOString().split('T')[0],
-                  foto: ''
+                  foto: '', doc: '', comprovativo: ''
                 });
               }
             });
@@ -765,7 +815,11 @@
       populateCardSelect();
       document.getElementById('badge-inscricoes-count').innerText = inscricoesOnline.length;
 
-      members.forEach(m => { if(m.foto && !biblioteca.some(b => b.url === m.foto)) biblioteca.push({name: `Ficha_${m.name}.jpg`, url: m.foto}); });
+      members.forEach(m => {
+        if(m.foto && !biblioteca.some(b => b.url === m.foto)) biblioteca.push({name: `Ficha_${m.name}.jpg`, url: m.foto});
+        if(m.doc && !biblioteca.some(b => b.url === m.doc)) biblioteca.push({name: `Doc_${m.name}`, url: m.doc});
+        if(m.comprovativo && !biblioteca.some(b => b.url === m.comprovativo)) biblioteca.push({name: `Comprovativo_${m.name}`, url: m.comprovativo});
+      });
 
       localStorage.setItem('kosmo_members', JSON.stringify(members));
       localStorage.setItem('kosmo_produtos', JSON.stringify(products));
@@ -782,10 +836,35 @@
     }
 
     function converterFotoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-foto-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterDocMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-doc-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterComprovativoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-comprovativo-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    
     function converterFotoPortal(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('portal-foto-b64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
     function converterFotoProduto(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('p-foto-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
     function converterFotoStaff(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('colab-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
     function converterFileDespesa(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('exp-file-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+
+    function tratarMudancaPlano() {
+      const plano = document.getElementById('m-plan').value;
+      const divExtra = document.getElementById('div-comprovativo-extra');
+      const lblExtra = document.getElementById('label-comprovativo-extra');
+      if (plano === 'Plano Casal') {
+        divExtra.style.display = 'block';
+        lblExtra.innerText = 'Comprovativo de Casado / Certidão:';
+      } else if (plano === 'Plano Estudante') {
+        divExtra.style.display = 'block';
+        lblExtra.innerText = 'Comprovativo de Estudante (Declaração Escolar):';
+      } else {
+        divExtra.style.display = 'none';
+        document.getElementById('m-comprovativo-base64').value = '';
+        document.getElementById('m-comprovativo-file').value = '';
+      }
+    }
+
+    function ordenarMembrosAZ() {
+      members.sort((a, b) => a.name.localeCompare(b.name, 'pt', { sensitivity: 'base' }));
+      renderMembers();
+    }
 
     function renderDashboardCounts() {
       const now = new Date(); let cAtivos = 0, cAVencer = 0, cExpirados = 0, cInativos = 0;
@@ -827,13 +906,36 @@
       const editId = document.getElementById('m-edit-id').value;
       const name = document.getElementById('m-name').value.trim(); const barcode = document.getElementById('m-barcode').value.trim();
       if (!name || !barcode) { alert('Preencha nome e código.'); return; }
+      const nif = document.getElementById('m-nif').value.trim();
+      const email = document.getElementById('m-email').value.trim();
+      const phone = document.getElementById('m-phone').value.trim();
+      const altura = document.getElementById('m-altura').value.trim();
+      const peso = document.getElementById('m-peso').value.trim();
+      const patologias = document.getElementById('m-patologias').value.trim();
+      const plan = document.getElementById('m-plan').value;
+      const estado = document.getElementById('m-estado').value;
+      const date = document.getElementById('m-date').value;
+      const foto = document.getElementById('m-foto-base64').value;
+      const doc = document.getElementById('m-doc-base64').value;
+      const comprovativo = document.getElementById('m-comprovativo-base64').value;
+
       if (editId) {
         const m = members.find(x => x.id == editId);
-        if (m) { m.name = name; m.email = document.getElementById('m-email').value; m.barcode = barcode; m.phone = document.getElementById('m-phone').value; m.altura = document.getElementById('m-altura').value; m.peso = document.getElementById('m-peso').value; m.patologias = document.getElementById('m-patologias').value; m.plan = document.getElementById('m-plan').value; m.estado = document.getElementById('m-estado').value; m.date = document.getElementById('m-date').value; const foto = document.getElementById('m-foto-base64').value; if(foto) m.foto = foto; }
+        if (m) {
+          m.name = name; m.email = email; m.barcode = barcode; m.nif = nif; m.phone = phone; m.altura = altura; m.peso = peso; m.patologias = patologias; m.plan = plan; m.estado = estado; m.date = date;
+          if(foto) m.foto = foto;
+          if(doc) m.doc = doc;
+          if(comprovativo) m.comprovativo = comprovativo;
+        }
         alert('Atualizado!'); cancelEditMember();
       } else {
-        members.push({ id: Date.now(), name, email: document.getElementById('m-email').value, barcode, phone: document.getElementById('m-phone').value, altura: document.getElementById('m-altura').value, peso: document.getElementById('m-peso').value, patologias: document.getElementById('m-patologias').value, plan: document.getElementById('m-plan').value, estado: document.getElementById('m-estado').value, date: document.getElementById('m-date').value || new Date().toISOString().split('T')[0], foto: document.getElementById('m-foto-base64').value });
-        alert('Membro criado!'); document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+        members.push({
+          id: Date.now(), name, email, barcode, nif, phone, altura, peso, patologias, plan, estado,
+          date: date || new Date().toISOString().split('T')[0],
+          foto, doc, comprovativo
+        });
+        alert('Membro criado!');
+        document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = ''; document.getElementById('m-nif').value = '';
       }
       refreshAll();
     }
@@ -842,10 +944,16 @@
       const m = members.find(x => x.id === id); if (!m) return;
       document.getElementById('m-edit-id').value = m.id; document.getElementById('m-name').value = m.name;
       document.getElementById('m-email').value = m.email || ''; document.getElementById('m-barcode').value = m.barcode;
+      document.getElementById('m-nif').value = m.nif || '';
       document.getElementById('m-phone').value = m.phone || ''; document.getElementById('m-altura').value = m.altura || '';
       document.getElementById('m-peso').value = m.peso || ''; document.getElementById('m-patologias').value = m.patologias || '';
       document.getElementById('m-plan').value = m.plan; document.getElementById('m-estado').value = m.estado || 'Ativo';
-      document.getElementById('m-date').value = m.date || ''; document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
+      document.getElementById('m-date').value = m.date || '';
+      document.getElementById('m-foto-base64').value = m.foto || '';
+      document.getElementById('m-doc-base64').value = m.doc || '';
+      document.getElementById('m-comprovativo-base64').value = m.comprovativo || '';
+      tratarMudancaPlano();
+      document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
       document.getElementById('btn-save-member').innerText = 'Guardar'; document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
       navigate('membros');
     }
@@ -853,7 +961,9 @@
     function cancelEditMember() {
       document.getElementById('m-edit-id').value = ''; document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro';
       document.getElementById('btn-save-member').innerText = 'Registar Membro'; document.getElementById('btn-cancel-edit').style.display = 'none';
-      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
+      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = ''; document.getElementById('m-nif').value = '';
+      document.getElementById('m-foto-base64').value = ''; document.getElementById('m-doc-base64').value = ''; document.getElementById('m-comprovativo-base64').value = '';
+      tratarMudancaPlano();
     }
 
     function renovarSubscricao(id) {
@@ -866,8 +976,19 @@
     }
 
     function renderMembers() {
-      const t = document.getElementById('members-tbody'); if (!t) return; t.innerHTML = ''; const now = new Date();
-      members.forEach(m => {
+      const t = document.getElementById('members-tbody'); if (!t) return; t.innerHTML = '';
+      const termoPesquisa = (document.getElementById('input-pesquisa-membros')?.value || '').toLowerCase();
+      const now = new Date();
+
+      const membrosFiltrados = members.filter(m => {
+        if (!termoPesquisa) return true;
+        return (m.name && m.name.toLowerCase().includes(termoPesquisa)) ||
+               (m.email && m.email.toLowerCase().includes(termoPesquisa)) ||
+               (m.barcode && m.barcode.toLowerCase().includes(termoPesquisa)) ||
+               (m.nif && m.nif.toLowerCase().includes(termoPesquisa));
+      });
+
+      membrosFiltrados.forEach(m => {
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
         const diff = Math.ceil((d - now)/(1000*60*60*24));
         let badge = '<span class="badge badge-ok">Ativo 🟢</span>';
@@ -879,7 +1000,8 @@
           <td><input type="checkbox" class="member-checkbox" value="${m.id}"></td>
           <td>${m.foto ? '<img src="'+m.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">' : '👤'}</td>
           <td><strong>${m.name}</strong><br><small>${m.email||'--'}</small></td>
-          <td><code>${m.barcode}</code></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td>${badge}</td>
+          <td>NIF: <strong>${m.nif||'--'}</strong><br><code>ID: ${m.barcode}</code></td>
+          <td>${m.plan} ${m.comprovativo ? '📎' : ''}</td><td>${d.toLocaleDateString('pt-PT')}</td><td>${badge}</td>
           <td>
             <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button>
             <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button>
@@ -893,7 +1015,7 @@
     function renderDatabase() {
       const t = document.getElementById('database-tbody'); if (!t) return; t.innerHTML = ''; let achou = false;
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'mensalidades') {
-        members.forEach(m => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-ok">📂 Mensalidade</span></td><td><strong>${m.name}</strong></td><td>Plano: ${m.plan}</td><td>${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button></td></tr>`; });
+        members.forEach(m => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-ok">📂 Mensalidade</span></td><td><strong>${m.name}</strong></td><td>Plano: ${m.plan} (NIF: ${m.nif||'--'})</td><td>${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button></td></tr>`; });
       }
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'produtos') {
         salesHistory.forEach((s, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-warn">📂 Produto Venda</span></td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty}) - <strong>${s.total} CVE</strong></td><td>${s.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`; });
@@ -992,9 +1114,8 @@
     function renderInvoices() { const t = document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; invoicesList.forEach((inv,idx)=>t.innerHTML+=`<tr><td>${inv.type}</td><td>${inv.name}</td><td>${inv.desc}</td><td>${inv.val} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="invoicesList.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
-    function checkinManualPrompt() { const c=prompt('ID:'); if(c) processarCheckin(c); }
+    function checkinManualPrompt() { const c=prompt('ID do Membro:'); if(c) processarCheckin(c.trim()); }
     
-    // --- FUNÇÃO ADICIONADA: Check-in Manual por Lista de Membros ---
     function checkinPorListaModal() {
       document.getElementById('modal-checkin-lista').style.display = 'flex';
       renderModalCheckinList(members);
@@ -1028,10 +1149,20 @@
     }
 
     function processarCheckin(code) {
-      const m=members.find(x=>x.barcode===code); const now=new Date(); let ativo=false; let nome='Desconhecido';
-      if(m) { nome=m.name; const d=new Date(m.date||'2026-01-01'); d.setDate(d.getDate()+30); ativo=d>=now&&m.estado==='Ativo'; }
-      attendanceLogs.unshift({data:now.toLocaleDateString('pt-PT'), time:now.toLocaleTimeString('pt-PT'), name:nome, barcode:code, status:ativo?'Ativo':'Expirado'});
+      if (!code) return;
+      const m = members.find(x => x.barcode === code);
+      const now = new Date(); let ativo = false; let nome = 'Desconhecido';
+      if(m) {
+        nome = m.name;
+        const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
+        ativo = d >= now && m.estado === 'Ativo';
+      }
+      const logEntry = {data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nome, barcode: code, status: ativo ? 'Ativo' : 'Expirado'};
+      attendanceLogs.unshift(logEntry);
+      localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
       renderAttendance();
+      const inputChk = document.getElementById('chk-input');
+      if(inputChk) { inputChk.value = ''; inputChk.focus(); }
     }
     function renderAttendance() { const t=document.getElementById('attendance-tbody'); if(!t)return; t.innerHTML=''; attendanceLogs.forEach(a=>t.innerHTML+=`<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td>${a.status}</td></tr>`); }
 
@@ -1065,7 +1196,7 @@
     }
     function aprovarInscricao(idx) {
       const ins = inscricoesOnline[idx]; const barcode = String(Math.floor(100000 + Math.random()*900000));
-      members.push({ id:Date.now(), name:ins.name, email:ins.email, barcode, phone:ins.phone, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto });
+      members.push({ id:Date.now(), name:ins.name, email:ins.email, barcode, nif:ins.nif||'', phone:ins.phone, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto, doc:'', comprovativo:'' });
       inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição aprovada! ID gerado: ${barcode}`);
     }
 
@@ -1075,7 +1206,6 @@
     }
     function renderChat() { const a = document.getElementById('chat-msgs'); if(!a)return; a.innerHTML=''; chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`); }
 
-    // --- RENDERIZAÇÃO DA BIBLIOTECA DE ARQUIVOS ---
     function renderBiblioteca() {
       const b = document.getElementById('bib-list'); if(!b)return; b.innerHTML='';
       if (biblioteca.length === 0) { b.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos na biblioteca.</td></tr>`; return; }
@@ -1100,7 +1230,13 @@
       collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, nif: document.getElementById('colab-nif').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value });
       refreshAll(); alert('Staff registado!');
     }
-    function renderColab() { const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML=''; collaborators.forEach((c, idx)=>t.innerHTML+=`<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif}</td><td><code>${c.barcode}</code></td><td>Total</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
+    function renderColab() {
+      const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML='';
+      collaborators.forEach((c, idx) => {
+        const fTag = c.foto ? '<img src="'+c.foto+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">' : '👤';
+        t.innerHTML += `<tr><td>${fTag}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif||'--'}</td><td><code>${c.barcode}</code></td><td>Total</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+      });
+    }
 
     function toggleCardType() { populateCardSelect(); }
     function populateCardSelect() {
@@ -1111,9 +1247,23 @@
     }
     function renderDigitalCard() {
       const z = document.getElementById('digital-card-container'), name = document.getElementById('card-member-select').value; if(!z)return;
-      const obj = document.getElementById('card-type-select').value==='membro'?members.find(x=>x.name===name):collaborators.find(x=>x.name===name);
+      const isMembro = document.getElementById('card-type-select').value === 'membro';
+      const obj = isMembro ? members.find(x=>x.name===name) : collaborators.find(x=>x.name===name);
       if(!obj){z.innerHTML='Selecione.';return;}
-      z.innerHTML = `<div class="id-card-wrap"><h3>Ginásio KOSMO</h3><h2>${obj.name}</h2><p>ID: ${obj.barcode}</p><svg id="card-bc"></svg></div>`;
+
+      const avatarHtml = obj.foto ? `<img src="${obj.foto}" class="id-card-avatar" style="width:75px;height:75px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);">` : `<div class="id-card-avatar">👤</div>`;
+      
+      z.innerHTML = `<div class="id-card-wrap">
+        <div class="id-card-top">
+          ${avatarHtml}
+          <div class="id-card-info">
+            <h3 style="font-size:0.9rem; color:#88929b; margin-bottom:2px;">Ginásio KOSMO</h3>
+            <h2 style="font-size:1.15rem; color:#fff; margin-bottom:4px;">${obj.name}</h2>
+            <p style="font-size:0.8rem; color:#ccc;">ID: <strong>${obj.barcode}</strong> ${obj.nif ? '| NIF: ' + obj.nif : ''}</p>
+          </div>
+        </div>
+        <svg id="card-bc" style="width:100%; height:45px; background:#fff; border-radius:4px; padding:4px;"></svg>
+      </div>`;
       setTimeout(()=>{if(window.JsBarcode) JsBarcode("#card-bc", obj.barcode, {format:"CODE128", width:2, height:40, displayValue:true});}, 100);
     }
 
