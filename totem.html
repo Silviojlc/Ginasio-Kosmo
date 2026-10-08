@@ -10,12 +10,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
     body { width: 100vw; height: 100vh; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px; overflow: hidden; text-align: center; }
 
-    /* HORA E DATA MONUMENTAIS (Visíveis a mais de 4 metros) */
     .totem-top-info { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; margin-top: 5px; }
     #clock-date { font-size: 2.2rem; color: #ced4da; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
     #clock-time { font-size: 8rem; color: #ffd43b; font-weight: 900; letter-spacing: 6px; line-height: 1; text-shadow: 0 0 40px rgba(255,212,59,0.4), 0 5px 25px rgba(0,0,0,0.9); }
 
-    /* CENTRO COM LOGÓTIPO GIGANTE RECORTADO EM OVAL PERFEITO */
     .totem-center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 1200px; flex: 1; }
     
     .totem-logo-gigante { 
@@ -32,7 +30,6 @@
     .totem-input { width: 100%; max-width: 600px; padding: 16px; font-size: 1.5rem; font-weight: bold; border-radius: 8px; border: 3px solid var(--primary); background: #fff; color: #212529; text-align: center; outline: none; box-shadow: 0 5px 20px rgba(0,0,0,0.6); }
     .totem-input:focus { border-color: #ff6b6b; }
 
-    /* ECRÃ DE RESULTADO / ACESSO */
     .totem-result { width: 100%; max-width: 800px; min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 15px; background: var(--card); border: 3px solid #21262d; transition: all 0.2s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
     .totem-result.success { background: rgba(43, 138, 62, 0.3); border: 4px solid var(--success); }
     .totem-result.error { background: rgba(217, 72, 15, 0.3); border: 4px solid var(--danger); }
@@ -72,7 +69,6 @@
     const SUPABASE_KEY = 'sb_publishable_2Fy-0tjG0UszGVLoHnBdOQ_OtNFPQfY';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-    // --- 1. ANTIHIBERNANÇÃO (Screen Wake Lock) ---
     let wakeLock = null;
     async function requestWakeLock() {
       try {
@@ -96,7 +92,6 @@
       }
     });
 
-    // --- 2. FOCO CONSTANTE E AUTOMÁTICO (Sem necessidade de rato) ---
     function focarInputImediato() {
       const inp = document.getElementById('totem-code-input');
       if (inp) inp.focus();
@@ -106,14 +101,12 @@
     document.addEventListener('click', focarInputImediato);
     setInterval(focarInputImediato, 1000);
 
-    // --- 3. RELÓGIO E DATA MONUMENTAIS ---
     setInterval(() => {
       const now = new Date();
       document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-PT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-PT');
     }, 1000);
 
-    // --- 4. LEITOR DE ALTA CAPACIDADE COM SUPABASE ---
     const inputField = document.getElementById('totem-code-input');
     inputField.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
@@ -130,46 +123,34 @@
       const resBox = document.getElementById('totem-result-box');
       let m = null;
 
-      // Consulta a nuvem Supabase
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient
-            .from('membros')
-            .select('*')
+            .from('kosmo_membros')
+            .select('id, name, nif, phone, barcode, plan')
             .eq('barcode', code)
             .single();
           if (!error && data) m = data;
         } catch (err) {
-          console.log('A recorrer à base local');
+          console.log('Erro ao consultar Supabase');
         }
       }
 
-      // Se não encontrar na nuvem, recorre ao localStorage como apoio offline
       if (!m) {
         let members = JSON.parse(localStorage.getItem('kosmo_members')) || [];
         m = members.find(x => x.barcode === code);
       }
 
       if (m) {
-        const d = new Date(m.date || '2026-01-01');
-        d.setDate(d.getDate() + 30);
-        const ativo = d >= now && m.estado === 'Ativo';
-
-        if (ativo) {
-          resBox.className = 'totem-result success';
-          resBox.innerHTML = `<h2>✅ ACESSO AUTORIZADO</h2><p style="font-size:1.5rem; color:#fff;">Bem-vindo(a), <strong>${m.name}</strong></p><p style="margin-top:2px; font-size:1rem; color:#d3f9d8;">Plano: ${m.plan}</p>`;
-        } else {
-          resBox.className = 'totem-result error';
-          resBox.innerHTML = `<h2>❌ ACESSO NEGADO</h2><p style="font-size:1.4rem; color:#fff;">Subscrição expirada para <strong>${m.name}</strong></p><p style="margin-top:2px; font-size:1rem; color:#ffc9c9;">Por favor, dirija-se à receção.</p>`;
-        }
+        resBox.className = 'totem-result success';
+        resBox.innerHTML = `<h2>✅ ACESSO AUTORIZADO</h2><p style="font-size:1.5rem; color:#fff;">Bem-vindo(a), <strong>${m.name}</strong></p><p style="margin-top:2px; font-size:1rem; color:#d3f9d8;">Plano: ${m.plan || 'Normal'}</p>`;
 
         let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
-        attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: ativo ? 'Ativo' : 'Expirado' });
+        attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: 'Ativo' });
         localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
 
-        // Regista o check-in na nuvem
         if (supabaseClient) {
-          supabaseClient.from('checkins').insert([{ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: ativo ? 'Ativo' : 'Expirado' }]).then(()=>{});
+          supabaseClient.from('kosmo_pagamentos').insert([{ data: now.toISOString(), Membro: m.name, Código: code, Estado: 'Check-in' }]).then(()=>{});
         }
 
       } else {
