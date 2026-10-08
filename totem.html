@@ -14,25 +14,25 @@
     #clock-date { font-size: 1.8rem; color: #adb5bd; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
     #clock-time { font-size: 5rem; color: #ffd43b; font-weight: 900; letter-spacing: 4px; line-height: 1.1; text-shadow: 0 5px 20px rgba(0,0,0,0.8); }
 
-    /* Centro com Logótipo Oval Gigante e Campo de Input Integrado */
-    .totem-center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; width: 100%; max-width: 800px; flex: 1; }
+    /* Centro com Logótipo em Formato Oval Gigante (Sem fundo branco quadrado) */
+    .totem-center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; width: 100%; max-width: 850px; flex: 1; }
     
     .totem-logo-oval { 
-      width: 320px; 
-      height: 200px; 
+      width: 520px; 
+      height: 260px; 
       object-fit: contain; 
-      background: #fff; 
-      border-radius: 50% / 40%; 
-      padding: 15px; 
-      border: 6px solid var(--primary); 
-      box-shadow: 0 10px 40px rgba(201,42,42,0.4); 
+      background: transparent; 
+      border-radius: 50% / 45%; 
+      padding: 10px; 
+      border: 5px solid var(--primary); 
+      box-shadow: 0 15px 50px rgba(201,42,42,0.5); 
     }
 
     .totem-input { width: 100%; max-width: 550px; padding: 18px; font-size: 1.5rem; font-weight: bold; border-radius: 10px; border: 3px solid #444; background: #fff; color: #212529; text-align: center; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
     .totem-input:focus { border-color: var(--primary); }
 
     /* Ecrã de Resultado / Acesso */
-    .totem-result { width: 100%; max-width: 750px; min-height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 14px; padding: 20px; background: var(--card); border: 3px solid #2a3038; transition: all 0.2s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+    .totem-result { width: 100%; max-width: 750px; min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 14px; padding: 20px; background: var(--card); border: 3px solid #2a3038; transition: all 0.2s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
     .totem-result.success { background: rgba(43, 138, 62, 0.25); border: 4px solid var(--success); }
     .totem-result.error { background: rgba(217, 72, 15, 0.25); border: 4px solid var(--danger); }
     
@@ -51,7 +51,7 @@
     <span id="clock-time">00:00:00</span>
   </div>
 
-  <!-- CENTRO COM LOGÓTIPO OVAL GIGANTE -->
+  <!-- CENTRO COM LOGÓTIPO OVAL GIGANTE E SLOGAN -->
   <div class="totem-center-stage">
     <img src="logo.jpg" alt="Ginásio KOSMO" class="totem-logo-oval" onerror="this.src='src/img/logo.jpg';">
     
@@ -151,7 +151,6 @@
         resBox.innerHTML = `<h2>❌ CARTÃO DESCONHECIDO</h2><p style="font-size:1.4rem;">O código <code>${code}</code> não está registado.</p>`;
       }
 
-      // Repor o ecrã após 4 segundos e recuperar o foco imediato
       setTimeout(() => {
         resBox.className = 'totem-result';
         resBox.innerHTML = `<h2>PRONTO PARA LEITURA</h2><p>Aproxime o cartão de membro ou código de barras</p>`;
