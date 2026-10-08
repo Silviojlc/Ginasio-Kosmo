@@ -405,15 +405,60 @@
       <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR / EXPORTAR UNIVERSAL -->
+      <!-- IMPORTAR / EXPORTAR SEPARADO POR CATEGORIAS -->
       <section id="view-importar" class="view-section">
         <div class="card">
-          <h2>Importar / Exportar Universal (Excel, CSV, JSON ou Legados)</h2>
-          <p style="margin-bottom:12px; color:#666; font-size:0.85rem;">Faça backup completo de todos os dados do sistema ou importe qualquer formato (fichas antigas do GYMMER em Excel, CSV, JSON ou texto).</p>
-          <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
-            <div><label>Carregar Ficheiro Universal</label><input type="file" id="import-file-input" accept=".json,.csv,.xlsx,.xls,.txt" onchange="importarFicheiroUniversal(event)"></div>
-            <div><button class="btn btn-blue" style="margin-top:22px;" onclick="exportarBackupUniversal()">📥 Exportar Dados Completos</button></div>
+          <h2>Importação e Exportação por Categorias (GYMMER & KOSMO)</h2>
+          <p style="margin-bottom:15px; color:#666; font-size:0.85rem;">Selecione o ficheiro adequado (Excel, CSV, JSON ou texto) e escolha a aba correta para que cada dado vá diretamente para o seu respetivo lugar.</p>
+          
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+            
+            <!-- MEMBROS ATIVOS -->
+            <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
+              <h3 style="font-size:0.95rem; color:var(--success); margin-bottom:8px;">🟢 Membros Ativos</h3>
+              <p style="font-size:0.78rem; color:#666; margin-bottom:10px;">Importa fichas de membros ativos para a lista principal.</p>
+              <input type="file" id="file-import-ativos" accept=".json,.csv,.xlsx,.xls" style="margin-bottom:8px; font-size:0.8rem;">
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-sm btn-green" onclick="importarPorCategoria('ativos')">📥 Importar Ativos</button>
+                <button class="btn btn-sm btn-blue" onclick="exportarPorCategoria('ativos')">📤 Exportar</button>
+              </div>
+            </div>
+
+            <!-- MEMBROS EXPIRADOS / INATIVOS -->
+            <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
+              <h3 style="font-size:0.95rem; color:var(--danger); margin-bottom:8px;">🔴 Membros Expirados / Inativos</h3>
+              <p style="font-size:0.78rem; color:#666; margin-bottom:10px;">Importa registos antigos ou expirados para a aba de inativos.</p>
+              <input type="file" id="file-import-expirados" accept=".json,.csv,.xlsx,.xls" style="margin-bottom:8px; font-size:0.8rem;">
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-sm" style="background:var(--danger);" onclick="importarPorCategoria('expirados')">📥 Importar Expirados</button>
+                <button class="btn btn-sm btn-blue" onclick="exportarPorCategoria('expirados')">📤 Exportar</button>
+              </div>
+            </div>
+
+            <!-- PRODUTOS & STOCK -->
+            <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
+              <h3 style="font-size:0.95rem; color:var(--warning); margin-bottom:8px;">📦 Produtos & Stock do Ginásio</h3>
+              <p style="font-size:0.78rem; color:#666; margin-bottom:10px;">Importa artigos e suplementos diretamente para o catálogo da loja.</p>
+              <input type="file" id="file-import-produtos" accept=".json,.csv,.xlsx,.xls" style="margin-bottom:8px; font-size:0.8rem;">
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-sm btn-warning" onclick="importarPorCategoria('produtos')">📥 Importar Produtos</button>
+                <button class="btn btn-sm btn-blue" onclick="exportarPorCategoria('produtos')">📤 Exportar</button>
+              </div>
+            </div>
+
           </div>
+
+          <!-- BACKUP GLOBAL -->
+          <div style="margin-top:25px; padding-top:15px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h3 style="font-size:0.95rem; color:var(--dark);">📁 Backup Completo Global</h3>
+              <p style="font-size:0.78rem; color:#666;">Guarda ou restaura todo o sistema (membros, vendas, despesas, salários e staff).</p>
+            </div>
+            <div>
+              <button class="btn btn-blue" onclick="exportarBackupUniversal()">📥 Exportar Sistema Completo</button>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -593,10 +638,13 @@
       alert('Backup universal exportado com sucesso!');
     }
 
-    // Importação Universal compatível com Excel, CSV, JSON e Texto
-    function importarFicheiroUniversal(event) {
-      const f = event.target.files[0];
-      if (!f) return;
+    // Importação segmentada por categoria (Ativos, Expirados, Produtos)
+    function importarPorCategoria(tipo) {
+      const inputId = tipo === 'ativos' ? 'file-import-ativos' : (tipo === 'expirados' ? 'file-import-expirados' : 'file-import-produtos');
+      const inputEl = document.getElementById(inputId);
+      if (!inputEl || !inputEl.files[0]) { alert('Por favor, selecione um ficheiro primeiro.'); return; }
+      
+      const f = inputEl.files[0];
       const nome = f.name.toLowerCase();
       const r = new FileReader();
 
@@ -604,13 +652,16 @@
         r.onload = e => {
           try {
             const data = JSON.parse(e.target.result);
-            if (data.members) members = data.members;
-            if (data.products) products = data.products;
-            if (data.salesHistory) salesHistory = data.salesHistory;
-            if (data.expenses) expenses = data.expenses;
-            if (data.collaborators) collaborators = data.collaborators;
+            if (tipo === 'produtos' && data.products) {
+              products = products.concat(data.products);
+            } else if ((tipo === 'ativos' || tipo === 'expirados') && data.members) {
+              data.members.forEach(m => {
+                if (tipo === 'expirados') m.estado = 'Inativo';
+                members.push(m);
+              });
+            }
             refreshAll();
-            alert('Dados importados com sucesso a partir do ficheiro JSON!');
+            alert(`Importação de ${tipo} concluída com sucesso via JSON!`);
           } catch(err) { alert('Erro ao analisar ficheiro JSON.'); }
         };
         r.readAsText(f);
@@ -619,34 +670,66 @@
           try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
-            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            
             rows.forEach(row => {
-              members.push({
-                id: Date.now() + Math.random(),
-                name: row.Nome || row.name || 'Membro Importado',
-                email: row.Email || row.email || '',
-                barcode: String(row.Codigo || row.barcode || Math.floor(100000 + Math.random()*900000)),
-                plan: row.Plano || row.plan || 'Musculação Mensal',
-                estado: 'Ativo',
-                phone: String(row.Telemovel || row.phone || ''),
-                date: new Date().toISOString().split('T')[0],
-                foto: ''
-              });
+              if (tipo === 'produtos') {
+                products.push({
+                  name: row.Nome || row.name || row.Produto || 'Produto Importado',
+                  buy: Number(row.Compra || row.buy || 0),
+                  price: Number(row.Preco || row.price || 0),
+                  stock: Number(row.Stock || row.stock || 10),
+                  desc: row.Descricao || '',
+                  use: row.Uso || '',
+                  foto: ''
+                });
+              } else {
+                members.push({
+                  id: Date.now() + Math.random(),
+                  name: row.Nome || row.name || 'Membro Importado',
+                  email: row.Email || row.email || '',
+                  barcode: String(row.Codigo || row.barcode || Math.floor(100000 + Math.random()*900000)),
+                  plan: row.Plano || row.plan || 'Musculação Mensal',
+                  estado: tipo === 'expirados' ? 'Inativo' : 'Ativo',
+                  phone: String(row.Telemovel || row.phone || ''),
+                  date: row.Data || new Date().toISOString().split('T')[0],
+                  foto: ''
+                });
+              }
             });
             refreshAll();
-            alert(`Importação universal de Excel/CSV concluída! ${rows.length} registos integrados.`);
-          } catch(err) { alert('Erro ao processar ficheiro Excel/CSV.'); }
+            alert(`Importação de ${tipo} concluída com sucesso! ${rows.length} registos integrados no respetivo destino.`);
+          } catch(err) { alert('Erro ao processar tabela Excel/CSV.'); }
         };
         r.readAsArrayBuffer(f);
       } else {
-        r.onload = e => {
-          alert('Ficheiro de texto carregado e registado na biblioteca.');
-          biblioteca.push({ name: f.name, url: e.target.result });
-          refreshAll();
-        };
-        r.readAsDataURL(f);
+        alert('Formato de ficheiro não suportado para esta categoria.');
       }
+    }
+
+    // Exportação segmentada por categoria
+    function exportarPorCategoria(tipo) {
+      let dadosExportar = [];
+      let nomeFicheiro = '';
+
+      if (tipo === 'ativos') {
+        dadosExportar = members.filter(m => m.estado === 'Ativo');
+        nomeFicheiro = 'kosmo_membros_ativos.xlsx';
+      } else if (tipo === 'expirados') {
+        dadosExportar = members.filter(m => m.estado !== 'Ativo');
+        nomeFicheiro = 'kosmo_membros_expirados.xlsx';
+      } else if (tipo === 'produtos') {
+        dadosExportar = products;
+        nomeFicheiro = 'kosmo_produtos_stock.xlsx';
+      }
+
+      if (dadosExportar.length === 0) { alert('Não existem dados registados nesta categoria para exportar.'); return; }
+
+      const worksheet = XLSX.utils.json_to_sheet(dadosExportar);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, tipo.toUpperCase());
+      XLSX.writeFile(workbook, nomeFicheiro);
+      alert(`Exportação de ${tipo} concluída com sucesso!`);
     }
 
     function onLoginKey(e) {
@@ -690,7 +773,6 @@
           setTimeout(gerarQRCodeInscricao, 100);
         }
       }
-      // Fecha o menu móvel automaticamente ao navegar em telemóveis
       const sidebar = document.getElementById('sidebar-panel');
       if (sidebar) sidebar.classList.remove('mobile-open');
       refreshAll();
