@@ -152,7 +152,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="main-scroll-container">
       <!-- DASHBOARD -->
       <section id="view-dashboard" class="view-section active">
         <div class="card">
@@ -185,7 +185,7 @@
 
       <!-- MEMBROS -->
       <section id="view-membros" class="view-section">
-        <div class="card">
+        <div class="card" id="card-form-membro">
           <h2 id="form-member-title">Registar ou Editar Membro</h2>
           <input type="hidden" id="m-edit-id" value="">
           <div class="form-grid">
@@ -613,6 +613,13 @@
       }
       gerarQRCodeInscricao();
       verificarAlertaVencimentos();
+      
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'kosmo_attendance') {
+          attendanceLogs = JSON.parse(e.newValue) || [];
+          renderAttendance();
+        }
+      });
     });
 
     function toggleMobileMenu() {
@@ -632,7 +639,6 @@
       }
     }
 
-    // --- CORREÇÃO DO BACKUP UNIVERSAL ---
     function exportarBackupUniversal() {
       const dataObj = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, collaborators };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj, null, 2));
@@ -955,7 +961,13 @@
       tratarMudancaPlano();
       document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
       document.getElementById('btn-save-member').innerText = 'Guardar'; document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
-      navigate('membros');
+      
+      // Salto direto e suave para o formulário de edição no topo da página
+      const cardForm = document.getElementById('card-form-membro');
+      const mainContainer = document.getElementById('main-scroll-container');
+      if (cardForm && mainContainer) {
+        mainContainer.scrollTo({ top: cardForm.offsetTop - 10, behavior: 'smooth' });
+      }
     }
 
     function cancelEditMember() {
@@ -1150,16 +1162,31 @@
 
     function processarCheckin(code) {
       if (!code) return;
-      const m = members.find(x => x.barcode === code);
+      const freshMembers = JSON.parse(localStorage.getItem('kosmo_members')) || members;
+      const m = freshMembers.find(x => x.barcode === code);
       const now = new Date(); let ativo = false; let nome = 'Desconhecido';
       if(m) {
         nome = m.name;
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
         ativo = d >= now && m.estado === 'Ativo';
       }
-      const logEntry = {data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: nome, barcode: code, status: ativo ? 'Ativo' : 'Expirado'};
+      const logEntry = {
+        data: now.toLocaleDateString('pt-PT'),
+        time: now.toLocaleTimeString('pt-PT'),
+        name: nome,
+        barcode: code,
+        status: ativo ? 'Ativo' : 'Expirado',
+        foto: m ? m.foto : ''
+      };
+      
       attendanceLogs.unshift(logEntry);
       localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
+      
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'kosmo_attendance',
+        newValue: JSON.stringify(attendanceLogs)
+      }));
+
       renderAttendance();
       const inputChk = document.getElementById('chk-input');
       if(inputChk) { inputChk.value = ''; inputChk.focus(); }
