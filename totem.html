@@ -5,27 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
-    :root { --primary: #c92a2a; --bg: #111417; --card: #1e2227; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
+    :root { --primary: #c92a2a; --bg: #0b0d0f; --card: #161a1e; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { width: 100vw; height: 100vh; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 30px; overflow: hidden; text-align: center; }
+    body { width: 100vw; height: 100vh; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 25px; overflow: hidden; text-align: center; }
 
-    .totem-header { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 600px; }
-    .totem-logo { height: 90px; object-fit: contain; background: #fff; border-radius: 8px; padding: 6px; }
-    .totem-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: 1px; }
-    .totem-clock { font-size: 1.2rem; color: #adb5bd; font-weight: 600; }
+    /* Logótipo Grande Centralizado */
+    .totem-header { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+    .totem-logo { height: 120px; width: auto; max-width: 350px; object-fit: contain; background: #fff; border-radius: 10px; padding: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+    .totem-header h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: 2px; color: #fff; }
 
-    .totem-body { width: 100%; max-width: 650px; background: var(--card); border-radius: 16px; padding: 40px; border: 3px solid #333; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; gap: 20px; }
-    .totem-input { width: 100%; padding: 18px 20px; font-size: 1.4rem; font-weight: bold; border-radius: 8px; border: 2px solid #444; background: #fff; color: #212529; text-align: center; outline: none; }
-    .totem-input:focus { border-color: var(--primary); }
+    /* Relógio e Data em Formato Gigante visível a metros de distância */
+    .totem-clock-box { background: #1e2329; border: 2px solid #333; padding: 15px 30px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); margin-top: 5px; }
+    #clock-date { font-size: 1.5rem; color: #adb5bd; font-weight: 700; display: block; margin-bottom: 4px; }
+    #clock-time { font-size: 3.5rem; color: #ffd43b; font-weight: 900; letter-spacing: 3px; line-height: 1; }
 
-    .totem-result { width: 100%; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; padding: 20px; background: #262c35; transition: all 0.3s ease; }
-    .totem-result.success { background: rgba(43, 138, 62, 0.2); border: 2px solid var(--success); }
-    .totem-result.error { background: rgba(217, 72, 15, 0.2); border: 2px solid var(--danger); }
+    /* Corpo de Leitura de Alta Capacidade */
+    .totem-body { width: 100%; max-width: 750px; background: var(--card); border-radius: 16px; padding: 30px; border: 3px solid #333; box-shadow: 0 15px 40px rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .totem-input { width: 100%; padding: 20px; font-size: 1.6rem; font-weight: bold; border-radius: 8px; border: 3px solid var(--primary); background: #fff; color: #212529; text-align: center; outline: none; }
     
-    .totem-result h2 { font-size: 1.8rem; margin-bottom: 8px; }
-    .totem-result p { font-size: 1.1rem; color: #ced4da; }
+    /* Ecrã de Resultado Gigante */
+    .totem-result { width: 100%; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 25px; background: #21262d; transition: all 0.2s ease; border: 2px solid #444; }
+    .totem-result.success { background: rgba(43, 138, 62, 0.25); border: 4px solid var(--success); }
+    .totem-result.error { background: rgba(217, 72, 15, 0.25); border: 4px solid var(--danger); }
     
-    .totem-footer { font-size: 0.85rem; color: #6c757d; }
+    .totem-result h2 { font-size: 2.2rem; margin-bottom: 10px; font-weight: 900; }
+    .totem-result p { font-size: 1.3rem; color: #e9ecef; font-weight: 600; }
+    
+    .totem-footer { font-size: 0.9rem; color: #6c757d; display: flex; flex-direction: column; gap: 4px; }
+    .wake-status { color: #2b8a3e; font-weight: bold; font-size: 0.85rem; }
   </style>
 </head>
 <body>
@@ -33,43 +40,85 @@
   <div class="totem-header">
     <img src="logo.jpg" alt="Ginásio KOSMO" class="totem-logo" onerror="this.src='src/img/logo.jpg';">
     <h1>GINÁSIO KOSMO</h1>
-    <div id="clock" class="totem-clock">00:00:00</div>
+    <div class="totem-clock-box">
+      <span id="clock-date">Carregando data...</span>
+      <span id="clock-time">00:00:00</span>
+    </div>
   </div>
 
   <div class="totem-body">
-    <p style="font-size: 1.1rem; color: #adb5bd;">Passe o seu cartão ou digite o código ID:</p>
-    <input type="text" id="totem-code-input" class="totem-input" placeholder="A aguardar leitura..." autofocus onkeydown="onTotemScan(event)">
+    <p style="font-size: 1.2rem; color: #ced4da; font-weight: bold;">PASSE O CARTÃO NO LEITOR ÓTICO</p>
+    <input type="text" id="totem-code-input" class="totem-input" placeholder="A aguardar leitura direta..." autofocus autocomplete="off">
     
     <div id="totem-result-box" class="totem-result">
-      <h2>Pronto para Leitura</h2>
-      <p>Aproxime o código de barras ou insira o ID no leitor.</p>
+      <h2>PRONTO PARA LEITURA</h2>
+      <p>O terminal está ativo e operacional.</p>
     </div>
   </div>
 
   <div class="totem-footer">
-    Terra Branca, Frente Escola Amor De Deus | NIF: 283023805
+    <span>Terra Branca, Frente Escola Amor De Deus | NIF: 283023805</span>
+    <span id="wake-lock-label" class="wake-status">⚡ Sistema Antihibernação & Foco Automático Ativo</span>
   </div>
 
   <script>
-    // Relógio em tempo real
-    setInterval(() => {
-      const now = new Date();
-      document.getElementById('clock').innerText = now.toLocaleDateString('pt-PT') + ' - ' + now.toLocaleTimeString('pt-PT');
-    }, 1000);
-
-    // Manter foco constante no input para o leitor ótico funcionar sem interrupções
-    document.addEventListener('click', () => {
-      const inp = document.getElementById('totem-code-input');
-      if (inp) inp.focus();
-    });
-
-    function onTotemScan(e) {
-      if (e.key === 'Enter') {
-        const code = document.getElementById('totem-code-input').value.trim();
-        if (code) processarCheckinTotem(code);
-        document.getElementById('totem-code-input').value = '';
+    // --- 1. FUNÇÃO ANTIHIBERNANÇÃO (Screen Wake Lock API) ---
+    let wakeLock = null;
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          document.getElementById('wake-lock-label').innerText = "⚡ Monitor Protegido contra Suspensão (Ativo 24/7)";
+        }
+      } catch (err) {
+        console.error(err);
       }
     }
+
+    window.addEventListener('load', () => {
+      requestWakeLock();
+      setInterval(requestWakeLock, 20000);
+      focarInputImediato();
+    });
+
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible') {
+        await requestWakeLock();
+        focarInputImediato();
+      }
+    });
+
+    // --- 2. FOCO CONSTANTE E AUTOMÁTICO (Sem necessidade de rato) ---
+    function focarInputImediato() {
+      const inp = document.getElementById('totem-code-input');
+      if (inp) {
+        inp.focus();
+      }
+    }
+
+    // Reaplicar foco automaticamente a cada clique em qualquer ponto ou perda de foco
+    window.addEventListener('blur', () => { setTimeout(focarInputImediato, 100); });
+    document.addEventListener('click', focarInputImediato);
+    setInterval(focarInputImediato, 1000);
+
+    // --- 3. RELÓGIO E DATA GIGANTE ---
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-PT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+      document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-PT');
+    }, 1000);
+
+    // --- 4. LEITOR DE ALTA CAPACIDADE ---
+    const inputField = document.getElementById('totem-code-input');
+    inputField.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const code = inputField.value.trim();
+        if (code) {
+          processarCheckinTotem(code);
+        }
+        inputField.value = '';
+      }
+    });
 
     function processarCheckinTotem(code) {
       let members = JSON.parse(localStorage.getItem('kosmo_members')) || [];
@@ -84,27 +133,27 @@
 
         if (ativo) {
           resBox.className = 'totem-result success';
-          resBox.innerHTML = `<h2>✅ ACESSO AUTORIZADO</h2><p>Bem-vindo(a), <strong>${m.name}</strong>!</p><p style="margin-top:5px; font-size:0.95rem;">Plano: ${m.plan}</p>`;
+          resBox.innerHTML = `<h2>✅ ACESSO AUTORIZADO</h2><p style="font-size:1.6rem; color:#fff;">Bem-vindo(a), <strong>${m.name}</strong></p><p style="margin-top:8px; font-size:1.1rem; color:#d3f9d8;">Plano: ${m.plan}</p>`;
         } else {
           resBox.className = 'totem-result error';
-          resBox.innerHTML = `<h2>❌ ACESSO NEGADO</h2><p>Subscrição expirada para <strong>${m.name}</strong>.</p><p style="margin-top:5px; font-size:0.95rem;">Por favor, dirija-se à receção.</p>`;
+          resBox.innerHTML = `<h2>❌ ACESSO NEGADO</h2><p style="font-size:1.5rem; color:#fff;">Subscrição expirada para <strong>${m.name}</strong></p><p style="margin-top:8px; font-size:1.1rem; color:#ffc9c9;">Por favor, dirija-se à receção.</p>`;
         }
 
-        // Registar também no histórico geral
         let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
         attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: ativo ? 'Ativo' : 'Expirado' });
         localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
 
       } else {
         resBox.className = 'totem-result error';
-        resBox.innerHTML = `<h2>❌ CARTÃO DESCONHECIDO</h2><p>Código <code>${code}</code> não encontrado no sistema.</p>`;
+        resBox.innerHTML = `<h2>❌ CARTÃO DESCONHECIDO</h2><p style="font-size:1.4rem;">O código <code>${code}</code> não está registado.</p>`;
       }
 
-      // Limpar e focar novamente após 5 segundos
+      // Repor o ecrã após 4 segundos e recuperar o foco imediato para o próximo cliente
       setTimeout(() => {
         resBox.className = 'totem-result';
-        resBox.innerHTML = `<h2>Pronto para Leitura</h2><p>Aproxime o código de barras ou insira o ID no leitor.</p>`;
-      }, 5000);
+        resBox.innerHTML = `<h2>PRONTO PARA LEITURA</h2><p>O terminal está ativo e operacional.</p>`;
+        focarInputImediato();
+      }, 4000);
     }
   </script>
 </body>

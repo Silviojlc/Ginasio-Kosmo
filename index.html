@@ -8,7 +8,6 @@
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <!-- Biblioteca SheetJS para importação universal de Excel / CSV / Texto -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root { --primary: #c92a2a; --primary-dark: #a61e1e; --sidebar-bg: #1e2227; --sidebar-hover: #2a3038; --sidebar-text: #c2c7d0; --bg: #f4f6f9; --card: #ffffff; --success: #2b8a3e; --danger: #d9480f; --warning: #f59f00; --dark: #212529; --border: #dee2e6; }
@@ -36,7 +35,6 @@
     header { height: 60px; background: #fff; border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
     .top-title { font-size: 1.15rem; font-weight: 700; }
 
-    /* Botão Hambúrguer para telemóveis */
     .mobile-menu-btn { display: none; background: var(--primary); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; font-size: 1.2rem; cursor: pointer; margin-right: 10px; }
 
     main { flex: 1; overflow-y: auto; padding: 20px; }
@@ -66,7 +64,6 @@
     .contrato-box { background: #fafafa; border: 1px solid #ced4da; padding: 15px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: #212529; text-align: justify; max-height: 180px; overflow-y: auto; margin-bottom: 10px; }
     .id-card-wrap { width: 100%; max-width: 450px; background: #111417; color: #fff; border-radius: 12px; padding: 20px; margin: 0 auto; border: 2px solid #333; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; position: relative; }
 
-    /* Media Queries para ajuste perfeito em telemóveis */
     @media (max-width: 768px) {
       aside { position: fixed; left: -260px; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
       aside.mobile-open { left: 0; }
@@ -74,17 +71,11 @@
       header { padding: 0 10px; }
       .top-title { font-size: 1rem; }
     }
-
-    @media print {
-      body * { visibility: hidden; }
-      #printable-qrcode-area, #printable-qrcode-area * { visibility: visible; }
-      #printable-qrcode-area { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN INICIAL LIMPO -->
+  <!-- LOGIN INICIAL -->
   <div id="login-overlay">
     <div class="login-box">
       <img src="logo.jpg" alt="Ginásio KOSMO" class="login-logo" onerror="this.src='src/img/logo.jpg';">
@@ -151,7 +142,6 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <!-- BOTÃO DE ESTADO CONECTADO À CLOUD -->
         <span style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">🟢 Base de Dados: Conectada</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
@@ -174,24 +164,22 @@
         </div>
       </section>
 
-      <!-- QR CODE DE INSCRIÇÃO VISÍVEL -->
+      <!-- QR CODE DE INSCRIÇÃO -->
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
           <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Aponte a câmara do telemóvel para abrir instantaneamente o Portal de Inscrição KOSMO.</p>
-          
           <div id="printable-qrcode-area" style="display:inline-block; background:#fff; padding:30px; border-radius:12px; border:3px solid var(--primary); box-shadow:0 5px 20px rgba(0,0,0,0.15); margin-bottom:15px;">
             <img src="logo.jpg" alt="KOSMO" style="height:80px; object-fit:contain; margin-bottom:15px; display:block; margin-left:auto; margin-right:auto;" onerror="this.src='src/img/logo.jpg';">
             <h3 style="margin-bottom:12px; color:#212529; font-size:1.4rem;">INSCRIÇÃO ONLINE - KOSMO</h3>
             <div id="qrcode-container" style="display:flex; justify-content:center; align-items:center; margin:15px auto;"></div>
             <p style="font-size:0.95rem; font-weight:bold; color:#444; margin-top:15px;">Aponte a câmara do telemóvel para se inscrever</p>
           </div>
-
           <div><button class="btn btn-blue" onclick="window.print()">🖨 Imprimir QR Code</button></div>
         </div>
       </section>
 
-      <!-- MEMBROS -->
+      <!-- MEMBROS (Com eliminação múltipla) -->
       <section id="view-membros" class="view-section">
         <div class="card">
           <h2 id="form-member-title">Registar ou Editar Membro</h2>
@@ -214,9 +202,12 @@
           <button class="btn btn-blue" id="btn-cancel-edit" onclick="cancelEditMember()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <h2>Lista de Membros Ativos</h2>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h2>Lista de Membros Ativos</h2>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="eliminarMembrosSelecionados()">🗑️ Apagar Selecionados</button>
+          </div>
           <table>
-            <thead><tr><th>Foto</th><th>Nome & E-mail</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
+            <thead><tr><th><input type="checkbox" id="selectAllMembers" onclick="toggleSelectAllMembers(this)"></th><th>Foto</th><th>Nome & E-mail</th><th>ID</th><th>Plano</th><th>Validade</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="members-tbody"></tbody>
           </table>
         </div>
@@ -253,7 +244,7 @@
       <!-- CHECK-INS -->
       <section id="view-checkins" class="view-section">
         <div class="card">
-          <h2>Terminal de Check-ins (Leitura Direta sem Rato)</h2>
+          <h2>Terminal de Check-ins</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
             <input type="text" id="chk-input" placeholder="Passe o cartão a qualquer momento..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; flex:1; min-width:200px;" autofocus>
             <button class="btn btn-green" onclick="checkinManualPrompt()">Check-in Manual</button>
@@ -289,7 +280,7 @@
         </div>
       </section>
 
-      <!-- PRODUTOS -->
+      <!-- PRODUTOS (Com eliminação múltipla) -->
       <section id="view-produtos" class="view-section">
         <div class="card">
           <h2 id="form-prod-title">Registar ou Editar Produto</h2>
@@ -308,9 +299,12 @@
           <button class="btn btn-blue" id="btn-cancel-prod" onclick="cancelEditProduct()" style="display:none; background:#868e96;">Cancelar</button>
         </div>
         <div class="card">
-          <h2>Catálogo de Produtos</h2>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h2>Catálogo de Produtos</h2>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="eliminarProdutosSelecionados()">🗑️ Apagar Selecionados</button>
+          </div>
           <table>
-            <thead><tr><th>Foto</th><th>Produto</th><th>Modo de Usar</th><th>Preço</th><th>Stock</th><th>Ações</th></tr></thead>
+            <thead><tr><th><input type="checkbox" id="selectAllProducts" onclick="toggleSelectAllProducts(this)"></th><th>Foto</th><th>Produto</th><th>Modo de Usar</th><th>Preço</th><th>Stock</th><th>Ações</th></tr></thead>
             <tbody id="products-tbody"></tbody>
           </table>
         </div>
@@ -322,7 +316,7 @@
       <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
-      <!-- FATURAS E RECIBOS COM LOGÓTIPO -->
+      <!-- FATURAS -->
       <section id="view-faturas" class="view-section">
         <div class="card">
           <h2>Faturas & Recibos Oficiais (Com Logótipo e NIF: 283023805)</h2>
@@ -337,7 +331,7 @@
         </div>
       </section>
 
-      <!-- DESPESAS COM NIF, EMPRESA E FICHEIROS -->
+      <!-- DESPESAS -->
       <section id="view-despesas" class="view-section">
         <div class="card">
           <h2>Registar Despesa (Com NIF e Empresa)</h2>
@@ -360,7 +354,7 @@
         </div>
       </section>
 
-      <!-- SALÁRIOS COM NIF E DOCUMENTO -->
+      <!-- SALÁRIOS -->
       <section id="view-salarios" class="view-section">
         <div class="card">
           <h2>Registar Salário / Ordenado Staff (NIF & Documento)</h2>
@@ -399,70 +393,60 @@
       <!-- CHAT -->
       <section id="view-chat" class="view-section"><div class="card"><h2>Chat Multimédia</h2><div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;"><div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div><div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;"><input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)"><button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar</button><input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()"><button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button></div></div></div></section>
 
-      <!-- BIBLIOTECA -->
-      <section id="view-biblioteca" class="view-section"><div class="card"><h2>Biblioteca de Arquivos</h2><table><thead><tr><th>Nome</th><th>Ações</th></tr></thead><tbody id="bib-list"><tr><td colspan="2" style="text-align:center;">Sem arquivos.</td></tr></tbody></table></div></section>
+      <!-- BIBLIOTECA DE ARQUIVOS (Totalmente integrada e recetiva) -->
+      <section id="view-biblioteca" class="view-section">
+        <div class="card">
+          <h2>Biblioteca de Arquivos & Documentos</h2>
+          <p style="margin-bottom:15px; color:#666; font-size:0.85rem;">Todos os ficheiros anexados no chat, fichas de inscrição e comprovativos de despesas ficam guardados e disponíveis aqui automaticamente.</p>
+          <table>
+            <thead><tr><th>Nome do Ficheiro / Anexo</th><th>Ações</th></tr></thead>
+            <tbody id="bib-list"><tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos na biblioteca.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
 
       <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR / EXPORTAR SEPARADO POR CATEGORIAS -->
+      <!-- IMPORTAR / EXPORTAR -->
       <section id="view-importar" class="view-section">
         <div class="card">
           <h2>Importação e Exportação por Categorias (GYMMER & KOSMO)</h2>
           <p style="margin-bottom:15px; color:#666; font-size:0.85rem;">Selecione o ficheiro adequado (Excel, CSV, JSON ou texto) e escolha a aba correta para que cada dado vá diretamente para o seu respetivo lugar.</p>
-          
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
-            
-            <!-- MEMBROS ATIVOS -->
             <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
               <h3 style="font-size:0.95rem; color:var(--success); margin-bottom:8px;">🟢 Membros Ativos</h3>
-              <p style="font-size:0.78rem; color:#666; margin-bottom:10px;">Importa fichas de membros ativos para a lista principal.</p>
               <input type="file" id="file-import-ativos" accept=".json,.csv,.xlsx,.xls" style="margin-bottom:8px; font-size:0.8rem;">
               <div style="display:flex; gap:8px;">
                 <button class="btn btn-sm btn-green" onclick="importarPorCategoria('ativos')">📥 Importar Ativos</button>
                 <button class="btn btn-sm btn-blue" onclick="exportarPorCategoria('ativos')">📤 Exportar</button>
               </div>
             </div>
-
-            <!-- MEMBROS EXPIRADOS / INATIVOS -->
             <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
               <h3 style="font-size:0.95rem; color:var(--danger); margin-bottom:8px;">🔴 Membros Expirados / Inativos</h3>
-              <p style="font-size:0.78rem; color:#666; margin-bottom:10px;">Importa registos antigos ou expirados para a aba de inativos.</p>
               <input type="file" id="file-import-expirados" accept=".json,.csv,.xlsx,.xls" style="margin-bottom:8px; font-size:0.8rem;">
               <div style="display:flex; gap:8px;">
                 <button class="btn btn-sm" style="background:var(--danger);" onclick="importarPorCategoria('expirados')">📥 Importar Expirados</button>
                 <button class="btn btn-sm btn-blue" onclick="exportarPorCategoria('expirados')">📤 Exportar</button>
               </div>
             </div>
-
-            <!-- PRODUTOS & STOCK -->
             <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid var(--border);">
               <h3 style="font-size:0.95rem; color:var(--warning); margin-bottom:8px;">📦 Produtos & Stock do Ginásio</h3>
-              <p style="font-size:0.78rem; color:#666; margin-bottom:10px;">Importa artigos e suplementos diretamente para o catálogo da loja.</p>
               <input type="file" id="file-import-produtos" accept=".json,.csv,.xlsx,.xls" style="margin-bottom:8px; font-size:0.8rem;">
               <div style="display:flex; gap:8px;">
                 <button class="btn btn-sm btn-warning" onclick="importarPorCategoria('produtos')">📥 Importar Produtos</button>
                 <button class="btn btn-sm btn-blue" onclick="exportarPorCategoria('produtos')">📤 Exportar</button>
               </div>
             </div>
-
           </div>
-
-          <!-- BACKUP GLOBAL -->
           <div style="margin-top:25px; padding-top:15px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <div>
-              <h3 style="font-size:0.95rem; color:var(--dark);">📁 Backup Completo Global</h3>
-              <p style="font-size:0.78rem; color:#666;">Guarda ou restaura todo o sistema (membros, vendas, despesas, salários e staff).</p>
-            </div>
-            <div>
-              <button class="btn btn-blue" onclick="exportarBackupUniversal()">📥 Exportar Sistema Completo</button>
-            </div>
+            <div><h3 style="font-size:0.95rem;">📁 Backup Completo Global</h3></div>
+            <div><button class="btn btn-blue" onclick="exportarBackupUniversal()">📥 Exportar Sistema Completo</button></div>
           </div>
-
         </div>
       </section>
 
-      <!-- GERIR STAFF COM NIF, EDIÇÃO E ALTERAÇÃO DE SENHA -->
+      <!-- GERIR STAFF -->
       <section id="view-colab" class="view-section">
         <div class="card">
           <h2 id="form-staff-title">Gerir Staff, NIF & Permissões</h2>
@@ -500,7 +484,7 @@
         </div>
       </section>
 
-      <!-- ALTERAR MINHA SENHA -->
+      <!-- ALTERAR SENHA -->
       <section id="view-mudar-senha" class="view-section">
         <div class="card" style="max-width:500px; margin:0 auto;">
           <h2>Alterar Minha Palavra-passe</h2>
@@ -512,19 +496,17 @@
       </section>
 
       <!-- PICA PONTO -->
-      <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto (Leitura Direta sem Rato)</h2><div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;"><input type="text" id="pica-input" placeholder="Passe o cartão do staff..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold; min-width:200px;" autofocus><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
+      <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto</h2><div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;"><input type="text" id="pica-input" placeholder="Passe o cartão do staff..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold; min-width:200px;" autofocus><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
     </main>
   </div>
 
-  <!-- PORTAL DE INSCRIÇÃO ONLINE -->
+  <!-- PORTAL INSCRIÇÃO -->
   <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
     <div style="background:#fff; width:100%; max-width:650px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
       <img src="logo.jpg" alt="KOSMO" style="height:70px; object-fit:contain; margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';">
       <h2>Ginásio KOSMO - Inscrição Online & Chat</h2>
-      
       <div id="portal-step-1" style="margin-top:15px;">
-        <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">Insira o seu nome para iniciar a inscrição e desbloquear o chat.</p>
         <div class="form-grid" style="text-align:left;">
           <div><label>Nome Completo *</label><input type="text" id="portal-name" placeholder="O seu nome"></div>
           <div><label>E-mail *</label><input type="email" id="portal-email" placeholder="seu@email.com"></div>
@@ -532,33 +514,18 @@
         </div>
         <button class="btn" style="width:100%; margin-top:10px;" onclick="ativarPortalChat()">Avançar para Ficha & Chat</button>
       </div>
-
       <div id="portal-step-2" style="display:none; margin-top:15px; text-align:left;">
         <div class="form-grid">
           <div><label>NIF</label><input type="text" id="portal-nif"></div>
           <div><label>Altura (m)</label><input type="text" id="portal-altura" placeholder="Ex: 1.75m"></div>
           <div><label>Peso Atual (kg)</label><input type="text" id="portal-peso" placeholder="Ex: 75kg"></div>
-          <div><label>Plano *</label><select id="portal-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option><option value="Plano Casal">Plano Casal</option><option value="Plano Estudante">Plano Estudante</option></select></div>
-          <div style="grid-column:1/-1;"><label>Patologias, lesões ou doenças especiais?</label><textarea id="portal-patologia" rows="2" placeholder="Descreva..."></textarea></div>
+          <div><label>Plano *</label><select id="portal-plan"><option value="Mensal Trabalhador">Mensal Trabalhador</option><option value="Musculação Mensal">Musculação Mensal</option></select></div>
+          <div style="grid-column:1/-1;"><label>Patologias ou lesões?</label><textarea id="portal-patologia" rows="2"></textarea></div>
           <div><label>Fotografia Pessoal *</label><input type="file" id="portal-foto-file" accept="image/*" onchange="converterFotoPortal(event)"></div>
         </div>
         <input type="hidden" id="portal-foto-b64" value="">
-        
-        <h3 style="font-size:0.95rem; margin:15px 0 5px; color:var(--primary);">💬 Chat Direto com o Ginásio</h3>
-        <div style="border:1px solid #ddd; border-radius:6px; background:#f8f9fa; height:180px; display:flex; flex-direction:column; overflow:hidden; margin-bottom:10px;">
-          <div id="portal-chat-msgs" style="flex:1; padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; font-size:0.85rem;"></div>
-          <div style="padding:6px; background:#fff; border-top:1px solid #ddd; display:flex; gap:6px;">
-            <input type="file" id="portal-chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="portalEnviarArquivo(event)">
-            <button class="btn btn-sm btn-blue" onclick="document.getElementById('portal-chat-file').click()">📎 Anexar</button>
-            <input type="text" id="portal-chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') portalEnviarMsg()">
-            <button class="btn btn-sm" onclick="portalEnviarMsg()">Enviar</button>
-          </div>
-        </div>
-
-        <div class="contrato-box">
-          <strong>Contrato de Inscrição KOSMO</strong><br>
-          Comprometo-me a cuidar de cada utensílio/material afetos a este ginásio, arrumar e deixar tudo no seu respetivo lugar.<br><br>
-          <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer;"><input type="checkbox" id="portal-contrato"> Concordo plenamente com os termos do contrato.</label>
+        <div class="contrato-box" style="margin-top:15px;">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:bold; cursor:pointer;"><input type="checkbox" id="portal-contrato"> Concordo com os termos do contrato.</label>
         </div>
         <button class="btn" style="width:100%; margin-top:5px;" onclick="submeterInscricaoOnline()">Submeter Inscrição Online</button>
       </div>
@@ -604,7 +571,6 @@
       verificarAlertaVencimentos();
     });
 
-    // Função para abrir/fechar menu em telemóveis
     function toggleMobileMenu() {
       const sidebar = document.getElementById('sidebar-panel');
       if (sidebar) sidebar.classList.toggle('mobile-open');
@@ -617,11 +583,7 @@
         const urlPortal = window.location.href.split('?')[0] + '?portal=inscricao';
         const qrImg = document.createElement('img');
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(urlPortal)}`;
-        qrImg.alt = "QR Code Inscrição KOSMO";
-        qrImg.style.width = "250px";
-        qrImg.style.height = "250px";
-        qrImg.style.display = "block";
-        qrImg.style.margin = "0 auto";
+        qrImg.style.width = "250px"; qrImg.style.height = "250px"; qrImg.style.display = "block"; qrImg.style.margin = "0 auto";
         el.appendChild(qrImg);
       }
     }
@@ -638,7 +600,34 @@
       alert('Backup universal exportado com sucesso!');
     }
 
-    // Importação segmentada por categoria (Ativos, Expirados, Produtos)
+    // --- FUNÇÕES DE ELIMINAÇÃO MÚLTIPLA E INDIVIDUAL CORRIGIDAS ---
+    function toggleSelectAllMembers(master) {
+      document.querySelectorAll('.member-checkbox').forEach(chk => chk.checked = master.checked);
+    }
+    function eliminarMembrosSelecionados() {
+      const selecionados = Array.from(document.querySelectorAll('.member-checkbox:checked')).map(chk => Number(chk.value));
+      if (selecionados.length === 0) { alert('Selecione pelo menos um membro para eliminar.'); return; }
+      if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} membro(s)?`)) {
+        members = members.filter(m => !selecionados.includes(m.id));
+        refreshAll();
+        alert('Membros eliminados com sucesso!');
+      }
+    }
+
+    function toggleSelectAllProducts(master) {
+      document.querySelectorAll('.product-checkbox').forEach(chk => chk.checked = master.checked);
+    }
+    function eliminarProdutosSelecionados() {
+      const selecionados = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(chk => Number(chk.value));
+      if (selecionados.length === 0) { alert('Selecione pelo menos um produto para eliminar.'); return; }
+      if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} produto(s)?`)) {
+        products = products.filter((p, idx) => !selecionados.includes(idx));
+        refreshAll();
+        alert('Produtos eliminados com sucesso!');
+      }
+    }
+
+    // --- IMPORTAÇÃO E EXPORTAÇÃO POR CATEGORIAS ---
     function importarPorCategoria(tipo) {
       const inputId = tipo === 'ativos' ? 'file-import-ativos' : (tipo === 'expirados' ? 'file-import-expirados' : 'file-import-produtos');
       const inputEl = document.getElementById(inputId);
@@ -660,6 +649,8 @@
                 members.push(m);
               });
             }
+            // Regista também na biblioteca de arquivos
+            biblioteca.push({ name: f.name, url: e.target.result });
             refreshAll();
             alert(`Importação de ${tipo} concluída com sucesso via JSON!`);
           } catch(err) { alert('Erro ao analisar ficheiro JSON.'); }
@@ -697,64 +688,52 @@
                 });
               }
             });
+            biblioteca.push({ name: f.name, url: e.target.result });
             refreshAll();
-            alert(`Importação de ${tipo} concluída com sucesso! ${rows.length} registos integrados no respetivo destino.`);
+            alert(`Importação de ${tipo} concluída com sucesso! ${rows.length} registos integrados.`);
           } catch(err) { alert('Erro ao processar tabela Excel/CSV.'); }
         };
         r.readAsArrayBuffer(f);
       } else {
-        alert('Formato de ficheiro não suportado para esta categoria.');
+        r.onload = e => {
+          biblioteca.push({ name: f.name, url: e.target.result });
+          refreshAll();
+          alert('Ficheiro registado na biblioteca.');
+        };
+        r.readAsDataURL(f);
       }
     }
 
-    // Exportação segmentada por categoria
     function exportarPorCategoria(tipo) {
       let dadosExportar = [];
       let nomeFicheiro = '';
+      if (tipo === 'ativos') { dadosExportar = members.filter(m => m.estado === 'Ativo'); nomeFicheiro = 'kosmo_membros_ativos.xlsx'; }
+      else if (tipo === 'expirados') { dadosExportar = members.filter(m => m.estado !== 'Ativo'); nomeFicheiro = 'kosmo_membros_expirados.xlsx'; }
+      else if (tipo === 'produtos') { dadosExportar = products; nomeFicheiro = 'kosmo_produtos_stock.xlsx'; }
 
-      if (tipo === 'ativos') {
-        dadosExportar = members.filter(m => m.estado === 'Ativo');
-        nomeFicheiro = 'kosmo_membros_ativos.xlsx';
-      } else if (tipo === 'expirados') {
-        dadosExportar = members.filter(m => m.estado !== 'Ativo');
-        nomeFicheiro = 'kosmo_membros_expirados.xlsx';
-      } else if (tipo === 'produtos') {
-        dadosExportar = products;
-        nomeFicheiro = 'kosmo_produtos_stock.xlsx';
-      }
-
-      if (dadosExportar.length === 0) { alert('Não existem dados registados nesta categoria para exportar.'); return; }
-
+      if (dadosExportar.length === 0) { alert('Não existem dados registados nesta categoria.'); return; }
       const worksheet = XLSX.utils.json_to_sheet(dadosExportar);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, tipo.toUpperCase());
       XLSX.writeFile(workbook, nomeFicheiro);
-      alert(`Exportação de ${tipo} concluída com sucesso!`);
     }
 
-    function onLoginKey(e) {
-      if (e.key === 'Enter') directLogin();
-    }
-
+    function onLoginKey(e) { if (e.key === 'Enter') directLogin(); }
     function directLogin() {
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
-        loggedStaff = null;
-        document.getElementById('login-overlay').style.display = 'none';
+        loggedStaff = null; document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('logged-user-label').innerText = 'Sessão: Admin Master';
         document.getElementById('nav-mudar-senha').style.display = 'none';
-        navigate('dashboard');
-        return;
+        navigate('dashboard'); return;
       }
       const staff = collaborators.find(c => c.user === u && c.pass === p);
       if (staff) {
-        loggedStaff = staff;
-        document.getElementById('login-overlay').style.display = 'none';
+        loggedStaff = staff; document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('logged-user-label').innerText = `Staff: ${staff.name}`;
         document.getElementById('nav-mudar-senha').style.display = 'flex';
-        navigate('dashboard');
-        return;
+        navigate('dashboard'); return;
       }
       alert('Utilizador ou palavra-passe incorretos.');
     }
@@ -764,17 +743,10 @@
     function navigate(viewId) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      const t = document.getElementById('view-' + viewId);
-      if (t) t.classList.add('active');
+      const t = document.getElementById('view-' + viewId); if (t) t.classList.add('active');
       const n = document.getElementById('nav-' + viewId);
-      if (n) {
-        n.classList.add('active');
-        if (viewId === 'qrcode') {
-          setTimeout(gerarQRCodeInscricao, 100);
-        }
-      }
-      const sidebar = document.getElementById('sidebar-panel');
-      if (sidebar) sidebar.classList.remove('mobile-open');
+      if (n) { n.classList.add('active'); if (viewId === 'qrcode') setTimeout(gerarQRCodeInscricao, 100); }
+      const sidebar = document.getElementById('sidebar-panel'); if (sidebar) sidebar.classList.remove('mobile-open');
       refreshAll();
     }
 
@@ -799,6 +771,10 @@
       verificarAlertaVencimentos();
       populateCardSelect();
       document.getElementById('badge-inscricoes-count').innerText = inscricoesOnline.length;
+      
+      // Sincronizar dados automáticos na biblioteca (fotos, fichas e anexos gerados)
+      members.forEach(m => { if(m.foto && !biblioteca.some(b => b.url === m.foto)) biblioteca.push({name: `Ficha_${m.name}.jpg`, url: m.foto}); });
+
       localStorage.setItem('kosmo_members', JSON.stringify(members));
       localStorage.setItem('kosmo_produtos', JSON.stringify(products));
       localStorage.setItem('kosmo_sales', JSON.stringify(salesHistory));
@@ -813,15 +789,14 @@
       localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
     }
 
-    function converterFotoMembro(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('m-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
-    function converterFotoPortal(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('portal-foto-b64').value = evt.target.result; r.readAsDataURL(f); } }
-    function converterFotoProduto(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('p-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
-    function converterFotoStaff(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('colab-foto-base64').value = evt.target.result; r.readAsDataURL(f); } }
-    function converterFileDespesa(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = evt => document.getElementById('exp-file-base64').value = evt.target.result; r.readAsDataURL(f); } }
+    function converterFotoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-foto-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterFotoPortal(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('portal-foto-b64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterFotoProduto(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('p-foto-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterFotoStaff(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('colab-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
+    function converterFileDespesa(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('exp-file-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
 
     function renderDashboardCounts() {
-      const now = new Date();
-      let cAtivos = 0, cAVencer = 0, cExpirados = 0, cInativos = 0;
+      const now = new Date(); let cAtivos = 0, cAVencer = 0, cExpirados = 0, cInativos = 0;
       members.forEach(m => {
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
         const diff = Math.ceil((d - now)/(1000*60*60*24));
@@ -837,9 +812,8 @@
     }
 
     function filtrarMembrosDashboard(filtro) {
-      const res = document.getElementById('dashboard-filtro-resultado');
-      const now = new Date();
-      let html = `<h3>Membros Filtrados: ${filtro}</h3><table><thead><tr><th>Foto</th><th>Nome & E-mail</th><th>Plano</th><th>Validade</th></tr></thead><tbody>`;
+      const res = document.getElementById('dashboard-filtro-resultado'); const now = new Date();
+      let html = `<h3>Membros Filtrados: ${filtro}</h3><table><thead><tr><th>Foto</th><th>Nome</th><th>Plano</th><th>Validade</th></tr></thead><tbody>`;
       let achou = false;
       members.forEach(m => {
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
@@ -849,75 +823,58 @@
         if (filtro === 'A Vencer' && m.estado === 'Ativo' && diff <= 5 && diff >= 0) match = true;
         if (filtro === 'Expirado' && d < now) match = true;
         if (filtro === 'Inativo' && (m.estado === 'Inativo' || m.estado === 'Desativado')) match = true;
-
         if (match) {
           achou = true;
-          html += `<tr><td>${m.foto ? '<img src="'+m.foto+'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">' : '👤'}</td><td><strong>${m.name}</strong><br><small>${m.email||'--'}</small></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td></tr>`;
+          html += `<tr><td>${m.foto ? '<img src="'+m.foto+'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">' : '👤'}</td><td><strong>${m.name}</strong></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td></tr>`;
         }
       });
-      html += `</tbody></table>`;
-      res.innerHTML = achou ? html : `<p style="margin-top:10px; color:#777;">Nenhum membro encontrado com este estado.</p>`;
+      html += `</tbody></table>`; res.innerHTML = achou ? html : `<p style="margin-top:10px; color:#777;">Nenhum membro encontrado.</p>`;
     }
 
     function saveMember() {
       const editId = document.getElementById('m-edit-id').value;
-      const name = document.getElementById('m-name').value.trim();
-      const email = document.getElementById('m-email').value.trim();
-      const barcode = document.getElementById('m-barcode').value.trim();
-      if (!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
+      const name = document.getElementById('m-name').value.trim(); const barcode = document.getElementById('m-barcode').value.trim();
+      if (!name || !barcode) { alert('Preencha nome e código.'); return; }
       if (editId) {
         const m = members.find(x => x.id == editId);
-        if (m) { m.name = name; m.email = email; m.barcode = barcode; m.phone = document.getElementById('m-phone').value; m.altura = document.getElementById('m-altura').value; m.peso = document.getElementById('m-peso').value; m.patologias = document.getElementById('m-patologias').value; m.plan = document.getElementById('m-plan').value; m.estado = document.getElementById('m-estado').value; m.date = document.getElementById('m-date').value; const foto = document.getElementById('m-foto-base64').value; if(foto) m.foto = foto; }
+        if (m) { m.name = name; m.email = document.getElementById('m-email').value; m.barcode = barcode; m.phone = document.getElementById('m-phone').value; m.altura = document.getElementById('m-altura').value; m.peso = document.getElementById('m-peso').value; m.patologias = document.getElementById('m-patologias').value; m.plan = document.getElementById('m-plan').value; m.estado = document.getElementById('m-estado').value; m.date = document.getElementById('m-date').value; const foto = document.getElementById('m-foto-base64').value; if(foto) m.foto = foto; }
         alert('Atualizado!'); cancelEditMember();
       } else {
-        members.push({ id: Date.now(), name, email, barcode, phone: document.getElementById('m-phone').value, altura: document.getElementById('m-altura').value, peso: document.getElementById('m-peso').value, patologias: document.getElementById('m-patologias').value, plan: document.getElementById('m-plan').value, estado: document.getElementById('m-estado').value, date: document.getElementById('m-date').value || new Date().toISOString().split('T')[0], foto: document.getElementById('m-foto-base64').value });
-        alert('Registo criado com sucesso!');
-        document.getElementById('m-name').value = ''; document.getElementById('m-email').value = ''; document.getElementById('m-barcode').value = '';
+        members.push({ id: Date.now(), name, email: document.getElementById('m-email').value, barcode, phone: document.getElementById('m-phone').value, altura: document.getElementById('m-altura').value, peso: document.getElementById('m-peso').value, patologias: document.getElementById('m-patologias').value, plan: document.getElementById('m-plan').value, estado: document.getElementById('m-estado').value, date: document.getElementById('m-date').value || new Date().toISOString().split('T')[0], foto: document.getElementById('m-foto-base64').value });
+        alert('Membro criado!'); document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
       }
       refreshAll();
     }
 
     function editMember(id) {
       const m = members.find(x => x.id === id); if (!m) return;
-      document.getElementById('m-edit-id').value = m.id;
-      document.getElementById('m-name').value = m.name;
-      document.getElementById('m-email').value = m.email || '';
-      document.getElementById('m-barcode').value = m.barcode;
-      document.getElementById('m-phone').value = m.phone || '';
-      document.getElementById('m-altura').value = m.altura || '';
-      document.getElementById('m-peso').value = m.peso || '';
-      document.getElementById('m-patologias').value = m.patologias || '';
-      document.getElementById('m-plan').value = m.plan;
-      document.getElementById('m-estado').value = m.estado || 'Ativo';
-      document.getElementById('m-date').value = m.date || '';
-      document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
-      document.getElementById('btn-save-member').innerText = 'Guardar';
-      document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
+      document.getElementById('m-edit-id').value = m.id; document.getElementById('m-name').value = m.name;
+      document.getElementById('m-email').value = m.email || ''; document.getElementById('m-barcode').value = m.barcode;
+      document.getElementById('m-phone').value = m.phone || ''; document.getElementById('m-altura').value = m.altura || '';
+      document.getElementById('m-peso').value = m.peso || ''; document.getElementById('m-patologias').value = m.patologias || '';
+      document.getElementById('m-plan').value = m.plan; document.getElementById('m-estado').value = m.estado || 'Ativo';
+      document.getElementById('m-date').value = m.date || ''; document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
+      document.getElementById('btn-save-member').innerText = 'Guardar'; document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
       navigate('membros');
     }
 
     function cancelEditMember() {
-      document.getElementById('m-edit-id').value = '';
-      document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro';
-      document.getElementById('btn-save-member').innerText = 'Registar Membro';
-      document.getElementById('btn-cancel-edit').style.display = 'none';
-      document.getElementById('m-name').value = ''; document.getElementById('m-email').value = ''; document.getElementById('m-barcode').value = '';
+      document.getElementById('m-edit-id').value = ''; document.getElementById('form-member-title').innerText = 'Registar ou Editar Membro';
+      document.getElementById('btn-save-member').innerText = 'Registar Membro'; document.getElementById('btn-cancel-edit').style.display = 'none';
+      document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = '';
     }
 
     function renovarSubscricao(id) {
       const m = members.find(x => x.id === id);
       if (m) {
-        m.date = new Date().toISOString().split('T')[0];
-        m.estado = 'Ativo';
+        m.date = new Date().toISOString().split('T')[0]; m.estado = 'Ativo';
         invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, email: m.email, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
-        refreshAll();
-        alert(`Subscrição de ${m.name} renovada! Fatura gerada e enviada automaticamente por e-mail (${m.email || 'N/A'}).`);
+        refreshAll(); alert(`Subscrição de ${m.name} renovada!`);
       }
     }
 
     function renderMembers() {
-      const t = document.getElementById('members-tbody'); if (!t) return; t.innerHTML = '';
-      const now = new Date();
+      const t = document.getElementById('members-tbody'); if (!t) return; t.innerHTML = ''; const now = new Date();
       members.forEach(m => {
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
         const diff = Math.ceil((d - now)/(1000*60*60*24));
@@ -925,37 +882,34 @@
         if (m.estado === 'Inativo' || m.estado === 'Desativado') badge = '<span class="badge badge-inativo">Inativo ⚫</span>';
         else if (d < now) badge = '<span class="badge badge-err">Expirado 🔴</span>';
         else if (diff <= 5 && diff >= 0) badge = `<span class="badge badge-warn">Faltam ${diff} dias 🟡</span>`;
-        t.innerHTML += `<tr><td>${m.foto ? '<img src="'+m.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">' : '👤'}</td><td><strong>${m.name}</strong><br><small>${m.email||'--'}</small></td><td><code>${m.barcode}</code></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td>${badge}</td><td><button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button> <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button></td></tr>`;
+        
+        t.innerHTML += `<tr>
+          <td><input type="checkbox" class="member-checkbox" value="${m.id}"></td>
+          <td>${m.foto ? '<img src="'+m.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">' : '👤'}</td>
+          <td><strong>${m.name}</strong><br><small>${m.email||'--'}</small></td>
+          <td><code>${m.barcode}</code></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td>${badge}</td>
+          <td>
+            <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button>
+            <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button>
+          </td>
+        </tr>`;
       });
     }
 
-    function filtrarPasta(pasta) {
-      pastaFiltroGlobal = pasta;
-      renderDatabase();
-    }
-
+    function filtrarPasta(pasta) { pastaFiltroGlobal = pasta; renderDatabase(); }
     function renderDatabase() {
-      const t = document.getElementById('database-tbody'); if (!t) return; t.innerHTML = '';
-      let achou = false;
+      const t = document.getElementById('database-tbody'); if (!t) return; t.innerHTML = ''; let achou = false;
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'mensalidades') {
-        members.forEach(m => {
-          achou = true;
-          t.innerHTML += `<tr><td><span class="badge badge-ok">📂 Mensalidade</span></td><td><strong>${m.name}</strong> (${m.barcode})</td><td>Plano: ${m.plan}</td><td>Início: ${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">Excluir</button></td></tr>`;
-        });
+        members.forEach(m => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-ok">📂 Mensalidade</span></td><td><strong>${m.name}</strong></td><td>Plano: ${m.plan}</td><td>${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button></td></tr>`; });
       }
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'produtos') {
-        salesHistory.forEach((s, i) => {
-          achou = true;
-          t.innerHTML += `<tr><td><span class="badge badge-warn">📂 Produto Venda</span></td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty}) - <strong>${s.total} CVE</strong></td><td>${s.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
-        });
+        salesHistory.forEach((s, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-warn">📂 Produto Venda</span></td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty}) - <strong>${s.total} CVE</strong></td><td>${s.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`; });
       }
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'despesas') {
-        expenses.forEach((e, i) => {
-          achou = true;
-          t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc} (Empresa: ${e.empresa || 'N/A'})</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); refreshAll();">Excluir</button></td></tr>`;
-        });
+        expenses.forEach((e, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc}</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); refreshAll();">Excluir</button></td></tr>`; });
       }
-      if (!achou) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Nenhum registo nesta pasta.</td></tr>`; }
+      if (!achou) t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem registos.</td></tr>`;
     }
 
     function saveProduct() {
@@ -965,10 +919,10 @@
       const fotoVal = document.getElementById('p-foto-base64').value;
       if (idx !== '') {
         products[idx] = { name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: fotoVal || products[idx].foto };
-        alert('Atualizado!'); cancelEditProduct();
+        alert('Produto atualizado!'); cancelEditProduct();
       } else {
         products.push({ name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: fotoVal });
-        alert('Criado!');
+        alert('Produto criado!');
       }
       refreshAll();
     }
@@ -977,17 +931,25 @@
       document.getElementById('p-name').value = p.name; document.getElementById('p-buy').value = p.buy;
       document.getElementById('p-price').value = p.price; document.getElementById('p-stock').value = p.stock;
       document.getElementById('p-desc').value = p.desc || ''; document.getElementById('p-use').value = p.use || '';
-      document.getElementById('p-foto-base64').value = p.foto || '';
-      navigate('produtos');
+      document.getElementById('p-foto-base64').value = p.foto || ''; navigate('produtos');
     }
     function cancelEditProduct() { document.getElementById('p-edit-idx').value = ''; document.getElementById('p-name').value = ''; }
+    
     function renderProducts() {
       const t = document.getElementById('products-tbody'); if(!t)return; t.innerHTML='';
       products.forEach((p,i)=>{
         const fTag = p.foto ? '<img src="'+p.foto+'" style="width:38px;height:38px;object-fit:cover;border-radius:4px;">' : '📦';
-        t.innerHTML+=`<tr><td>${fTag}</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td><td><button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML+=`<tr>
+          <td><input type="checkbox" class="product-checkbox" value="${i}"></td>
+          <td>${fTag}</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td>
+          <td>
+            <button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️</button>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button>
+          </td>
+        </tr>`;
       });
     }
+
     function renderStock() { const t = document.getElementById('stock-tbody'); if(!t)return; t.innerHTML=''; products.forEach(p=>t.innerHTML+=`<tr><td>${p.name}</td><td>${p.stock}</td><td>Normal</td></tr>`); }
     function renderSales() { const t = document.getElementById('sales-tbody'); if(!t)return; t.innerHTML=''; salesHistory.forEach(s=>t.innerHTML+=`<tr><td>${s.date}</td><td>${s.func}</td><td>${s.client}</td><td>${s.prod} (${s.qty})</td><td><strong>${s.total} CVE</strong></td></tr>`); }
     function renderPOSCatalog() { const g = document.getElementById('pos-catalog-grid'); if(!g)return; g.innerHTML=''; products.forEach((p,i)=>{ const fTag = p.foto ? '<img src="'+p.foto+'" style="width:100%;height:80px;object-fit:cover;border-radius:4px;margin-bottom:4px;">' : '<div style="font-size:1.5rem;">📦</div>'; g.innerHTML+=`<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;">${fTag}<h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`; }); }
@@ -1004,131 +966,38 @@
         invoicesList.unshift({type:'Fatura Venda Produto', name: clienteNome, email: clienteEmail, desc:`Compra de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});
       });
       cartItems=[]; document.getElementById('pos-client-name').value = ''; document.getElementById('pos-client-email').value = '';
-      refreshAll();
-      alert(`Venda concluída! Fatura enviada automaticamente por e-mail para ${clienteEmail}.`);
+      refreshAll(); alert(`Venda concluída!`);
     }
 
-    // DESPESAS COM NIF E EMPRESA
     function addExpense() {
-      const desc = document.getElementById('exp-desc').value.trim();
-      const val = Number(document.getElementById('exp-val').value);
-      const empresa = document.getElementById('exp-empresa').value.trim();
-      const nif = document.getElementById('exp-nif').value.trim();
-      const file = document.getElementById('exp-file-base64').value;
-      if (!desc || !val) { alert('Preencha a descrição e o valor da despesa.'); return; }
-      expenses.push({ id: Date.now(), date: new Date().toLocaleDateString('pt-PT'), desc, amount: val, empresa, nif, file: file || '' });
-      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; document.getElementById('exp-empresa').value = ''; document.getElementById('exp-nif').value = ''; document.getElementById('exp-file-base64').value = '';
-      refreshAll(); alert('Despesa registada com sucesso!');
+      const desc = document.getElementById('exp-desc').value.trim(); const val = Number(document.getElementById('exp-val').value);
+      if (!desc || !val) { alert('Preencha descrição e valor.'); return; }
+      expenses.push({ id: Date.now(), date: new Date().toLocaleDateString('pt-PT'), desc, amount: val, empresa: document.getElementById('exp-empresa').value, nif: document.getElementById('exp-nif').value, file: document.getElementById('exp-file-base64').value });
+      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; refreshAll(); alert('Despesa registada!');
     }
     function renderExpenses() {
       const t = document.getElementById('expenses-tbody'); if(!t)return;
       if (expenses.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem despesas.</td></tr>`; return; }
-      t.innerHTML = '';
-      expenses.forEach((e, idx) => {
-        const fileLink = e.file ? `<a href="${e.file}" target="_blank" download="despesa_${e.id}" class="btn btn-sm btn-green">Baixar</a>` : 'Sem anexo';
-        t.innerHTML += `
-          <tr>
-            <td>${e.date}</td>
-            <td>${e.desc}</td>
-            <td>${e.empresa || '--'} (NIF: ${e.nif || '--'})</td>
-            <td><strong>${e.amount} CVE</strong></td>
-            <td>${fileLink}</td>
-            <td>
-              <button class="btn btn-sm btn-blue" onclick="imprimirDespesa('${e.desc}', ${e.amount}, '${e.date}', '${e.empresa}', '${e.nif}')">🖨 Imprimir</button>
-              <button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1); refreshAll();">🗑️ Excluir</button>
-            </td>
-          </tr>
-        `;
+      t.innerHTML = ''; expenses.forEach((e, idx) => {
+        t.innerHTML += `<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.empresa||'--'}</td><td><strong>${e.amount} CVE</strong></td><td>${e.file?'Sim':'Não'}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
       });
     }
-    function imprimirDespesa(desc, val, data, emp, nif) {
-      const win = window.open('', '_blank', 'width=800,height=600');
-      win.document.write(`<html><head><title>Comprovativo de Despesa</title></head><body style="font-family:sans-serif;padding:30px; text-align:center;"><img src="logo.jpg" style="height:90px;object-fit:contain;margin-bottom:10px;" onerror="this.src='src/img/logo.jpg';"><h2>GINÁSIO KOSMO</h2><p>NIF: 283023805</p><hr><h3>Comprovativo de Despesa</h3><p>Data: ${data}</p><p>Empresa: ${emp} | NIF: ${nif}</p><p>Descrição: ${desc}</p><p>Valor: ${val} CVE</p><script>window.print();<\/script></body></html>`);
-      win.document.close();
-    }
 
-    // SALÁRIOS COM NIF E DOCUMENTO DE IDENTIFICAÇÃO
     function addSalary() {
       const name = document.getElementById('sal-name').value.trim();
-      const val = Number(document.getElementById('sal-val').value) || 0;
-      const nif = document.getElementById('sal-nif').value.trim();
-      const doc = document.getElementById('sal-doc').value.trim();
-      const mes = document.getElementById('sal-mes').value;
-      const horas = Number(document.getElementById('sal-horas').value) || 0;
-      if (!name) { alert('Insira o nome do staff.'); return; }
-      salaries.push({ name, base: val, nif, doc, mes, horas, total: val + horas });
-      refreshAll(); alert('Salário registado com sucesso!');
+      if (!name) { alert('Insira o nome.'); return; }
+      salaries.push({ name, base: Number(document.getElementById('sal-val').value)||0, nif: document.getElementById('sal-nif').value, doc: document.getElementById('sal-doc').value, mes: document.getElementById('sal-mes').value, horas: Number(document.getElementById('sal-horas').value)||0, total: (Number(document.getElementById('sal-val').value)||0) + (Number(document.getElementById('sal-horas').value)||0) });
+      refreshAll(); alert('Salário registado!');
     }
-    function renderSalaries() {
-      const t = document.getElementById('salaries-tbody'); if(!t)return;
-      if (salaries.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem salários.</td></tr>`; return; }
-      t.innerHTML = '';
-      salaries.forEach((s, idx) => {
-        t.innerHTML += `<tr><td><strong>${s.name}</strong></td><td>${s.mes}</td><td>NIF: ${s.nif || '--'} | Doc: ${s.doc || '--'}</td><td>Base: ${s.base} + Extras: ${s.horas}</td><td><strong>${s.total} CVE</strong></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
-      });
-    }
+    function renderSalaries() { const t = document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach((s,idx)=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.mes}</td><td>${s.nif}</td><td>${s.total} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
 
-    // FATURAS E RECIBOS COM LOGÓTIPO ACIMA
     function gerarFaturaMembroPrompt() {
-      const nomeMembro = prompt('Nome do Membro para Fatura:');
-      const emailMembro = prompt('E-mail do Membro:', 'aluno@email.com');
-      const descFatura = prompt('Descrição do Serviço / Produto:', 'Mensalidade Ginásio');
-      const valorFatura = prompt('Valor em CVE:', '3000');
-      if (nomeMembro && valorFatura) {
-        invoicesList.unshift({ type: 'Fatura Membro', name: nomeMembro, email: emailMembro, desc: descFatura, val: Number(valorFatura), date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert('Fatura emitida!');
-      }
+      const n = prompt('Nome:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Fatura', name:n, desc:'Serviço', val:Number(v), date:new Date().toLocaleString('pt-PT')}); refreshAll(); }
     }
     function gerarReciboStaffPrompt() {
-      const nomeStaff = prompt('Nome do Colaborador (Staff):');
-      const valorSalario = prompt('Valor do Ordenado em CVE:', '25000');
-      if (nomeStaff && valorSalario) {
-        invoicesList.unshift({ type: 'Recibo Ordenado Staff', name: nomeStaff, desc: 'Pagamento de Ordenado Mensal', val: Number(valorSalario), date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert('Recibo gerado!');
-      }
+      const n = prompt('Nome Staff:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Recibo', name:n, desc:'Ordenado', val:Number(v), date:new Date().toLocaleString('pt-PT')}); refreshAll(); }
     }
-    function renderInvoices() {
-      const t = document.getElementById('invoices-tbody'); if(!t)return;
-      if (invoicesList.length === 0) { t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem faturas.</td></tr>`; return; }
-      t.innerHTML = '';
-      invoicesList.forEach((inv) => {
-        t.innerHTML += `
-          <tr>
-            <td><span class="badge badge-blue">${inv.type}</span></td>
-            <td><strong>${inv.name}</strong><br><small>${inv.email || ''}</small></td>
-            <td>${inv.desc}<br><small>${inv.date}</small></td>
-            <td><strong>${inv.val} CVE</strong></td>
-            <td>
-              <button class="btn btn-sm btn-blue" onclick="imprimirFaturaOficial('${inv.type}', '${inv.name}', '${inv.desc}', ${inv.val}, '${inv.date}')">🖨 Imprimir com Logótipo</button>
-              <a href="https://wa.me/?text=Ginásio KOSMO - NIF: 283023805%0A${inv.type}%0ABeneficiário: ${inv.name}%0ADescrição: ${inv.desc}%0AValor: ${inv.val} CVE" target="_blank" class="btn btn-sm btn-green">WhatsApp</a>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function imprimirFaturaOficial(tipo, nome, desc, val, data) {
-      const win = window.open('', '_blank', 'width=800,height=700');
-      win.document.write(`
-        <html><head><title>Fatura / Recibo Oficial - KOSMO</title><style>body{font-family:sans-serif;padding:30px; text-align:center;}</style></head>
-        <body>
-          <img src="logo.jpg" style="height:100px; object-fit:contain; margin-bottom:12px;" onerror="this.src='src/img/logo.jpg';">
-          <h2>GINÁSIO KOSMO</h2>
-          <p>Terra Branca, Frente Escola Amor De Deus<br><strong>NIF: 283023805</strong></p>
-          <hr style="margin:20px 0;">
-          <h3 style="text-align:left;">${tipo}</h3>
-          <p style="text-align:left;"><strong>Data/Hora:</strong> ${data}</p>
-          <p style="text-align:left;"><strong>Beneficiário:</strong> ${nome}</p>
-          <p style="text-align:left;"><strong>Descrição:</strong> ${desc}</p>
-          <p style="text-align:left; font-size:1.2rem;"><strong>Valor Total:</strong> ${val} CVE</p>
-          <br><br><br>
-          <p style="text-align:left;">____________________________________________________</p>
-          <p style="text-align:left;">Assinatura / Declaração de Receção</p>
-          <script>window.print();<\/script>
-        </body></html>
-      `);
-      win.document.close();
-    }
+    function renderInvoices() { const t = document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; invoicesList.forEach((inv,idx)=>t.innerHTML+=`<tr><td>${inv.type}</td><td>${inv.name}</td><td>${inv.desc}</td><td>${inv.val} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="invoicesList.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID:'); if(c) processarCheckin(c); }
@@ -1136,9 +1005,9 @@
       const m=members.find(x=>x.barcode===code); const now=new Date(); let ativo=false; let nome='Desconhecido';
       if(m) { nome=m.name; const d=new Date(m.date||'2026-01-01'); d.setDate(d.getDate()+30); ativo=d>=now&&m.estado==='Ativo'; }
       attendanceLogs.unshift({data:now.toLocaleDateString('pt-PT'), time:now.toLocaleTimeString('pt-PT'), name:nome, barcode:code, status:ativo?'Ativo':'Expirado'});
-      renderAttendance(); localStorage.setItem('kosmo_totem_scan', JSON.stringify({name:nome, plan:m?m.plan:'Geral', auth:ativo, time:Date.now()}));
+      renderAttendance();
     }
-    function renderAttendance() { const t=document.getElementById('attendance-tbody'); if(!t)return; t.innerHTML=''; attendanceLogs.forEach(a=>t.innerHTML+=`<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td><span class="badge ${a.status==='Ativo'?'badge-ok':'badge-err'}">${a.status}</span></td></tr>`); }
+    function renderAttendance() { const t=document.getElementById('attendance-tbody'); if(!t)return; t.innerHTML=''; attendanceLogs.forEach(a=>t.innerHTML+=`<tr><td>${a.data}</td><td>${a.time}</td><td>${a.name}</td><td><code>${a.barcode}</code></td><td>${a.status}</td></tr>`); }
 
     function onScanStaff(e) { if(e.key==='Enter') processarPica(document.getElementById('pica-input').value.trim()); }
     function picaManualPrompt() { const c=prompt('ID Staff:'); if(c) processarPica(c); }
@@ -1151,163 +1020,61 @@
     function abrirPortalInscricao() { document.getElementById('portal-inscricao-overlay').style.display = 'flex'; }
     function ativarPortalChat() {
       const name = document.getElementById('portal-name').value.trim();
-      const email = document.getElementById('portal-email').value.trim();
-      const phone = document.getElementById('portal-phone').value.trim();
-      if (!name || !email || !phone) { alert('Preencha nome, e-mail e telemóvel para desbloquear o chat.'); return; }
-      document.getElementById('portal-step-1').style.display = 'none';
-      document.getElementById('portal-step-2').style.display = 'block';
-      portalChatLog.push({ sender: 'Sistema', text: `Olá ${name}! Chat interativo KOSMO ativo.` });
-      renderPortalChat();
+      if (!name) { alert('Insira o nome.'); return; }
+      document.getElementById('portal-step-1').style.display = 'none'; document.getElementById('portal-step-2').style.display = 'block';
     }
-    function portalEnviarMsg() {
-      const txt = document.getElementById('portal-chat-text').value.trim(); if(!txt)return;
-      portalChatLog.push({sender:'Cliente', text:txt}); chatMsgs.push({sender:'Cliente Portal', text:txt});
-      document.getElementById('portal-chat-text').value=''; renderPortalChat(); refreshAll();
-    }
-    function portalEnviarArquivo(e) {
-      const f = e.target.files[0]; if(!f)return;
-      const r = new FileReader(); r.onload = evt => {
-        portalChatLog.push({sender:'Cliente', fileUrl:evt.target.result, fileName:f.name});
-        chatMsgs.push({sender:'Cliente Portal', fileUrl:evt.target.result, fileName:f.name});
-        biblioteca.push({name:f.name, url:evt.target.result});
-        renderPortalChat(); refreshAll(); alert('Enviado!');
-      };
-      r.readAsDataURL(f);
-    }
-    function renderPortalChat() {
-      const a = document.getElementById('portal-chat-msgs'); if(!a)return; a.innerHTML='';
-      portalChatLog.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`);
-    }
-
     function submeterInscricaoOnline() {
-      const name = document.getElementById('portal-name').value.trim();
-      const contrato = document.getElementById('portal-contrato').checked;
-      const foto = document.getElementById('portal-foto-b64').value;
-      if(!name || !contrato || !foto) { alert('Preencha os campos obrigatórios, foto e contrato.'); return; }
-      inscricoesOnline.push({ id:Date.now(), name, email:document.getElementById('portal-email').value, phone:document.getElementById('portal-phone').value, nif:document.getElementById('portal-nif').value, altura:document.getElementById('portal-altura').value, peso:document.getElementById('portal-peso').value, patologias:document.getElementById('portal-patologia').value, plan:document.getElementById('portal-plan').value, foto });
-      alert('Inscrição submetida com sucesso! Aguarde validação.');
-      document.getElementById('portal-inscricao-overlay').style.display='none'; refreshAll();
+      const name = document.getElementById('portal-name').value.trim(); const contrato = document.getElementById('portal-contrato').checked; const foto = document.getElementById('portal-foto-b64').value;
+      if(!name || !contrato || !foto) { alert('Preencha campos, foto e contrato.'); return; }
+      inscricoesOnline.push({ id:Date.now(), name, email:document.getElementById('portal-email').value, phone:document.getElementById('portal-phone').value, nif:document.getElementById('portal-nif').value, plan:document.getElementById('portal-plan').value, foto });
+      biblioteca.push({name: `Inscricao_${name}.jpg`, url: foto});
+      alert('Inscrição submetida!'); document.getElementById('portal-inscricao-overlay').style.display='none'; refreshAll();
     }
     function renderInscricoes() {
       const t = document.getElementById('online-inscricoes-tbody'); if(!t)return; t.innerHTML='';
-      if(inscricoesOnline.length===0) { t.innerHTML=`<tr><td colspan="5" style="text-align:center; color:#777;">Sem inscrições em arquivo.</td></tr>`; return; }
+      if(inscricoesOnline.length===0) { t.innerHTML=`<tr><td colspan="5" style="text-align:center; color:#777;">Sem inscrições.</td></tr>`; return; }
       inscricoesOnline.forEach((ins, idx) => {
-        t.innerHTML += `
-          <tr>
-            <td>${ins.foto ? '<img src="'+ins.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">' : '👤'}</td>
-            <td><strong>${ins.name}</strong><br><small>${ins.email}</small></td>
-            <td>${ins.phone || '---'}</td>
-            <td>${ins.plan}</td>
-            <td>
-              <button class="btn btn-sm btn-green" onclick="aprovarInscricao(${idx})">✅ Validar / Aprovar</button>
-              <a href="${ins.foto}" download="ficha_${ins.name}.jpg" class="btn btn-sm btn-blue">📥 Baixar Ficha</a>
-              <button class="btn btn-sm" style="background:var(--danger);" onclick="inscricoesOnline.splice(${idx},1); refreshAll();">🗑️ Excluir</button>
-            </td>
-          </tr>
-        `;
+        t.innerHTML += `<tr><td>${ins.foto?'<img src="'+ins.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td><strong>${ins.name}</strong></td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="aprovarInscricao(${idx})">✅ Aprovar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="inscricoesOnline.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
       });
     }
     function aprovarInscricao(idx) {
       const ins = inscricoesOnline[idx]; const barcode = String(Math.floor(100000 + Math.random()*900000));
-      members.push({ id:Date.now(), name:ins.name, email:ins.email, barcode, phone:ins.phone, altura:ins.altura, peso:ins.peso, patologias:ins.patologias, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto });
-      inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição de ${ins.name} validada com sucesso! Cartão digital emitido (ID: ${barcode}).`);
+      members.push({ id:Date.now(), name:ins.name, email:ins.email, barcode, phone:ins.phone, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto });
+      inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição aprovada! ID gerado: ${barcode}`);
     }
 
     function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; refreshAll(); } }
     function enviarArquivoChat(e) {
-      const f = e.target.files[0]; if(!f)return;
-      const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); refreshAll(); alert('Enviado!'); };
-      r.readAsDataURL(f);
+      const f = e.target.files[0]; if(!f)return; const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); refreshAll(); alert('Enviado!'); }; r.readAsDataURL(f);
     }
     function renderChat() { const a = document.getElementById('chat-msgs'); if(!a)return; a.innerHTML=''; chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`); }
-    function renderBiblioteca() { const b = document.getElementById('bib-list'); if(!b)return; b.innerHTML=''; biblioteca.forEach((i, idx)=>b.innerHTML+=`<tr><td><a href="${i.url}" download="${i.name}">${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
+    
+    // --- RENDERIZAÇÃO DA BIBLIOTECA DE ARQUIVOS ---
+    function renderBiblioteca() {
+      const b = document.getElementById('bib-list'); if(!b)return; b.innerHTML='';
+      if (biblioteca.length === 0) { b.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos na biblioteca.</td></tr>`; return; }
+      biblioteca.forEach((i, idx) => {
+        b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}" target="_blank">📄 ${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+      });
+    }
 
     function verificarAlertaVencimentos() {
-      const t = document.getElementById('alertas-tbody'); if(!t)return; t.innerHTML='';
-      const now = new Date(); let count = 0;
+      const t = document.getElementById('alertas-tbody'); if(!t)return; t.innerHTML=''; const now = new Date(); let count = 0;
       members.forEach(m => {
         const d = new Date(m.date || '2026-01-01'); d.setDate(d.getDate() + 30);
         const diff = Math.ceil((d - now)/(1000*60*60*24));
-        if(diff <= 5 && diff >= 0) {
-          count++;
-          t.innerHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td><span class="badge badge-warn">02 Notificações Diárias Ativas (E-mail / WhatsApp)</span></td></tr>`;
-        }
+        if(diff <= 5 && diff >= 0) { count++; t.innerHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td><td><span class="badge badge-warn">Ativo</span></td></tr>`; }
       });
-      if(count===0) t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum alerta pendente.</td></tr>`;
+      if(count===0) t.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum alerta.</td></tr>`;
     }
 
     function addColab() {
-      const editId = document.getElementById('staff-edit-id').value;
-      const name = document.getElementById('colab-name').value.trim();
-      const barcode = document.getElementById('colab-barcode').value.trim();
-      if(!name || !barcode) { alert('Preencha os campos obrigatórios.'); return; }
-      const perms = [];
-      document.querySelectorAll('.perm-chk:checked').forEach(chk => perms.push(chk.value));
-
-      if (editId) {
-        const c = collaborators.find(x => x.id == editId);
-        if (c) {
-          c.name = name; c.role = document.getElementById('colab-role').value; c.barcode = barcode; c.nif = document.getElementById('colab-nif').value; c.perm = perms;
-          const u = document.getElementById('colab-user').value.trim(); const p = document.getElementById('colab-pass').value.trim();
-          if (u) c.user = u; if (p) c.pass = p;
-          const foto = document.getElementById('colab-foto-base64').value; if (foto) c.foto = foto;
-        }
-        alert('Colaborador atualizado com sucesso!');
-        cancelEditStaff();
-      } else {
-        collaborators.push({
-          id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, nif: document.getElementById('colab-nif').value,
-          perm: perms, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value
-        });
-        alert('Staff registado com sucesso!');
-      }
-      refreshAll();
+      const name = document.getElementById('colab-name').value.trim(); const barcode = document.getElementById('colab-barcode').value.trim();
+      if(!name || !barcode) { alert('Preencha nome e ID.'); return; }
+      collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, nif: document.getElementById('colab-nif').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value });
+      refreshAll(); alert('Staff registado!');
     }
-
-    function editStaff(id) {
-      const c = collaborators.find(x => x.id === id); if(!c) return;
-      document.getElementById('staff-edit-id').value = c.id;
-      document.getElementById('colab-name').value = c.name;
-      document.getElementById('colab-role').value = c.role || '';
-      document.getElementById('colab-barcode').value = c.barcode || '';
-      document.getElementById('colab-nif').value = c.nif || '';
-      document.getElementById('colab-user').value = c.user || '';
-      document.getElementById('colab-pass').value = c.pass || '';
-      document.getElementById('colab-foto-base64').value = c.foto || '';
-      document.getElementById('form-staff-title').innerText = 'Editar Colaborador: ' + c.name;
-      document.getElementById('btn-save-staff').innerText = 'Guardar Alterações';
-      document.getElementById('btn-cancel-staff').style.display = 'inline-flex';
-      navigate('colab');
-    }
-
-    function cancelEditStaff() {
-      document.getElementById('staff-edit-id').value = '';
-      document.getElementById('form-staff-title').innerText = 'Gerir Staff, NIF & Permissões';
-      document.getElementById('btn-save-staff').innerText = 'Registar Staff';
-      document.getElementById('btn-cancel-staff').style.display = 'none';
-      document.getElementById('colab-name').value = ''; document.getElementById('colab-barcode').value = '';
-    }
-
-    function alterarMinhaSenha() {
-      const nova = document.getElementById('staff-nova-senha').value.trim();
-      if (!nova) { alert('Insira a nova palavra-passe.'); return; }
-      if (loggedStaff) {
-        loggedStaff.pass = nova;
-        const idx = collaborators.findIndex(x => x.id === loggedStaff.id);
-        if (idx !== -1) collaborators[idx].pass = nova;
-        refreshAll();
-        alert('A sua palavra-passe foi alterada com sucesso!');
-        document.getElementById('staff-nova-senha').value = '';
-      }
-    }
-
-    function renderColab() {
-      const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML='';
-      collaborators.forEach((c) => {
-        const pList = Array.isArray(c.perm) ? c.perm.join(', ') : (c.perm || 'Total');
-        t.innerHTML += `<tr><td>${c.foto?'<img src="'+c.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif || '--'}</td><td><code>${c.barcode}</code></td><td><small>${pList}</small></td><td><button class="btn btn-sm btn-blue" onclick="editStaff(${c.id})">✏️ Editar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators=collaborators.filter(x=>x.id!==${c.id}); refreshAll();">🗑️</button></td></tr>`;
-      });
-    }
+    function renderColab() { const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML=''; collaborators.forEach((c, idx)=>t.innerHTML+=`<tr><td>👤</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif}</td><td><code>${c.barcode}</code></td><td>Total</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
 
     function toggleCardType() { populateCardSelect(); }
     function populateCardSelect() {
@@ -1317,11 +1084,10 @@
       renderDigitalCard();
     }
     function renderDigitalCard() {
-      const z = document.getElementById('digital-card-container'), name = document.getElementById('card-member-select').value;
-      if(!z)return;
+      const z = document.getElementById('digital-card-container'), name = document.getElementById('card-member-select').value; if(!z)return;
       const obj = document.getElementById('card-type-select').value==='membro'?members.find(x=>x.name===name):collaborators.find(x=>x.name===name);
       if(!obj){z.innerHTML='Selecione.';return;}
-      z.innerHTML = `<div class="id-card-wrap"><div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;"><div>${obj.foto?'<img src="'+obj.foto+'" style="width:75px;height:75px;border-radius:50%;object-fit:cover;">':'👤'}</div><div><h3>Ginásio KOSMO</h3><h2>${obj.name}</h2><p>ID: ${obj.barcode}</p></div></div><div style="background:#fff; padding:6px; border-radius:6px; text-align:center;"><svg id="card-bc"></svg></div></div>`;
+      z.innerHTML = `<div class="id-card-wrap"><h3>Ginásio KOSMO</h3><h2>${obj.name}</h2><p>ID: ${obj.barcode}</p><svg id="card-bc"></svg></div>`;
       setTimeout(()=>{if(window.JsBarcode) JsBarcode("#card-bc", obj.barcode, {format:"CODE128", width:2, height:40, displayValue:true});}, 100);
     }
 
