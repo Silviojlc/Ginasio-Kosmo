@@ -75,7 +75,6 @@
 </head>
 <body>
 
-  <!-- LOGIN INICIAL -->
   <div id="login-overlay">
     <div class="login-box">
       <img src="logo.jpg" alt="Ginásio KOSMO" class="login-logo" onerror="this.src='src/img/logo.jpg';">
@@ -88,7 +87,6 @@
     </div>
   </div>
 
-  <!-- MENU LATERAL -->
   <aside id="sidebar-panel">
     <div class="gym-header">
       <img src="logo.jpg" alt="KOSMO" class="sidebar-logo" onerror="this.src='src/img/logo.jpg';">
@@ -103,7 +101,7 @@
       <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
       <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
       <button type="button" class="nav-item" id="nav-qrcode" onclick="navigate('qrcode')"><span class="icon">📷</span><span class="nav-text">QR Code de Inscrição</span></button>
-      
+
       <div class="nav-group-title">Loja & Stock</div>
       <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
       <button type="button" class="nav-item" id="nav-produtos" onclick="navigate('produtos')"><span class="icon">📦</span><span class="nav-text">Produtos (A a Z)</span></button>
@@ -149,7 +147,6 @@
     </header>
 
     <main>
-      <!-- DASHBOARD -->
       <section id="view-dashboard" class="view-section active">
         <div class="card">
           <h2>Dashboard de Membros & Estado</h2>
@@ -164,7 +161,6 @@
         </div>
       </section>
 
-      <!-- QR CODE DE INSCRIÇÃO -->
       <section id="view-qrcode" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>QR Code para Inscrição Online</h2>
@@ -179,7 +175,6 @@
         </div>
       </section>
 
-      <!-- MEMBROS (Com eliminação múltipla) -->
       <section id="view-membros" class="view-section">
         <div class="card">
           <h2 id="form-member-title">Registar ou Editar Membro</h2>
@@ -213,7 +208,6 @@
         </div>
       </section>
 
-      <!-- ARQUIVO DE INSCRIÇÕES -->
       <section id="view-inscricoes" class="view-section">
         <div class="card">
           <h2>Pasta de Arquivo de Inscrições Online</h2>
@@ -224,7 +218,6 @@
         </div>
       </section>
 
-      <!-- BASE DE DADOS EM PASTAS -->
       <section id="view-database" class="view-section">
         <div class="card">
           <h2>Base de Transações (Organizada em Pastas)</h2>
@@ -241,13 +234,13 @@
         </div>
       </section>
 
-      <!-- CHECK-INS -->
       <section id="view-checkins" class="view-section">
         <div class="card">
           <h2>Terminal de Check-ins</h2>
           <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
             <input type="text" id="chk-input" placeholder="Passe o cartão a qualquer momento..." onkeydown="onScan(event)" style="padding:12px; font-weight:bold; font-size:1.1rem; flex:1; min-width:200px;" autofocus>
             <button class="btn btn-green" onclick="checkinManualPrompt()">Check-in Manual</button>
+            <button class="btn btn-blue" onclick="checkinPorListaModal()">Check-in Manual (Escolher Membro)</button>
           </div>
           <table>
             <thead><tr><th>Data</th><th>Hora</th><th>Membro</th><th>Código</th><th>Estado</th></tr></thead>
@@ -256,7 +249,6 @@
         </div>
       </section>
 
-      <!-- POS -->
       <section id="view-pos" class="view-section">
         <div class="card">
           <h2>POS - Ponto de Venda & Carrinho</h2>
@@ -280,7 +272,6 @@
         </div>
       </section>
 
-      <!-- PRODUTOS (Com eliminação múltipla) -->
       <section id="view-produtos" class="view-section">
         <div class="card">
           <h2 id="form-prod-title">Registar ou Editar Produto</h2>
@@ -310,13 +301,10 @@
         </div>
       </section>
 
-      <!-- STOCK -->
       <section id="view-stock" class="view-section"><div class="card"><h2>Gestão de Stock</h2><table><thead><tr><th>Produto</th><th>Stock</th><th>Estado</th></tr></thead><tbody id="stock-tbody"></tbody></table></div></section>
 
-      <!-- VENDAS -->
       <section id="view-vendas" class="view-section"><div class="card"><h2>Histórico de Vendas</h2><table><thead><tr><th>Data / Hora</th><th>Funcionário</th><th>Cliente</th><th>Artigo / Qtd</th><th>Total (CVE)</th></tr></thead><tbody id="sales-tbody"><tr><td colspan="5" style="text-align:center;">Sem vendas.</td></tr></tbody></table></div></section>
 
-      <!-- FATURAS -->
       <section id="view-faturas" class="view-section">
         <div class="card">
           <h2>Faturas & Recibos Oficiais (Com Logótipo e NIF: 283023805)</h2>
@@ -331,7 +319,6 @@
         </div>
       </section>
 
-      <!-- DESPESAS -->
       <section id="view-despesas" class="view-section">
         <div class="card">
           <h2>Registar Despesa (Com NIF e Empresa)</h2>
@@ -354,7 +341,6 @@
         </div>
       </section>
 
-      <!-- SALÁRIOS -->
       <section id="view-salarios" class="view-section">
         <div class="card">
           <h2>Registar Salário / Ordenado Staff (NIF & Documento)</h2>
@@ -377,7 +363,6 @@
         </div>
       </section>
 
-      <!-- CARTÕES -->
       <section id="view-cartaodigital" class="view-section">
         <div class="card" style="text-align:center;">
           <h2>Cartões Digitais com Foto</h2>
@@ -390,10 +375,8 @@
         </div>
       </section>
 
-      <!-- CHAT -->
       <section id="view-chat" class="view-section"><div class="card"><h2>Chat Multimédia</h2><div style="border:1px solid #ddd; border-radius:6px; background:#fff; height:380px; display:flex; flex-direction:column; overflow:hidden;"><div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column; gap:8px;"></div><div style="padding:10px; background:#fff; border-top:1px solid #ddd; display:flex; gap:10px; align-items:center;"><input type="file" id="chat-file" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="display:none;" onchange="enviarArquivoChat(event)"><button class="btn btn-sm btn-blue" onclick="document.getElementById('chat-file').click()">📎 Anexar</button><input type="text" id="chat-text" placeholder="Escreva..." style="flex:1;" onkeydown="if(event.key==='Enter') enviarMsgChat()"><button class="btn btn-sm" onclick="enviarMsgChat()">Enviar</button></div></div></div></section>
 
-      <!-- BIBLIOTECA DE ARQUIVOS (Totalmente integrada e recetiva) -->
       <section id="view-biblioteca" class="view-section">
         <div class="card">
           <h2>Biblioteca de Arquivos & Documentos</h2>
@@ -405,10 +388,8 @@
         </div>
       </section>
 
-      <!-- LEMBRETES -->
       <section id="view-lembretes" class="view-section"><div class="card"><h2>Alertas Automáticos (-5d / 2x ao dia)</h2><table><thead><tr><th>Membro</th><th>Plano</th><th>Vencimento</th><th>Estado</th></tr></thead><tbody id="alertas-tbody"><tr><td colspan="4" style="text-align:center;">A verificar...</td></tr></tbody></table></div></section>
 
-      <!-- IMPORTAR / EXPORTAR -->
       <section id="view-importar" class="view-section">
         <div class="card">
           <h2>Importação e Exportação por Categorias (GYMMER & KOSMO)</h2>
@@ -446,7 +427,6 @@
         </div>
       </section>
 
-      <!-- GERIR STAFF -->
       <section id="view-colab" class="view-section">
         <div class="card">
           <h2 id="form-staff-title">Gerir Staff, NIF & Permissões</h2>
@@ -484,7 +464,6 @@
         </div>
       </section>
 
-      <!-- ALTERAR SENHA -->
       <section id="view-mudar-senha" class="view-section">
         <div class="card" style="max-width:500px; margin:0 auto;">
           <h2>Alterar Minha Palavra-passe</h2>
@@ -495,12 +474,10 @@
         </div>
       </section>
 
-      <!-- PICA PONTO -->
       <section id="view-picaponto" class="view-section"><div class="card"><h2>Pica Ponto</h2><div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;"><input type="text" id="pica-input" placeholder="Passe o cartão do staff..." onkeydown="onScanStaff(event)" style="padding:10px; flex:1; font-weight:bold; min-width:200px;" autofocus><button class="btn btn-green" onclick="picaManualPrompt()">Ponto Manual</button></div><table><thead><tr><th>Hora</th><th>Staff</th><th>Tipo</th></tr></thead><tbody id="pica-tbody"><tr><td colspan="3" style="text-align:center;">Sem registos.</td></tr></tbody></table></div></section>
     </main>
   </div>
 
-  <!-- PORTAL INSCRIÇÃO -->
   <div id="portal-inscricao-overlay" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:90000; display:none; justify-content:center; align-items:center; padding:15px;">
     <div style="background:#fff; width:100%; max-width:650px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:90vh; overflow-y:auto; text-align:center;">
       <button onclick="document.getElementById('portal-inscricao-overlay').style.display='none'" style="float:right; background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
@@ -532,7 +509,24 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER -->
+  <div id="modal-checkin-lista" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:95000; display:none; justify-content:center; align-items:center; padding:15px;">
+    <div style="background:#fff; width:100%; max-width:550px; border-radius:12px; padding:25px; border-top:6px solid var(--primary); max-height:85vh; overflow-y:auto; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2>Check-in Manual de Membro (Sem Cartão)</h2>
+        <button onclick="document.getElementById('modal-checkin-lista').style.display='none'" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✖</button>
+      </div>
+      <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">Selecione o membro que esqueceu o cartão para efetuar o check-in imediato:</p>
+      <div style="margin-bottom:12px;"><input type="text" id="filtro-checkin-membro" placeholder="Pesquisar por nome ou ID..." oninput="filtrarModalCheckin()" style="padding:8px;"></div>
+      <div style="max-height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:6px;">
+        <table style="margin-top:0;">
+          <thead><tr><th>Nome</th><th>Plano</th><th>ID</th><th>Ação</th></tr></thead>
+          <tbody id="modal-checkin-tbody"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-blue" style="width:100%; margin-top:15px;" onclick="document.getElementById('modal-checkin-lista').style.display='none'">Fechar</button>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://htyhbtbayxreoundolac.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_2Fy-0tjG0UszGVLoHnBdOQ_OtNFPQfY';
@@ -632,7 +626,7 @@
       const inputId = tipo === 'ativos' ? 'file-import-ativos' : (tipo === 'expirados' ? 'file-import-expirados' : 'file-import-produtos');
       const inputEl = document.getElementById(inputId);
       if (!inputEl || !inputEl.files[0]) { alert('Por favor, selecione um ficheiro primeiro.'); return; }
-      
+
       const f = inputEl.files[0];
       const nome = f.name.toLowerCase();
       const r = new FileReader();
@@ -649,7 +643,6 @@
                 members.push(m);
               });
             }
-            // Regista também na biblioteca de arquivos
             biblioteca.push({ name: f.name, url: e.target.result });
             refreshAll();
             alert(`Importação de ${tipo} concluída com sucesso via JSON!`);
@@ -662,7 +655,7 @@
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            
+
             rows.forEach(row => {
               if (tipo === 'produtos') {
                 products.push({
@@ -771,8 +764,7 @@
       verificarAlertaVencimentos();
       populateCardSelect();
       document.getElementById('badge-inscricoes-count').innerText = inscricoesOnline.length;
-      
-      // Sincronizar dados automáticos na biblioteca (fotos, fichas e anexos gerados)
+
       members.forEach(m => { if(m.foto && !biblioteca.some(b => b.url === m.foto)) biblioteca.push({name: `Ficha_${m.name}.jpg`, url: m.foto}); });
 
       localStorage.setItem('kosmo_members', JSON.stringify(members));
@@ -882,7 +874,7 @@
         if (m.estado === 'Inativo' || m.estado === 'Desativado') badge = '<span class="badge badge-inativo">Inativo ⚫</span>';
         else if (d < now) badge = '<span class="badge badge-err">Expirado 🔴</span>';
         else if (diff <= 5 && diff >= 0) badge = `<span class="badge badge-warn">Faltam ${diff} dias 🟡</span>`;
-        
+
         t.innerHTML += `<tr>
           <td><input type="checkbox" class="member-checkbox" value="${m.id}"></td>
           <td>${m.foto ? '<img src="'+m.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">' : '👤'}</td>
@@ -934,7 +926,7 @@
       document.getElementById('p-foto-base64').value = p.foto || ''; navigate('produtos');
     }
     function cancelEditProduct() { document.getElementById('p-edit-idx').value = ''; document.getElementById('p-name').value = ''; }
-    
+
     function renderProducts() {
       const t = document.getElementById('products-tbody'); if(!t)return; t.innerHTML='';
       products.forEach((p,i)=>{
@@ -955,7 +947,7 @@
     function renderPOSCatalog() { const g = document.getElementById('pos-catalog-grid'); if(!g)return; g.innerHTML=''; products.forEach((p,i)=>{ const fTag = p.foto ? '<img src="'+p.foto+'" style="width:100%;height:80px;object-fit:cover;border-radius:4px;margin-bottom:4px;">' : '<div style="font-size:1.5rem;">📦</div>'; g.innerHTML+=`<div style="background:#fff; border:1px solid #ddd; padding:10px; text-align:center; border-radius:6px;">${fTag}<h4>${p.name}</h4><p>${p.price} CVE</p><button class="btn btn-sm btn-blue" onclick="addToCart(${i})">Adicionar</button></div>`; }); }
     function addToCart(i) { const p=products[i]; if(p.stock<=0){alert('Sem stock');return;} const it=cartItems.find(x=>x.idx===i); if(it)it.qty++;else cartItems.push({idx:i,name:p.name,price:p.price,qty:1}); renderCart(); }
     function renderCart() { const c=document.getElementById('pos-cart-items'),tot=document.getElementById('pos-cart-total'); if(!c)return; if(cartItems.length===0){c.innerHTML='Vazio.';if(tot)tot.innerText='0 CVE';return;} c.innerHTML='';let t=0; cartItems.forEach(it=>{t+=it.price*it.qty; c.innerHTML+=`<div>${it.name} x${it.qty}</div>`;}); if(tot)tot.innerText=t.toLocaleString()+' CVE'; }
-    
+
     function finalizarVendaPOS() {
       if(cartItems.length===0){alert('Vazio');return;}
       const clienteNome = document.getElementById('pos-client-name').value.trim() || 'Cliente Balcão';
@@ -1001,6 +993,40 @@
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID:'); if(c) processarCheckin(c); }
+    
+    // --- FUNÇÃO ADICIONADA: Check-in Manual por Lista de Membros ---
+    function checkinPorListaModal() {
+      document.getElementById('modal-checkin-lista').style.display = 'flex';
+      renderModalCheckinList(members);
+    }
+    function renderModalCheckinList(lista) {
+      const tb = document.getElementById('modal-checkin-tbody');
+      if (!tb) return;
+      tb.innerHTML = '';
+      if (lista.length === 0) {
+        tb.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">Nenhum membro encontrado.</td></tr>`;
+        return;
+      }
+      lista.forEach(m => {
+        tb.innerHTML += `<tr>
+          <td><strong>${m.name}</strong></td>
+          <td>${m.plan}</td>
+          <td><code>${m.barcode}</code></td>
+          <td><button class="btn btn-sm btn-green" onclick="fazerCheckinDiretoMembro('${m.barcode}')">✅ Check-in</button></td>
+        </tr>`;
+      });
+    }
+    function filtrarModalCheckin() {
+      const filtro = document.getElementById('filtro-checkin-membro').value.toLowerCase();
+      const filtrados = members.filter(m => m.name.toLowerCase().includes(filtro) || m.barcode.toLowerCase().includes(filtro));
+      renderModalCheckinList(filtrados);
+    }
+    function fazerCheckinDiretoMembro(barcode) {
+      processarCheckin(barcode);
+      document.getElementById('modal-checkin-lista').style.display = 'none';
+      alert('Check-in manual realizado com sucesso!');
+    }
+
     function processarCheckin(code) {
       const m=members.find(x=>x.barcode===code); const now=new Date(); let ativo=false; let nome='Desconhecido';
       if(m) { nome=m.name; const d=new Date(m.date||'2026-01-01'); d.setDate(d.getDate()+30); ativo=d>=now&&m.estado==='Ativo'; }
@@ -1048,7 +1074,7 @@
       const f = e.target.files[0]; if(!f)return; const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); refreshAll(); alert('Enviado!'); }; r.readAsDataURL(f);
     }
     function renderChat() { const a = document.getElementById('chat-msgs'); if(!a)return; a.innerHTML=''; chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`); }
-    
+
     // --- RENDERIZAÇÃO DA BIBLIOTECA DE ARQUIVOS ---
     function renderBiblioteca() {
       const b = document.getElementById('bib-list'); if(!b)return; b.innerHTML='';
