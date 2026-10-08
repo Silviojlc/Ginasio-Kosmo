@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root { --primary: #c92a2a; --bg: #030405; --card: #0d1114; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -14,18 +15,17 @@
     #clock-date { font-size: 2.2rem; color: #ced4da; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
     #clock-time { font-size: 8rem; color: #ffd43b; font-weight: 900; letter-spacing: 6px; line-height: 1; text-shadow: 0 0 40px rgba(255,212,59,0.4), 0 5px 25px rgba(0,0,0,0.9); }
 
-    /* CENTRO COM LOGÓTIPO PREENCHIDO ATÉ À BORDA VERMELHA */
+    /* CENTRO COM LOGÓTIPO GIGANTE RECORTADO EM OVAL PERFEITO */
     .totem-center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 1200px; flex: 1; }
     
     .totem-logo-gigante { 
-      width: 850px; 
-      height: 400px; 
-      object-fit: contain; 
+      width: 750px; 
+      height: 380px; 
+      object-fit: cover; 
       border-radius: 50%;
-      border: 6px solid var(--primary);
-      box-shadow: 0 0 45px rgba(201,42,42,0.9);
-      background: #c5d3e8; /* Cor de fundo idêntica ao tom do logótipo para cobrir a transparência */
-      padding: 5px;
+      border: 5px solid var(--primary);
+      box-shadow: 0 0 35px rgba(201,42,42,0.8);
+      background: #c2d4e8;
       margin: -10px 0;
     }
 
@@ -46,17 +46,14 @@
 </head>
 <body>
 
-  <!-- HORA E DATA GIGANTESCAS PARA 4+ METROS -->
   <div class="totem-top-info">
     <span id="clock-date">CARREGANDO...</span>
     <span id="clock-time">00:00:00</span>
   </div>
 
-  <!-- CENTRO COM LOGÓTIPO EXPANDIDO ATÉ À LINHA VERMELHA -->
   <div class="totem-center-stage">
     <img src="logo.jpg" alt="Ginásio KOSMO" class="totem-logo-gigante" onerror="this.src='src/img/logo.jpg';">
     
-    <!-- Input de alta capacidade para o leitor de cartões -->
     <input type="text" id="totem-code-input" class="totem-input" placeholder="PASSE O CARTÃO NO LEITOR..." autofocus autocomplete="off">
     
     <div id="totem-result-box" class="totem-result">
@@ -71,6 +68,10 @@
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://htyhbtbayxreoundolac.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_2Fy-0tjG0UszGVLoHnBdOQ_OtNFPQfY';
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
     // --- 1. ANTIHIBERNANÇÃO (Screen Wake Lock) ---
     let wakeLock = null;
     async function requestWakeLock() {
@@ -112,7 +113,7 @@
       document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-PT');
     }, 1000);
 
-    // --- 4. LEITOR DE ALTA CAPACIDADE ---
+    // --- 4. LEITOR DE ALTA CAPACIDADE COM SUPABASE ---
     const inputField = document.getElementById('totem-code-input');
     inputField.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
@@ -124,11 +125,30 @@
       }
     });
 
-    function processarCheckinTotem(code) {
-      let members = JSON.parse(localStorage.getItem('kosmo_members')) || [];
-      const m = members.find(x => x.barcode === code);
+    async function processarCheckinTotem(code) {
       const now = new Date();
       const resBox = document.getElementById('totem-result-box');
+      let m = null;
+
+      // Consulta a nuvem Supabase
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('membros')
+            .select('*')
+            .eq('barcode', code)
+            .single();
+          if (!error && data) m = data;
+        } catch (err) {
+          console.log('A recorrer à base local');
+        }
+      }
+
+      // Se não encontrar na nuvem, recorre ao localStorage como apoio offline
+      if (!m) {
+        let members = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+        m = members.find(x => x.barcode === code);
+      }
 
       if (m) {
         const d = new Date(m.date || '2026-01-01');
@@ -146,6 +166,11 @@
         let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
         attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: ativo ? 'Ativo' : 'Expirado' });
         localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
+
+        // Regista o check-in na nuvem
+        if (supabaseClient) {
+          supabaseClient.from('checkins').insert([{ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: ativo ? 'Ativo' : 'Expirado' }]).then(()=>{});
+        }
 
       } else {
         resBox.className = 'totem-result error';
