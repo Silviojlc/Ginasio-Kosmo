@@ -14,20 +14,19 @@
     #clock-date { font-size: 2.2rem; color: #ced4da; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
     #clock-time { font-size: 8rem; color: #ffd43b; font-weight: 900; letter-spacing: 6px; line-height: 1; text-shadow: 0 0 40px rgba(255,212,59,0.4), 0 5px 25px rgba(0,0,0,0.9); }
 
-    /* CENTRO COM LOGÓTIPO GIGANTE (Fundo branco neutralizado e adaptado ao tema escuro) */
+    /* CENTRO COM LOGÓTIPO GIGANTE RECORTADO EM OVAL PERFEITO (Cores originais preservadas) */
     .totem-center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 1200px; flex: 1; }
     
     .totem-logo-gigante { 
-      width: 950px; 
-      height: 440px; 
-      object-fit: contain; 
-      /* Filtro avançado para anular o quadrado branco do JPG e fundir a parte cinzenta com o ecrã escuro */
-      filter: contrast(130%) brightness(95%) drop-shadow(0 0 30px rgba(201,42,42,0.6));
-      mix-blend-mode: luminosity; 
-      background: #030405;
-      border-radius: 20px;
-      padding: 5px;
-      margin: -15px 0;
+      width: 750px; 
+      height: 380px; 
+      object-fit: cover; 
+      /* Recorte limpo em formato oval perfeito sem alterar as cores originais */
+      border-radius: 50%;
+      border: 5px solid var(--primary);
+      box-shadow: 0 0 35px rgba(201,42,42,0.8);
+      background: #c2d4e8;
+      margin: -10px 0;
     }
 
     .totem-input { width: 100%; max-width: 600px; padding: 16px; font-size: 1.5rem; font-weight: bold; border-radius: 8px; border: 3px solid var(--primary); background: #fff; color: #212529; text-align: center; outline: none; box-shadow: 0 5px 20px rgba(0,0,0,0.6); }
@@ -53,7 +52,7 @@
     <span id="clock-time">00:00:00</span>
   </div>
 
-  <!-- CENTRO COM LOGÓTIPO AMPLIADO E FUNDO UNIFICADO -->
+  <!-- CENTRO COM LOGÓTIPO RECORTADO EM OVAL COM CORES VIVAS -->
   <div class="totem-center-stage">
     <img src="logo.jpg" alt="Ginásio KOSMO" class="totem-logo-gigante" onerror="this.src='src/img/logo.jpg';">
     
