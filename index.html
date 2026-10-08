@@ -597,9 +597,12 @@
     let staffLogs = JSON.parse(localStorage.getItem('kosmo_staff_attendance')) || [];
     let chatMsgs = JSON.parse(localStorage.getItem('kosmo_chat')) || [];
     let biblioteca = JSON.parse(localStorage.getItem('kosmo_bib')) || [];
+    
     let collaborators = JSON.parse(localStorage.getItem('kosmo_staff')) || [
-      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', nif: '123456789', perm: ['Total'], user: 'admin', pass: 'admin123', foto: '' }
+      { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', nif: '123456789', perm: ['Total'], user: 'admin', pass: 'admin123', foto: '' },
+      { id: 2, name: 'Lenilson Varela', role: 'Staff / Operacional', barcode: '3792572', nif: '', perm: ['Registar Membros', 'POS Vendas', 'Check-ins Totem'], user: 'lenilsonvarela09@gmail.com', pass: 'lenilson123', foto: '' }
     ];
+
     let cartItems = [];
     let portalChatLog = [];
     let pastaFiltroGlobal = 'todos';
@@ -962,7 +965,6 @@
       document.getElementById('form-member-title').innerText = 'Editar Membro: ' + m.name;
       document.getElementById('btn-save-member').innerText = 'Guardar'; document.getElementById('btn-cancel-edit').style.display = 'inline-flex';
       
-      // Salto direto e suave para o formulário de edição no topo da página
       const cardForm = document.getElementById('card-form-membro');
       const mainContainer = document.getElementById('main-scroll-container');
       if (cardForm && mainContainer) {
