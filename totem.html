@@ -13,7 +13,6 @@
     .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
     .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
 
-    /* ESTÉTICA EXATA ORIGINAL DA FOTO 2 (OVAL CLÁSSICO PERFEITO) */
     .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; position: relative; }
     .totem-logo-oval { 
       width: 750px; 
@@ -35,7 +34,6 @@
       transition: opacity 0.3s ease; 
     }
     
-    /* FOTO DO MEMBRO INTEIRA NO CHECK-IN */
     .totem-membro-foto-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -111,6 +109,18 @@
   <script>
     let temporizadorReset = null;
 
+    function falarMensagemVoz(texto) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Para qualquer fala anterior imediatamente
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'pt-PT';
+        utterance.volume = 1.0; // Volume máximo
+        utterance.rate = 1.0;  // Velocidade natural e nítida
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
     function atualizarRelogio() {
       const d = new Date();
       const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
@@ -179,7 +189,16 @@
       resBox.className = "totem-status-card";
       resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      const membrosLocais = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+      // Lê da nuvem local unificada
+      let membrosLocais = [];
+      try {
+        const dadosSync = JSON.parse(localStorage.getItem('kosmo_global_sync'));
+        if (dadosSync && dadosSync.members) membrosLocais = dadosSync.members;
+      } catch(e) {}
+      if (membrosLocais.length === 0) {
+        membrosLocais = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+      }
+
       const membro = membrosLocais.find(m => {
         const b = String(m.barcode || m.id || '').trim();
         return b === String(codigo).trim();
@@ -208,6 +227,8 @@
             <div class="totem-status-member-name">${nomeMembro}</div>
             <div class="totem-status-plan">Plano: ${planoMembro}</div>
           `;
+          // VOZ ALTA E CLARA PARA ATIVO
+          falarMensagemVoz("Mensalidade ativa. Tenha um bom treino!");
         } else {
           resBox.className = "totem-status-card status-err";
           resBox.innerHTML = `
@@ -215,9 +236,17 @@
             <div class="totem-status-member-name">${nomeMembro}</div>
             <div class="totem-status-plan">Por favor, renove o plano</div>
           `;
+          // VOZ ALTA E CLARA PARA INATIVO/EXPIRADO
+          falarMensagemVoz("Mensalidade inativa ou expirada. Você não pode treinar!");
         }
 
-        const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+        let logs = [];
+        try {
+          const dadosSync = JSON.parse(localStorage.getItem('kosmo_global_sync'));
+          if (dadosSync && dadosSync.attendanceLogs) logs = dadosSync.attendanceLogs;
+        } catch(e) {}
+        if (logs.length === 0) logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+
         logs.unshift({
           data: now.toLocaleDateString('pt-PT'),
           time: now.toLocaleTimeString('pt-PT'),
@@ -226,7 +255,13 @@
           status: ativo ? 'Ativo' : 'Expirado',
           foto: membro.foto || ''
         });
+        
         localStorage.setItem('kosmo_attendance', JSON.stringify(logs));
+        try {
+          const dadosSync = JSON.parse(localStorage.getItem('kosmo_global_sync')) || {};
+          dadosSync.attendanceLogs = logs;
+          localStorage.setItem('kosmo_global_sync', JSON.stringify(dadosSync));
+        } catch(e) {}
 
       } else {
         capaFoto.style.display = 'none';
@@ -238,9 +273,11 @@
             <div class="totem-status-plan">não registado no sistema</div>
           </div>
         `;
+        // VOZ PARA CARTÃO DESCONHECIDO
+        falarMensagemVoz("Cartão desconhecido. Acesso não permitido!");
       }
 
-      // Exatamente 5 minutos de permanência (300.000 ms)
+      // Temporizador de 5 minutos (300000ms) antes de voltar ao normal
       temporizadorReset = setTimeout(resetVisualTotem, 300000);
     }
   </script>
