@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
-    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; --oval-bg: #c5d7e6; }
+    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; transition: background-color 0.5s ease; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
     
     .totem-top { text-align: center; width: 100%; margin-top: 2px; }
     .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
     .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
 
+    /* ESTÉTICA EXATA ORIGINAL DA FOTO 2 (OVAL CLÁSSICO PERFEITO) */
     .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; position: relative; }
     .totem-logo-oval { 
       width: 750px; 
       height: 300px; 
-      background-color: var(--oval-bg); 
+      background: #c5d7e6; 
       border-radius: 50%; 
       border: 8px solid var(--primary); 
       box-shadow: 0 0 55px rgba(201, 42, 42, 0.7), inset 0 0 25px rgba(0,0,0,0.15); 
@@ -25,21 +26,27 @@
       justify-content: center; 
       align-items: center; 
       overflow: hidden; 
-      padding: 15px; 
-      transition: all 0.5s ease;
+      position: relative;
     }
-    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; transition: opacity 0.3s ease; }
+    .totem-logo-img { 
+      width: 105%; 
+      height: 105%; 
+      object-fit: contain; 
+      transition: opacity 0.3s ease; 
+    }
     
-    .totem-logo-oval.foto-ativa {
-        border: 8px solid #fff;
-        box-shadow: 0 0 65px rgba(255,255,255,0.5);
-        background-color: #0b131a;
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        padding: 0;
+    /* FOTO DO MEMBRO INTEIRA NO CHECK-IN */
+    .totem-membro-foto-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: #0b131a;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: none;
+      z-index: 10;
+      border-radius: 50%;
     }
-    .totem-logo-oval.foto-ativa .totem-logo-img { opacity: 0; }
 
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
     .totem-form { display: flex; gap: 10px; margin-bottom: 10px; position: absolute; left: -9999px; }
@@ -80,6 +87,7 @@
   <div class="totem-logo-container">
     <div class="totem-logo-oval" id="totem-oval-visual">
       <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-logo-image" onerror="this.src='src/img/logo.jpg';">
+      <div id="membro-foto-capa" class="totem-membro-foto-overlay"></div>
     </div>
   </div>
 
@@ -118,7 +126,7 @@
     atualizarRelogio();
 
     const inputLeitor = document.getElementById('totem-barcode-input');
-    const ovalVisual = document.getElementById('totem-oval-visual');
+    const capaFoto = document.getElementById('membro-foto-capa');
     const resBox = document.getElementById('totem-resultado');
 
     function focarInput() {
@@ -152,8 +160,8 @@
     function resetVisualTotem() {
         if (temporizadorReset) clearTimeout(temporizadorReset);
         
-        ovalVisual.style.backgroundImage = '';
-        ovalVisual.classList.remove('foto-ativa');
+        capaFoto.style.display = 'none';
+        capaFoto.style.backgroundImage = '';
         
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
@@ -187,11 +195,10 @@
         const planoMembro = membro.plan || 'Normal';
         
         if (membro.foto && membro.foto.startsWith('data:image')) {
-            ovalVisual.style.backgroundImage = `url('${membro.foto}')`;
-            ovalVisual.classList.add('foto-ativa');
+            capaFoto.style.backgroundImage = `url('${membro.foto}')`;
+            capaFoto.style.display = 'block';
         } else {
-            ovalVisual.style.backgroundImage = '';
-            ovalVisual.classList.remove('foto-ativa');
+            capaFoto.style.display = 'none';
         }
 
         if (ativo) {
@@ -222,8 +229,7 @@
         localStorage.setItem('kosmo_attendance', JSON.stringify(logs));
 
       } else {
-        ovalVisual.style.backgroundImage = '';
-        ovalVisual.classList.remove('foto-ativa');
+        capaFoto.style.display = 'none';
         resBox.className = "totem-status-card status-err";
         resBox.innerHTML = `
           <div style="text-align: center;">
@@ -234,7 +240,7 @@
         `;
       }
 
-      // 300000ms = 5 minutos exatos
+      // Exatamente 5 minutos de permanência (300.000 ms)
       temporizadorReset = setTimeout(resetVisualTotem, 300000);
     }
   </script>
