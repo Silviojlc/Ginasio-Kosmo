@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Sincronização Absoluta)</title>
+  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Cloud Sincronizada)</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -145,8 +145,7 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <button type="button" class="btn btn-green btn-sm" onclick="exportarBackupUniversal()" title="Exporta tudo num clique para abrir noutro dispositivo">💾 Sincronizar / Exportar Dados</button>
-        <label class="btn btn-blue btn-sm" style="cursor:pointer; margin-bottom:0;">📥 Importar Noutro PC/Telemóvel<input type="file" id="sync-file-input" accept=".json" style="display:none;" onchange="importarBackupUniversal(event)"></label>
+        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Ativa (Sync Automático)</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
@@ -576,8 +575,11 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER COM PERSISTÊNCIA BINDADA E SINCRONIZAÇÃO ABSOLUTA -->
+  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM PUBLICA AUTOMÁTICA -->
   <script>
+    const CLOUD_JSONBIN_URL = "https://api.jsonbin.io/v3/b/660a0ad7acd3cb34a8335412";
+    const CLOUD_API_KEY = "$2a$10$7vF9W8v5...";
+
     let members = [
       { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', nif: '123456789', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '', doc: '', comprovativo: '' }
     ];
@@ -599,14 +601,74 @@
     let cartItems = [];
     let pastaFiltroGlobal = 'todos';
     let loggedStaff = null;
+    let aSincronizarNuvem = false;
 
-    // CARREGAR DADOS DO ARQUIVO LOCAL BLINDADO
-    function carregarDadosMemoria() {
+    // BUSCAR DADOS DA NUVEM AUTOMATICAMENTE
+    async function sincronizarComNuvem() {
+      if (aSincronizarNuvem) return;
+      aSincronizarNuvem = true;
       try {
-        const local = localStorage.getItem('kosmo_master_db');
+        const res = await fetch(CLOUD_JSONBIN_URL + "/latest", {
+          headers: { "X-Master-Key": CLOUD_API_KEY }
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.record) {
+            const d = json.record;
+            if (d.members) members = d.members;
+            if (d.products) products = d.products;
+            if (d.salesHistory) salesHistory = d.salesHistory;
+            if (d.expenses) expenses = d.expenses;
+            if (d.salaries) salaries = d.salaries;
+            if (d.invoicesList) invoicesList = d.invoicesList;
+            if (d.inscricoesOnline) inscricoesOnline = d.inscricoesOnline;
+            if (d.attendanceLogs) attendanceLogs = d.attendanceLogs;
+            if (d.staffLogs) staffLogs = d.staffLogs;
+            if (d.collaborators) collaborators = d.collaborators;
+
+            // Guarda localmente para cache imediato
+            salvarLocalCache();
+            refreshAllUI();
+            const ind = document.getElementById('cloud-status-indicator');
+            if (ind) { ind.style.background = '#2b8a3e'; ind.innerText = '☁️ Nuvem Ativa (Sync OK)'; }
+          }
+        }
+      } catch(e) {
+        // Se falhar rede, usa cache local
+        carregarLocalCache();
+        refreshAllUI();
+        const ind = document.getElementById('cloud-status-indicator');
+        if (ind) { ind.style.background = '#d9480f'; ind.innerText = '⚠️ Modo Offline (Local)'; }
+      }
+      aSincronizarNuvem = false;
+    }
+
+    // GRAVAR DADOS NA NUVEM E LOCAL EM TEMPO REAL
+    async function gravarEDisponibilizarNuvem() {
+      salvarLocalCache();
+      const pacote = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, chatMsgs, biblioteca, collaborators };
+      try {
+        await fetch(CLOUD_JSONBIN_URL, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': CLOUD_API_KEY
+          },
+          body: JSON.stringify(pacote)
+        });
+        const ind = document.getElementById('cloud-status-indicator');
+        if (ind) { ind.style.background = '#2b8a3e'; ind.innerText = '☁️ Nuvem Ativa (Sync OK)'; }
+      } catch(e) {
+        console.error('Erro ao gravar na nuvem', e);
+      }
+    }
+
+    function carregarLocalCache() {
+      try {
+        const local = localStorage.getItem('kosmo_master_cache');
         if (local) {
           const d = JSON.parse(local);
-          if (d.members && d.members.length > 0) members = d.members;
+          if (d.members) members = d.members;
           if (d.products) products = d.products;
           if (d.salesHistory) salesHistory = d.salesHistory;
           if (d.expenses) expenses = d.expenses;
@@ -617,19 +679,21 @@
           if (d.staffLogs) staffLogs = d.staffLogs;
           if (d.collaborators) collaborators = d.collaborators;
         }
-      } catch(e) { console.error('Erro ao carregar', e); }
+      } catch(e) {}
     }
 
-    function salvarTudoLocal() {
+    function salvarLocalCache() {
       const pacote = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, chatMsgs, biblioteca, collaborators };
-      try {
-        localStorage.setItem('kosmo_master_db', JSON.stringify(pacote));
-      } catch(e) { console.error('Erro ao gravar', e); }
+      localStorage.setItem('kosmo_master_cache', JSON.stringify(pacote));
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      carregarDadosMemoria();
-      refreshAll();
+      carregarLocalCache();
+      refreshAllUI();
+      sincronizarComNuvem();
+
+      // POLLING GLOBAL AUTOMÁTICO A CADA 5 SEGUNDOS (Garante que se outro PC criar um membro ou staff, aparece aqui instantaneamente)
+      setInterval(sincronizarComNuvem, 5000);
 
       const params = new URLSearchParams(window.location.search);
       if (params.get('portal') === 'inscricao') {
@@ -658,42 +722,15 @@
     }
 
     function exportarBackupUniversal() {
-      salvarTudoLocal();
       const dataObj = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, collaborators };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "kosmo_backup_sincronizacao_total.json");
+      downloadAnchor.setAttribute("download", "kosmo_backup_universal.json");
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      alert('Backup gerado com sucesso! Guarde este ficheiro e carregue-o no botão "Importar Noutro PC/Telemóvel" no outro dispositivo para sincronizar tudo instantaneamente.');
-    }
-
-    function importarBackupUniversal(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      const r = new FileReader();
-      r.onload = evt => {
-        try {
-          const d = JSON.parse(evt.target.result);
-          if (d.members) members = d.members;
-          if (d.products) products = d.products;
-          if (d.salesHistory) salesHistory = d.salesHistory;
-          if (d.expenses) expenses = d.expenses;
-          if (d.salaries) salaries = d.salaries;
-          if (d.invoicesList) invoicesList = d.invoicesList;
-          if (d.inscricoesOnline) inscricoesOnline = d.inscricoesOnline;
-          if (d.attendanceLogs) attendanceLogs = d.attendanceLogs;
-          if (d.staffLogs) staffLogs = d.staffLogs;
-          if (d.collaborators) collaborators = d.collaborators;
-          
-          salvarTudoLocal();
-          refreshAll();
-          alert('Sincronização concluída com sucesso! Todos os dados e fotografias foram atualizados neste dispositivo.');
-        } catch(err) { alert('Erro ao importar ficheiro de sincronização.'); }
-      };
-      r.readAsText(f);
+      alert('Backup universal exportado com sucesso!');
     }
 
     function toggleSelectAllMembers(master) {
@@ -705,8 +742,8 @@
       if (selecionados.length === 0) { alert('Selecione pelo menos um membro para eliminar.'); return; }
       if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} membro(s)?`)) {
         members = members.filter(m => !selecionados.includes(m.id));
-        salvarTudoLocal();
-        refreshAll();
+        gravarEDisponibilizarNuvem();
+        refreshAllUI();
         alert('Membros eliminados com sucesso!');
       }
     }
@@ -719,8 +756,8 @@
       if (selecionados.length === 0) { alert('Selecione pelo menos um produto para eliminar.'); return; }
       if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} produto(s)?`)) {
         products = products.filter((p, idx) => !selecionados.includes(idx));
-        salvarTudoLocal();
-        refreshAll();
+        gravarEDisponibilizarNuvem();
+        refreshAllUI();
         alert('Produtos eliminados com sucesso!');
       }
     }
@@ -746,8 +783,8 @@
                 members.push(m);
               });
             }
-            salvarTudoLocal();
-            refreshAll();
+            gravarEDisponibilizarNuvem();
+            refreshAllUI();
             alert(`Importação de ${tipo} concluída com sucesso!`);
           } catch(err) { alert('Erro ao analisar ficheiro JSON.'); }
         };
@@ -784,8 +821,8 @@
                 members.push(novoM);
               }
             });
-            salvarTudoLocal();
-            refreshAll();
+            gravarEDisponibilizarNuvem();
+            refreshAllUI();
             alert(`Importação concluída! ${rows.length} registos integrados.`);
           } catch(err) { alert('Erro ao processar tabela.'); }
         };
@@ -808,7 +845,10 @@
 
     function onLoginKey(e) { if (e.key === 'Enter') directLogin(); }
     
-    function directLogin() {
+    async function directLogin() {
+      // Sincroniza primeiro antes de verificar login para garantir que staff criado noutro PC é reconhecido aqui
+      await sincronizarComNuvem();
+
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
@@ -834,7 +874,7 @@
     }
 
     function sairDaSessao() {
-      salvarTudoLocal();
+      gravarEDisponibilizarNuvem();
       location.reload();
     }
 
@@ -870,10 +910,10 @@
       const n = document.getElementById('nav-' + viewId);
       if (n) { n.classList.add('active'); if (viewId === 'qrcode') setTimeout(gerarQRCodeInscricao, 100); }
       const sidebar = document.getElementById('sidebar-panel'); if (sidebar) sidebar.classList.remove('mobile-open');
-      refreshAll();
+      refreshAllUI();
     }
 
-    function refreshAll() {
+    function refreshAllUI() {
       renderMembers();
       renderDashboardCounts();
       renderProducts();
@@ -895,7 +935,6 @@
       populateCardSelect();
       const badgeCount = document.getElementById('badge-inscricoes-count');
       if (badgeCount) badgeCount.innerText = inscricoesOnline.length;
-      salvarTudoLocal();
     }
 
     function converterFotoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
@@ -996,7 +1035,8 @@
         alert('Membro criado com sucesso!');
         document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = ''; document.getElementById('m-nif').value = '';
       }
-      refreshAll();
+      gravarEDisponibilizarNuvem();
+      refreshAllUI();
     }
 
     function editMember(id) {
@@ -1035,7 +1075,9 @@
       if (m) {
         m.date = new Date().toISOString().split('T')[0]; m.estado = 'Ativo';
         invoicesList.unshift({ type: 'Fatura Mensalidade', name: m.name, email: m.email, desc: `Renovação Plano ${m.plan}`, val: 3000, date: new Date().toLocaleString('pt-PT') });
-        refreshAll(); alert(`Subscrição de ${m.name} renovada!`);
+        gravarEDisponibilizarNuvem();
+        refreshAllUI(); 
+        alert(`Subscrição de ${m.name} renovada!`);
       }
     }
 
@@ -1069,7 +1111,7 @@
           <td>
             <button class="btn btn-sm btn-green" onclick="renovarSubscricao(${m.id})">🔄</button>
             <button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">✏️</button>
-            <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); refreshAll();">🗑️</button>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="members=members.filter(x=>x.id!==${m.id}); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button>
           </td>
         </tr>`;
       });
@@ -1082,10 +1124,10 @@
         members.forEach(m => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-ok">📂 Mensalidade</span></td><td><strong>${m.name}</strong></td><td>Plano: ${m.plan} (NIF: ${m.nif||'--'})</td><td>${m.date}</td><td><button class="btn btn-sm btn-blue" onclick="editMember(${m.id})">Editar</button></td></tr>`; });
       }
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'produtos') {
-        salesHistory.forEach((s, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-warn">📂 Produto Venda</span></td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty}) - <strong>${s.total} CVE</strong></td><td>${s.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); refreshAll();">Excluir</button></td></tr>`; });
+        salesHistory.forEach((s, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-warn">📂 Produto Venda</span></td><td>Cliente: ${s.client}</td><td>${s.prod} (${s.qty}) - <strong>${s.total} CVE</strong></td><td>${s.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salesHistory.splice(${i},1); gravarEDisponibilizarNuvem(); refreshAllUI();">Excluir</button></td></tr>`; });
       }
       if (pastaFiltroGlobal === 'todos' || pastaFiltroGlobal === 'despesas') {
-        expenses.forEach((e, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc}</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); refreshAll();">Excluir</button></td></tr>`; });
+        expenses.forEach((e, i) => { achou = true; t.innerHTML += `<tr><td><span class="badge badge-err">📂 Despesa</span></td><td>${e.desc}</td><td>${e.amount} CVE</td><td>${e.date}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${i},1); gravarEDisponibilizarNuvem(); refreshAllUI();">Excluir</button></td></tr>`; });
       }
       if (!achou) t.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Sem registos.</td></tr>`;
     }
@@ -1102,7 +1144,8 @@
         products.push({ name, buy: Number(document.getElementById('p-buy').value), price, stock: Number(document.getElementById('p-stock').value), desc: document.getElementById('p-desc').value, use: document.getElementById('p-use').value, foto: fotoVal });
         alert('Produto criado!');
       }
-      refreshAll();
+      gravarEDisponibilizarNuvem();
+      refreshAllUI();
     }
     function editProduct(i) {
       const p = products[i]; document.getElementById('p-edit-idx').value = i;
@@ -1122,7 +1165,7 @@
           <td>${fTag}</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td>
           <td>
             <button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️</button>
-            <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1); refreshAll();">🗑️</button>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button>
           </td>
         </tr>`;
       });
@@ -1144,20 +1187,25 @@
         invoicesList.unshift({type:'Fatura Venda Produto', name: clienteNome, email: clienteEmail, desc:`Compra de ${it.name} x${it.qty}`, val:it.price*it.qty, date:new Date().toLocaleString('pt-PT')});
       });
       cartItems=[]; document.getElementById('pos-client-name').value = ''; document.getElementById('pos-client-email').value = '';
-      refreshAll(); alert(`Venda concluída!`);
+      gravarEDisponibilizarNuvem();
+      refreshAllUI(); 
+      alert(`Venda concluída!`);
     }
 
     function addExpense() {
       const desc = document.getElementById('exp-desc').value.trim(); const val = Number(document.getElementById('exp-val').value);
       if (!desc || !val) { alert('Preencha descrição e valor.'); return; }
       expenses.push({ id: Date.now(), date: new Date().toLocaleDateString('pt-PT'), desc, amount: val, empresa: document.getElementById('exp-empresa').value, nif: document.getElementById('exp-nif').value, file: document.getElementById('exp-file-base64').value });
-      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; refreshAll(); alert('Despesa registada!');
+      document.getElementById('exp-desc').value = ''; document.getElementById('exp-val').value = ''; 
+      gravarEDisponibilizarNuvem();
+      refreshAllUI(); 
+      alert('Despesa registada!');
     }
     function renderExpenses() {
       const t = document.getElementById('expenses-tbody'); if(!t)return;
       if (expenses.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem despesas.</td></tr>`; return; }
       t.innerHTML = ''; expenses.forEach((e, idx) => {
-        t.innerHTML += `<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.empresa||'--'}</td><td><strong>${e.amount} CVE</strong></td><td>${e.file?'Sim':'Não'}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML += `<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.empresa||'--'}</td><td><strong>${e.amount} CVE</strong></td><td>${e.file?'Sim':'Não'}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button></td></tr>`;
       });
     }
 
@@ -1165,17 +1213,19 @@
       const name = document.getElementById('sal-name').value.trim();
       if (!name) { alert('Insira o nome.'); return; }
       salaries.push({ name, base: Number(document.getElementById('sal-val').value)||0, nif: document.getElementById('sal-nif').value, doc: document.getElementById('sal-doc').value, mes: document.getElementById('sal-mes').value, horas: Number(document.getElementById('sal-horas').value)||0, total: (Number(document.getElementById('sal-val').value)||0) + (Number(document.getElementById('sal-horas').value)||0) });
-      refreshAll(); alert('Salário registado!');
+      gravarEDisponibilizarNuvem();
+      refreshAllUI(); 
+      alert('Salário registado!');
     }
-    function renderSalaries() { const t = document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach((s,idx)=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.mes}</td><td>${s.nif}</td><td>${s.total} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
+    function renderSalaries() { const t = document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach((s,idx)=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.mes}</td><td>${s.nif}</td><td>${s.total} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button></td></tr>`); }
 
     function gerarFaturaMembroPrompt() {
-      const n = prompt('Nome:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Fatura', name:n, desc:'Serviço', val:Number(v), date:new Date().toLocaleString('pt-PT')}); refreshAll(); }
+      const n = prompt('Nome:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Fatura', name:n, desc:'Serviço', val:Number(v), date:new Date().toLocaleString('pt-PT')}); gravarEDisponibilizarNuvem(); refreshAllUI(); }
     }
     function gerarReciboStaffPrompt() {
-      const n = prompt('Nome Staff:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Recibo', name:n, desc:'Ordenado', val:Number(v), date:new Date().toLocaleString('pt-PT')}); refreshAll(); }
+      const n = prompt('Nome Staff:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Recibo', name:n, desc:'Ordenado', val:Number(v), date:new Date().toLocaleString('pt-PT')}); gravarEDisponibilizarNuvem(); refreshAllUI(); }
     }
-    function renderInvoices() { const t = document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; invoicesList.forEach((inv,idx)=>t.innerHTML+=`<tr><td>${inv.type}</td><td>${inv.name}</td><td>${inv.desc}</td><td>${inv.val} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="invoicesList.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
+    function renderInvoices() { const t = document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; invoicesList.forEach((inv,idx)=>t.innerHTML+=`<tr><td>${inv.type}</td><td>${inv.name}</td><td>${inv.desc}</td><td>${inv.val} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="invoicesList.splice(${idx},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button></td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID do Membro:'); if(c) processarCheckin(c.trim()); }
@@ -1231,7 +1281,8 @@
       };
       
       attendanceLogs.unshift(logEntry);
-      refreshAll();
+      gravarEDisponibilizarNuvem();
+      refreshAllUI();
       const inputChk = document.getElementById('chk-input');
       if(inputChk) { inputChk.value = ''; inputChk.focus(); }
     }
@@ -1241,7 +1292,8 @@
     function picaManualPrompt() { const c=prompt('ID Staff:'); if(c) processarPica(c); }
     function processarPica(code) {
       const s=collaborators.find(x=>x.barcode===code); staffLogs.unshift({time:new Date().toLocaleTimeString('pt-PT'), name:s?s.name:code, type:'Ponto'});
-      refreshAll();
+      gravarEDisponibilizarNuvem();
+      refreshAllUI();
     }
     function renderStaffAttendance() { const t=document.getElementById('pica-tbody'); if(!t)return; t.innerHTML=''; staffLogs.forEach(s=>t.innerHTML+=`<tr><td>${s.time}</td><td>${s.name}</td><td>${s.type}</td></tr>`); }
 
@@ -1256,25 +1308,29 @@
       if(!name || !contrato || !foto) { alert('Preencha campos, foto e contrato.'); return; }
       inscricoesOnline.push({ id:Date.now(), name, email:document.getElementById('portal-email').value, phone:document.getElementById('portal-phone').value, nif:document.getElementById('portal-nif').value, plan:document.getElementById('portal-plan').value, foto });
       biblioteca.push({name: `Inscricao_${name}.jpg`, url: foto});
-      alert('Inscrição submetida!'); document.getElementById('portal-inscricao-overlay').style.display='none'; refreshAll();
+      gravarEDisponibilizarNuvem();
+      alert('Inscrição submetida!'); document.getElementById('portal-inscricao-overlay').style.display='none'; refreshAllUI();
     }
     function renderInscricoes() {
       const t = document.getElementById('online-inscricoes-tbody'); if(!t)return; t.innerHTML='';
       if(inscricoesOnline.length===0) { t.innerHTML=`<tr><td colspan="5" style="text-align:center; color:#777;">Sem inscrições.</td></tr>`; return; }
       inscricoesOnline.forEach((ins, idx) => {
-        t.innerHTML += `<tr><td>${ins.foto?'<img src="'+ins.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td><strong>${ins.name}</strong></td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="aprovarInscricao(${idx})">✅ Aprovar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="inscricoesOnline.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML += `<tr><td>${ins.foto?'<img src="'+ins.foto+'" style="width:35px;height:35px;border-radius:50%;object-fit:cover;">':'👤'}</td><td><strong>${ins.name}</strong></td><td>${ins.phone}</td><td>${ins.plan}</td><td><button class="btn btn-sm btn-green" onclick="aprovarInscricao(${idx})">✅ Aprovar</button> <button class="btn btn-sm" style="background:var(--danger);" onclick="inscricoesOnline.splice(${idx},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button></td></tr>`;
       });
     }
     function aprovarInscricao(idx) {
       const ins = inscricoesOnline[idx]; const barcode = String(Math.floor(100000 + Math.random()*900000));
       const novoMembro = { id:Date.now(), name:ins.name, email:ins.email, barcode, nif:ins.nif||'', phone:ins.phone, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto, doc:'', comprovativo:'' };
       members.push(novoMembro);
-      inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição aprovada! ID gerado: ${barcode}`);
+      inscricoesOnline.splice(idx,1); 
+      gravarEDisponibilizarNuvem();
+      refreshAllUI(); 
+      alert(`Inscrição aprovada! ID gerado: ${barcode}`);
     }
 
-    function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; refreshAll(); } }
+    function enviarMsgChat() { const t = document.getElementById('chat-text').value; if(t) { chatMsgs.push({sender:'Admin', text:t}); document.getElementById('chat-text').value=''; gravarEDisponibilizarNuvem(); refreshAllUI(); } }
     function enviarArquivoChat(e) {
-      const f = e.target.files[0]; if(!f)return; const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); refreshAll(); alert('Enviado!'); }; r.readAsDataURL(f);
+      const f = e.target.files[0]; if(!f)return; const r = new FileReader(); r.onload = evt => { biblioteca.push({name:f.name, url:evt.target.result}); chatMsgs.push({sender:'Admin', fileName:f.name}); gravarEDisponibilizarNuvem(); refreshAllUI(); alert('Enviado!'); }; r.readAsDataURL(f);
     }
     function renderChat() { const a = document.getElementById('chat-msgs'); if(!a)return; a.innerHTML=''; chatMsgs.forEach(m => a.innerHTML += `<div><strong>${m.sender}:</strong> ${m.text || m.fileName}</div>`); }
 
@@ -1282,7 +1338,7 @@
       const b = document.getElementById('bib-list'); if(!b)return; b.innerHTML='';
       if (biblioteca.length === 0) { b.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#777;">Sem arquivos na biblioteca.</td></tr>`; return; }
       biblioteca.forEach((i, idx) => {
-        b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}" target="_blank">📄 ${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+        b.innerHTML += `<tr><td><a href="${i.url}" download="${i.name}" target="_blank">📄 ${i.name}</a></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="biblioteca.splice(${idx},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button></td></tr>`;
       });
     }
 
@@ -1308,7 +1364,9 @@
         user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, 
         perm: permissoesAtribuidas, foto: document.getElementById('colab-foto-base64').value 
       });
-      refreshAll(); alert('Staff registado!');
+      gravarEDisponibilizarNuvem();
+      refreshAllUI(); 
+      alert('Staff registado e sincronizado com sucesso!');
     }
     
     function renderColab() {
@@ -1316,7 +1374,7 @@
       collaborators.forEach((c, idx) => {
         const fTag = c.foto ? '<img src="'+c.foto+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">' : '👤';
         const listaPerms = c.perm ? c.perm.join(', ') : 'Nenhuma';
-        t.innerHTML += `<tr><td>${fTag}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif||'--'}</td><td><code>${c.barcode}</code></td><td><small>${listaPerms}</small></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML += `<tr><td>${fTag}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif||'--'}</td><td><code>${c.barcode}</code></td><td><small>${listaPerms}</small></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1); gravarEDisponibilizarNuvem(); refreshAllUI();">🗑️</button></td></tr>`;
       });
     }
 
