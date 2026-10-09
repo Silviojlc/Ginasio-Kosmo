@@ -4,165 +4,200 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root { --primary: #c92a2a; --bg: #030405; --card: #0d1114; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
+    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { width: 100vw; height: 100vh; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px; overflow: hidden; text-align: center; }
-
-    .totem-top-info { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; margin-top: 5px; }
-    #clock-date { font-size: 2.2rem; color: #ced4da; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-    #clock-time { font-size: 8rem; color: #ffd43b; font-weight: 900; letter-spacing: 6px; line-height: 1; text-shadow: 0 0 40px rgba(255,212,59,0.4), 0 5px 25px rgba(0,0,0,0.9); }
-
-    .totem-center-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 1200px; flex: 1; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
     
-    .totem-logo-gigante { 
+    .totem-top { text-align: center; width: 100%; margin-top: 2px; }
+    .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
+    .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
+
+    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; }
+    .totem-logo-oval { 
       width: 750px; 
-      height: 380px; 
-      object-fit: cover; 
-      border-radius: 50%;
-      border: 5px solid var(--primary);
-      box-shadow: 0 0 35px rgba(201,42,42,0.8);
-      background: #c2d4e8;
-      margin: -10px 0;
+      height: 300px; 
+      background: #c5d7e6; 
+      border-radius: 50%; 
+      border: 8px solid var(--primary); 
+      box-shadow: 0 0 45px rgba(201, 42, 42, 0.9), inset 0 0 25px rgba(0,0,0,0.15); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      overflow: hidden; 
+      padding: 15px; 
     }
+    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; }
 
-    .totem-input { width: 100%; max-width: 600px; padding: 16px; font-size: 1.5rem; font-weight: bold; border-radius: 8px; border: 3px solid var(--primary); background: #fff; color: #212529; text-align: center; outline: none; box-shadow: 0 5px 20px rgba(0,0,0,0.6); }
-    .totem-input:focus { border-color: #ff6b6b; }
+    .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
+    .totem-form { display: flex; gap: 10px; margin-bottom: 10px; }
+    .totem-input-manual { background: #fff; color: #212529; font-size: 1.4rem; font-weight: 800; padding: 10px 20px; border-radius: 8px; border: 4px solid var(--primary); flex: 1; text-align: center; outline: none; }
+    .totem-btn-ok { background: var(--success); color: #fff; border: none; padding: 0 30px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-    .totem-result { width: 100%; max-width: 800px; min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 15px; background: var(--card); border: 3px solid #21262d; transition: all 0.2s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-    .totem-result.success { background: rgba(43, 138, 62, 0.3); border: 4px solid var(--success); }
-    .totem-result.error { background: rgba(217, 72, 15, 0.3); border: 4px solid var(--danger); }
+    .totem-status-card { background: #161b22; border: 2px solid #333; border-radius: 12px; padding: 12px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+    .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
+    .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
     
-    .totem-result h2 { font-size: 2rem; margin-bottom: 4px; font-weight: 900; letter-spacing: 1px; }
-    .totem-result p { font-size: 1.2rem; color: #e9ecef; font-weight: 600; }
-    
-    .totem-footer { font-size: 0.85rem; color: #6c757d; display: flex; flex-direction: column; gap: 2px; margin-bottom: 5px; }
-    .wake-status { color: #2b8a3e; font-weight: bold; font-size: 0.8rem; }
+    .totem-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #aaa; }
+
+    .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
 </head>
-<body>
+<body onclick="focarInput()">
 
-  <div class="totem-top-info">
-    <span id="clock-date">CARREGANDO...</span>
-    <span id="clock-time">00:00:00</span>
+  <div class="totem-top">
+    <div class="totem-data" id="data-atual">--</div>
+    <div class="totem-relogio" id="relogio">--:--:--</div>
   </div>
 
-  <div class="totem-center-stage">
-    <img src="logo.jpg" alt="Ginásio KOSMO" class="totem-logo-gigante" onerror="this.src='src/img/logo.jpg';">
+  <div class="totem-logo-container">
+    <div class="totem-logo-oval">
+      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" onerror="this.src='src/img/logo.jpg';">
+    </div>
+  </div>
+
+  <div class="totem-action-box">
+    <form class="totem-form" onsubmit="event.preventDefault(); executarCheckin();">
+      <input type="text" id="totem-barcode-input" class="totem-input-manual" placeholder="PASSE O CARTÃO OU QR CODE..." autocomplete="off" autofocus oninput="detetarLeituraInstantanea(this)">
+      <button type="submit" class="totem-btn-ok">OK</button>
+    </form>
     
-    <input type="text" id="totem-code-input" class="totem-input" placeholder="PASSE O CARTÃO NO LEITOR..." autofocus autocomplete="off">
-    
-    <div id="totem-result-box" class="totem-result">
-      <h2>PRONTO PARA LEITURA</h2>
-      <p>Aproxime o cartão de membro ou código de barras</p>
+    <div id="totem-resultado" class="totem-status-card">
+      <div>
+        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
+        <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+      </div>
     </div>
   </div>
 
   <div class="totem-footer">
-    <span>Ginásio KOSMO | Terra Branca, Frente Escola Amor De Deus | NIF: 283023805</span>
-    <span id="wake-lock-label" class="wake-status">⚡ Sistema Antihibernação & Foco Automático Ativo</span>
+    Ginásio KOSMO | Terra Branca, Frente Escola Amor De Deus | NIF: 283023805
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://htyhbtbayxreoundolac.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_2Fy-0tjG0UszGVLoHnBdOQ_OtNFPQfY';
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    let temporizadorReset = null;
 
-    let wakeLock = null;
-    async function requestWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          document.getElementById('wake-lock-label').innerText = "⚡ Monitor Protegido contra Suspensão (Ativo 24/7)";
-        }
-      } catch (err) { console.error(err); }
+    function atualizarRelogio() {
+      const d = new Date();
+      const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      
+      const elData = document.getElementById('data-atual');
+      const elRelogio = document.getElementById('relogio');
+
+      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+      if(elRelogio) elRelogio.innerText = d.toLocaleTimeString('pt-PT');
+    }
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
+
+    const inputLeitor = document.getElementById('totem-barcode-input');
+
+    function focarInput() {
+      if (inputLeitor) inputLeitor.focus();
+    }
+    
+    setInterval(focarInput, 150);
+    window.onload = focarInput;
+    document.body.onclick = focarInput;
+
+    let timeoutInput = null;
+    function detetarLeituraInstantanea(el) {
+      const valor = el.value.trim();
+      if (valor.length >= 3) {
+        clearTimeout(timeoutInput);
+        timeoutInput = setTimeout(async () => {
+          const codigo = el.value.trim();
+          el.value = '';
+          if (codigo) await processarCheckinTotem(codigo);
+        }, 120);
+      }
     }
 
-    window.addEventListener('load', () => {
-      requestWakeLock();
-      setInterval(requestWakeLock, 20000);
-      focarInputImediato();
-    });
-
-    document.addEventListener('visibilitychange', async () => {
-      if (document.visibilityState === 'visible') {
-        await requestWakeLock();
-        focarInputImediato();
-      }
-    });
-
-    function focarInputImediato() {
-      const inp = document.getElementById('totem-code-input');
-      if (inp) inp.focus();
+    async function executarCheckin() {
+      const codigo = inputLeitor.value.trim();
+      if (!codigo) return;
+      inputLeitor.value = '';
+      await processarCheckinTotem(codigo);
     }
 
-    window.addEventListener('blur', () => { setTimeout(focarInputImediato, 100); });
-    document.addEventListener('click', focarInputImediato);
-    setInterval(focarInputImediato, 1000);
+    async function processarCheckinTotem(codigo) {
+      if (temporizadorReset) clearTimeout(temporizadorReset);
 
-    setInterval(() => {
+      const resBox = document.getElementById('totem-resultado');
+      resBox.className = "totem-status-card";
+      resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
+
+      const membrosLocais = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+      const membro = membrosLocais.find(m => {
+        const b = String(m.barcode || m.id || '').trim();
+        return b === String(codigo).trim();
+      });
+
       const now = new Date();
-      document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-PT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      document.getElementById('clock-time').innerText = now.toLocaleTimeString('pt-PT');
-    }, 1000);
 
-    const inputField = document.getElementById('totem-code-input');
-    inputField.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        const code = inputField.value.trim();
-        if (code) {
-          processarCheckinTotem(code);
+      if (membro) {
+        const dataFim = new Date(membro.date || '2026-01-01');
+        dataFim.setDate(dataFim.getDate() + 30);
+        const ativo = dataFim >= now && ((membro.estado || 'Ativo') === 'Ativo');
+        const nomeMembro = membro.name || 'Membro';
+        const planoMembro = membro.plan || 'Normal';
+        const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
+
+        if (ativo) {
+          resBox.className = "totem-status-card status-ok";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">✅ ACESSO AUTORIZADO</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #d4edda;">Plano: ${planoMembro}</p>
+            </div>
+          `;
+        } else {
+          resBox.className = "totem-status-card status-err";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ SUBSCRIÇÃO EXPIRADA</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #f8d7da;">Por favor, renove o plano</p>
+            </div>
+          `;
         }
-        inputField.value = '';
-      }
-    });
 
-    async function processarCheckinTotem(code) {
-      const now = new Date();
-      const resBox = document.getElementById('totem-result-box');
-      let m = null;
-
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient
-            .from('kosmo_membros')
-            .select('id, name, nif, phone, barcode, plan')
-            .eq('barcode', code)
-            .single();
-          if (!error && data) m = data;
-        } catch (err) {
-          console.log('Erro ao consultar Supabase');
-        }
-      }
-
-      if (!m) {
-        let members = JSON.parse(localStorage.getItem('kosmo_members')) || [];
-        m = members.find(x => x.barcode === code);
-      }
-
-      if (m) {
-        resBox.className = 'totem-result success';
-        resBox.innerHTML = `<h2>✅ ACESSO AUTORIZADO</h2><p style="font-size:1.5rem; color:#fff;">Bem-vindo(a), <strong>${m.name}</strong></p><p style="margin-top:2px; font-size:1rem; color:#d3f9d8;">Plano: ${m.plan || 'Normal'}</p>`;
-
-        let attendanceLogs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
-        attendanceLogs.unshift({ data: now.toLocaleDateString('pt-PT'), time: now.toLocaleTimeString('pt-PT'), name: m.name, barcode: code, status: 'Ativo' });
-        localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
-
-        if (supabaseClient) {
-          supabaseClient.from('kosmo_pagamentos').insert([{ data: now.toISOString(), Membro: m.name, Código: code, Estado: 'Check-in' }]).then(()=>{});
-        }
+        const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+        logs.unshift({
+          data: now.toLocaleDateString('pt-PT'),
+          time: now.toLocaleTimeString('pt-PT'),
+          name: nomeMembro,
+          barcode: codigo,
+          status: ativo ? 'Ativo' : 'Expirado',
+          foto: membro.foto || ''
+        });
+        localStorage.setItem('kosmo_attendance', JSON.stringify(logs));
 
       } else {
-        resBox.className = 'totem-result error';
-        resBox.innerHTML = `<h2>❌ CARTÃO DESCONHECIDO</h2><p style="font-size:1.3rem;">O código <code>${code}</code> não está registado.</p>`;
+        resBox.className = "totem-status-card status-err";
+        resBox.innerHTML = `
+          <div style="text-align: center;">
+            <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
+            <p style="font-size: 1.1rem;">ID "${codigo}" não registado no sistema</p>
+          </div>
+        `;
       }
 
-      setTimeout(() => {
-        resBox.className = 'totem-result';
-        resBox.innerHTML = `<h2>PRONTO PARA LEITURA</h2><p>Aproxime o cartão de membro ou código de barras</p>`;
-        focarInputImediato();
-      }, 4000);
+      // Ciclo exato de 5 segundos antes de limpar e retornar ao estado inicial
+      temporizadorReset = setTimeout(() => {
+        resBox.className = "totem-status-card";
+        resBox.innerHTML = `
+          <div>
+            <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
+            <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+          </div>
+        `;
+        focarInput();
+      }, 5000);
     }
   </script>
 </body>
