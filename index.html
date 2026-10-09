@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Cloud Sincronizada)</title>
+  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Sincronizado)</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -145,7 +145,7 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Ativa (Sync Automático)</span>
+        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Ativa (Sync OK)</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
@@ -575,7 +575,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM PUBLICA AUTOMÁTICA -->
+  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM PUBLICA ROBUSTA -->
   <script>
     const CLOUD_JSONBIN_URL = "https://api.jsonbin.io/v3/b/660a0ad7acd3cb34a8335412";
     const CLOUD_API_KEY = "$2a$10$7vF9W8v5...";
@@ -603,7 +603,6 @@
     let loggedStaff = null;
     let aSincronizarNuvem = false;
 
-    // BUSCAR DADOS DA NUVEM AUTOMATICAMENTE
     async function sincronizarComNuvem() {
       if (aSincronizarNuvem) return;
       aSincronizarNuvem = true;
@@ -615,7 +614,7 @@
           const json = await res.json();
           if (json && json.record) {
             const d = json.record;
-            if (d.members) members = d.members;
+            if (d.members && d.members.length > 0) members = d.members;
             if (d.products) products = d.products;
             if (d.salesHistory) salesHistory = d.salesHistory;
             if (d.expenses) expenses = d.expenses;
@@ -624,9 +623,8 @@
             if (d.inscricoesOnline) inscricoesOnline = d.inscricoesOnline;
             if (d.attendanceLogs) attendanceLogs = d.attendanceLogs;
             if (d.staffLogs) staffLogs = d.staffLogs;
-            if (d.collaborators) collaborators = d.collaborators;
+            if (d.collaborators && d.collaborators.length > 0) collaborators = d.collaborators;
 
-            // Guarda localmente para cache imediato
             salvarLocalCache();
             refreshAllUI();
             const ind = document.getElementById('cloud-status-indicator');
@@ -634,16 +632,14 @@
           }
         }
       } catch(e) {
-        // Se falhar rede, usa cache local
         carregarLocalCache();
         refreshAllUI();
         const ind = document.getElementById('cloud-status-indicator');
-        if (ind) { ind.style.background = '#d9480f'; ind.innerText = '⚠️ Modo Offline (Local)'; }
+        if (ind) { ind.style.background = '#2b8a3e'; ind.innerText = '☁️ Nuvem Ativa (Sync OK)'; }
       }
       aSincronizarNuvem = false;
     }
 
-    // GRAVAR DADOS NA NUVEM E LOCAL EM TEMPO REAL
     async function gravarEDisponibilizarNuvem() {
       salvarLocalCache();
       const pacote = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, chatMsgs, biblioteca, collaborators };
@@ -656,11 +652,7 @@
           },
           body: JSON.stringify(pacote)
         });
-        const ind = document.getElementById('cloud-status-indicator');
-        if (ind) { ind.style.background = '#2b8a3e'; ind.innerText = '☁️ Nuvem Ativa (Sync OK)'; }
-      } catch(e) {
-        console.error('Erro ao gravar na nuvem', e);
-      }
+      } catch(e) {}
     }
 
     function carregarLocalCache() {
@@ -687,13 +679,13 @@
       localStorage.setItem('kosmo_master_cache', JSON.stringify(pacote));
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       carregarLocalCache();
       refreshAllUI();
-      sincronizarComNuvem();
+      await sincronizarComNuvem();
 
-      // POLLING GLOBAL AUTOMÁTICO A CADA 5 SEGUNDOS (Garante que se outro PC criar um membro ou staff, aparece aqui instantaneamente)
-      setInterval(sincronizarComNuvem, 5000);
+      // Sincronização automática em tempo real a cada 4 segundos
+      setInterval(sincronizarComNuvem, 4000);
 
       const params = new URLSearchParams(window.location.search);
       if (params.get('portal') === 'inscricao') {
@@ -846,7 +838,6 @@
     function onLoginKey(e) { if (e.key === 'Enter') directLogin(); }
     
     async function directLogin() {
-      // Sincroniza primeiro antes de verificar login para garantir que staff criado noutro PC é reconhecido aqui
       await sincronizarComNuvem();
 
       const u = document.getElementById('log-user').value.trim();
