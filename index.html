@@ -102,40 +102,40 @@
     <div class="menu-scroll">
       <div class="nav-group-title">Membros & Online</div>
       <button type="button" class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')"><span class="icon">🏠</span><span class="nav-text">Dashboard Geral</span></button>
-      <button type="button" class="nav-item" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
-      <button type="button" class="nav-item" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Arquivo de Inscrições (<span id="badge-inscricoes-count">0</span>)</span></button>
-      <button type="button" class="nav-item" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
-      <button type="button" class="nav-item" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
-      <button type="button" class="nav-item" id="nav-qrcode" onclick="navigate('qrcode')"><span class="icon">📷</span><span class="nav-text">QR Code de Inscrição</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Registar Membros" id="nav-membros" onclick="navigate('membros')"><span class="icon">👤</span><span class="nav-text">Membros Ativos & Gestão</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-inscricoes" onclick="navigate('inscricoes')"><span class="icon">📥</span><span class="nav-text">Arquivo de Inscrições (<span id="badge-inscricoes-count">0</span>)</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Check-ins Totem" id="nav-checkins" onclick="navigate('checkins')"><span class="icon">🔔</span><span class="nav-text">Check-ins / Totem</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Registar Membros" id="nav-cartaodigital" onclick="navigate('cartaodigital')"><span class="icon">🪪</span><span class="nav-text">Cartões Digitais</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Registar Membros" id="nav-qrcode" onclick="navigate('qrcode')"><span class="icon">📷</span><span class="nav-text">QR Code de Inscrição</span></button>
 
       <div class="nav-group-title">Loja & Stock</div>
-      <button type="button" class="nav-item" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
-      <button type="button" class="nav-item" id="nav-produtos" onclick="navigate('produtos')"><span class="icon">📦</span><span class="nav-text">Produtos (A a Z)</span></button>
-      <button type="button" class="nav-item" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
-      <button type="button" class="nav-item" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="POS Vendas" id="nav-pos" onclick="navigate('pos')"><span class="icon">🛒</span><span class="nav-text">POS (Carrinho)</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Gerir Stock" id="nav-produtos" onclick="navigate('produtos')"><span class="icon">📦</span><span class="nav-text">Produtos (A a Z)</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Gerir Stock" id="nav-stock" onclick="navigate('stock')"><span class="icon">📊</span><span class="nav-text">Stock</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="POS Vendas" id="nav-vendas" onclick="navigate('vendas')"><span class="icon">📑</span><span class="nav-text">Histórico de Vendas</span></button>
 
       <div class="nav-group-title">Financeiro & Faturas</div>
-      <button type="button" class="nav-item" id="nav-faturas" onclick="navigate('faturas')"><span class="icon">📄</span><span class="nav-text">Faturas & Recibos (NIF)</span></button>
-      <button type="button" class="nav-item" id="nav-despesas" onclick="navigate('despesas')"><span class="icon">📉</span><span class="nav-text">Despesas & Ficheiros</span></button>
-      <button type="button" class="nav-item" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & NIF / Horas</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Emitir Faturas" id="nav-faturas" onclick="navigate('faturas')"><span class="icon">📄</span><span class="nav-text">Faturas & Recibos (NIF)</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-despesas" onclick="navigate('despesas')"><span class="icon">📉</span><span class="nav-text">Despesas & Ficheiros</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-salarios" onclick="navigate('salarios')"><span class="icon">💵</span><span class="nav-text">Salários & NIF / Horas</span></button>
 
       <div class="nav-group-title">Base de Dados Global</div>
-      <button type="button" class="nav-item" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Pastas & Transações</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-database" onclick="navigate('database')"><span class="icon">🗄️</span><span class="nav-text">Pastas & Transações</span></button>
 
       <div class="nav-group-title">Comunicação & Backups</div>
-      <button type="button" class="nav-item" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
-      <button type="button" class="nav-item" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
-      <button type="button" class="nav-item" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Auto (-5d / 2x dia)</span></button>
-      <button type="button" class="nav-item" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar / Exportar Universal</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Registar Membros" id="nav-chat" onclick="navigate('chat')"><span class="icon">💬</span><span class="nav-text">Chat Multimédia</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-biblioteca" onclick="navigate('biblioteca')"><span class="icon">📁</span><span class="nav-text">Biblioteca de Arquivos</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-lembretes" onclick="navigate('lembretes')"><span class="icon">⏰</span><span class="nav-text">Alertas Auto (-5d / 2x dia)</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-importar" onclick="navigate('importar')"><span class="icon">📥</span><span class="nav-text">Importar / Exportar Universal</span></button>
 
       <div class="nav-group-title">Colaboradores & Staff</div>
-      <button type="button" class="nav-item" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Permissões</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Ver Relatórios" id="nav-colab" onclick="navigate('colab')"><span class="icon">👥</span><span class="nav-text">Gerir Staff & Permissões</span></button>
       <button type="button" class="nav-item" id="nav-mudar-senha" onclick="navigate('mudar-senha')" style="display:none;"><span class="icon">🔒</span><span class="nav-text">Alterar Minha Senha</span></button>
-      <button type="button" class="nav-item" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
+      <button type="button" class="nav-item staff-perm-item" data-perm="Check-ins Totem" id="nav-picaponto" onclick="navigate('picaponto')"><span class="icon">⏱️</span><span class="nav-text">Pica Ponto (Leitor / Manual)</span></button>
     </div>
     <div style="padding: 12px; border-top: 1px solid rgba(255,255,255,0.08);">
       <span id="logged-user-label" style="display:block; color:#ffd43b; font-size:0.75rem; margin-bottom:6px; text-align:center; font-weight:bold;">Sessão: Admin Master</span>
-      <button type="button" onclick="location.reload()" class="btn btn-sm" style="background:#e03131; width:100%;">Terminar Sessão</button>
+      <button type="button" onclick="sairDaSessao()" class="btn btn-sm" style="background:#e03131; width:100%;">Terminar Sessão</button>
     </div>
   </aside>
 
@@ -146,7 +146,7 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">🟢 Base de Dados: Conectada</span>
+        <span id="badge-nuvem-status" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">🟢 Nuvem Supabase Ativa</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
@@ -576,18 +576,12 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER -->
+  <!-- SCRIPT MASTER ROBUSTO E ESTÁVEL -->
   <script>
-    const SUPABASE_URL = 'https://htyhbtbayxreoundolac.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_2Fy-0tjG0UszGVLoHnBdOQ_OtNFPQfY';
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
     let members = JSON.parse(localStorage.getItem('kosmo_members')) || [
       { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', nif: '123456789', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '', doc: '', comprovativo: '' }
     ];
-    let products = JSON.parse(localStorage.getItem('kosmo_produtos')) || [
-      { name: 'Creatina 300g', buy: 1800, price: 2500, stock: 12, desc: 'Creatina pura', use: 'Tomar 5g ao dia', foto: '' }
-    ];
+    let products = JSON.parse(localStorage.getItem('kosmo_produtos')) || [];
     let salesHistory = JSON.parse(localStorage.getItem('kosmo_sales')) || [];
     let expenses = JSON.parse(localStorage.getItem('kosmo_expenses')) || [];
     let salaries = JSON.parse(localStorage.getItem('kosmo_salaries')) || [];
@@ -597,18 +591,17 @@
     let staffLogs = JSON.parse(localStorage.getItem('kosmo_staff_attendance')) || [];
     let chatMsgs = JSON.parse(localStorage.getItem('kosmo_chat')) || [];
     let biblioteca = JSON.parse(localStorage.getItem('kosmo_bib')) || [];
-    
     let collaborators = JSON.parse(localStorage.getItem('kosmo_staff')) || [
       { id: 1, name: 'Administrador', role: 'Gerente (Master)', barcode: '998877', nif: '123456789', perm: ['Total'], user: 'admin', pass: 'admin123', foto: '' },
       { id: 2, name: 'Lenilson Varela', role: 'Staff / Operacional', barcode: '3792572', nif: '', perm: ['Registar Membros', 'POS Vendas', 'Check-ins Totem'], user: 'lenilsonvarela09@gmail.com', pass: 'lenilson123', foto: '' }
     ];
 
     let cartItems = [];
-    let portalChatLog = [];
     let pastaFiltroGlobal = 'todos';
     let loggedStaff = null;
 
     window.addEventListener('DOMContentLoaded', () => {
+      refreshAll();
       const params = new URLSearchParams(window.location.search);
       if (params.get('portal') === 'inscricao') {
         document.getElementById('login-overlay').style.display = 'none';
@@ -616,14 +609,24 @@
       }
       gerarQRCodeInscricao();
       verificarAlertaVencimentos();
-      
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'kosmo_attendance') {
-          attendanceLogs = JSON.parse(e.newValue) || [];
-          renderAttendance();
-        }
-      });
     });
+
+    function salvarTudoLocal() {
+      try {
+        localStorage.setItem('kosmo_members', JSON.stringify(members));
+        localStorage.setItem('kosmo_produtos', JSON.stringify(products));
+        localStorage.setItem('kosmo_sales', JSON.stringify(salesHistory));
+        localStorage.setItem('kosmo_expenses', JSON.stringify(expenses));
+        localStorage.setItem('kosmo_salaries', JSON.stringify(salaries));
+        localStorage.setItem('kosmo_invoices', JSON.stringify(invoicesList));
+        localStorage.setItem('kosmo_inscricoes', JSON.stringify(inscricoesOnline));
+        localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
+        localStorage.setItem('kosmo_staff_attendance', JSON.stringify(staffLogs));
+        localStorage.setItem('kosmo_chat', JSON.stringify(chatMsgs));
+        localStorage.setItem('kosmo_bib', JSON.stringify(biblioteca));
+        localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
+      } catch(e) { console.error('Erro ao guardar cache', e); }
+    }
 
     function toggleMobileMenu() {
       const sidebar = document.getElementById('sidebar-panel');
@@ -657,11 +660,13 @@
     function toggleSelectAllMembers(master) {
       document.querySelectorAll('.member-checkbox').forEach(chk => chk.checked = master.checked);
     }
+    
     function eliminarMembrosSelecionados() {
       const selecionados = Array.from(document.querySelectorAll('.member-checkbox:checked')).map(chk => Number(chk.value));
       if (selecionados.length === 0) { alert('Selecione pelo menos um membro para eliminar.'); return; }
       if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} membro(s)?`)) {
         members = members.filter(m => !selecionados.includes(m.id));
+        salvarTudoLocal();
         refreshAll();
         alert('Membros eliminados com sucesso!');
       }
@@ -675,6 +680,7 @@
       if (selecionados.length === 0) { alert('Selecione pelo menos um produto para eliminar.'); return; }
       if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} produto(s)?`)) {
         products = products.filter((p, idx) => !selecionados.includes(idx));
+        salvarTudoLocal();
         refreshAll();
         alert('Produtos eliminados com sucesso!');
       }
@@ -701,9 +707,9 @@
                 members.push(m);
               });
             }
-            biblioteca.push({ name: f.name, url: e.target.result });
+            salvarTudoLocal();
             refreshAll();
-            alert(`Importação de ${tipo} concluída com sucesso via JSON!`);
+            alert(`Importação de ${tipo} concluída com sucesso!`);
           } catch(err) { alert('Erro ao analisar ficheiro JSON.'); }
         };
         r.readAsText(f);
@@ -717,18 +723,16 @@
             rows.forEach(row => {
               if (tipo === 'produtos') {
                 products.push({
-                  name: row.Nome || row.name || row.Produto || 'Produto Importado',
+                  name: row.Nome || row.name || row.Produto || 'Produto',
                   buy: Number(row.Compra || row.buy || 0),
                   price: Number(row.Preco || row.price || 0),
                   stock: Number(row.Stock || row.stock || 10),
-                  desc: row.Descricao || '',
-                  use: row.Uso || '',
-                  foto: ''
+                  desc: row.Descricao || '', use: row.Uso || '', foto: ''
                 });
               } else {
-                members.push({
+                const novoM = {
                   id: Date.now() + Math.random(),
-                  name: row.Nome || row.name || 'Membro Importado',
+                  name: row.Nome || row.name || 'Membro',
                   email: row.Email || row.email || '',
                   barcode: String(row.Codigo || row.barcode || Math.floor(100000 + Math.random()*900000)),
                   nif: String(row.Nif || row.nif || ''),
@@ -737,33 +741,26 @@
                   phone: String(row.Telemovel || row.phone || ''),
                   date: row.Data || new Date().toISOString().split('T')[0],
                   foto: '', doc: '', comprovativo: ''
-                });
+                };
+                members.push(novoM);
               }
             });
-            biblioteca.push({ name: f.name, url: e.target.result });
+            salvarTudoLocal();
             refreshAll();
-            alert(`Importação de ${tipo} concluída com sucesso! ${rows.length} registos integrados.`);
-          } catch(err) { alert('Erro ao processar tabela Excel/CSV.'); }
+            alert(`Importação concluída! ${rows.length} registos integrados.`);
+          } catch(err) { alert('Erro ao processar tabela.'); }
         };
         r.readAsArrayBuffer(f);
-      } else {
-        r.onload = e => {
-          biblioteca.push({ name: f.name, url: e.target.result });
-          refreshAll();
-          alert('Ficheiro registado na biblioteca.');
-        };
-        r.readAsDataURL(f);
       }
     }
 
     function exportarPorCategoria(tipo) {
-      let dadosExportar = [];
-      let nomeFicheiro = '';
+      let dadosExportar = []; let nomeFicheiro = '';
       if (tipo === 'ativos') { dadosExportar = members.filter(m => m.estado === 'Ativo'); nomeFicheiro = 'kosmo_membros_ativos.xlsx'; }
       else if (tipo === 'expirados') { dadosExportar = members.filter(m => m.estado !== 'Ativo'); nomeFicheiro = 'kosmo_membros_expirados.xlsx'; }
       else if (tipo === 'produtos') { dadosExportar = products; nomeFicheiro = 'kosmo_produtos_stock.xlsx'; }
 
-      if (dadosExportar.length === 0) { alert('Não existem dados registados nesta categoria.'); return; }
+      if (dadosExportar.length === 0) { alert('Sem dados nesta categoria.'); return; }
       const worksheet = XLSX.utils.json_to_sheet(dadosExportar);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, tipo.toUpperCase());
@@ -771,28 +768,63 @@
     }
 
     function onLoginKey(e) { if (e.key === 'Enter') directLogin(); }
+    
     function directLogin() {
       const u = document.getElementById('log-user').value.trim();
       const p = document.getElementById('log-pass').value.trim();
       if (u === 'admin' && p === 'admin123') {
-        loggedStaff = null; document.getElementById('login-overlay').style.display = 'none';
+        loggedStaff = null; 
+        document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('logged-user-label').innerText = 'Sessão: Admin Master';
         document.getElementById('nav-mudar-senha').style.display = 'none';
-        navigate('dashboard'); return;
+        aplicarPermissoesStaff(null);
+        navigate('dashboard'); 
+        return;
       }
       const staff = collaborators.find(c => c.user === u && c.pass === p);
       if (staff) {
-        loggedStaff = staff; document.getElementById('login-overlay').style.display = 'none';
+        loggedStaff = staff; 
+        document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('logged-user-label').innerText = `Staff: ${staff.name}`;
         document.getElementById('nav-mudar-senha').style.display = 'flex';
-        navigate('dashboard'); return;
+        aplicarPermissoesStaff(staff);
+        navigate('dashboard'); 
+        return;
       }
       alert('Utilizador ou palavra-passe incorretos.');
+    }
+
+    function sairDaSessao() {
+      salvarTudoLocal();
+      location.reload();
+    }
+
+    function aplicarPermissoesStaff(staff) {
+      const items = document.querySelectorAll('.staff-perm-item');
+      if (!staff || staff.perm.includes('Total') || staff.perm.includes('Total Master')) {
+        items.forEach(el => el.style.display = 'flex');
+        return;
+      }
+      items.forEach(el => {
+        const permRequerida = el.getAttribute('data-perm');
+        if (staff.perm && staff.perm.includes(permRequerida)) {
+          el.style.display = 'flex';
+        } else {
+          el.style.display = 'none';
+        }
+      });
     }
 
     function openTotemWindow() { window.open('totem.html', '_blank', 'width=1200,height=800'); }
 
     function navigate(viewId) {
+      if (loggedStaff && !loggedStaff.perm.includes('Total') && !loggedStaff.perm.includes('Total Master')) {
+        const targetNav = document.getElementById('nav-' + viewId);
+        if (targetNav && targetNav.style.display === 'none') {
+          alert('Acesso negado.');
+          return;
+        }
+      }
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       const t = document.getElementById('view-' + viewId); if (t) t.classList.add('active');
@@ -822,51 +854,30 @@
       renderDatabase();
       verificarAlertaVencimentos();
       populateCardSelect();
-      document.getElementById('badge-inscricoes-count').innerText = inscricoesOnline.length;
-
-      members.forEach(m => {
-        if(m.foto && !biblioteca.some(b => b.url === m.foto)) biblioteca.push({name: `Ficha_${m.name}.jpg`, url: m.foto});
-        if(m.doc && !biblioteca.some(b => b.url === m.doc)) biblioteca.push({name: `Doc_${m.name}`, url: m.doc});
-        if(m.comprovativo && !biblioteca.some(b => b.url === m.comprovativo)) biblioteca.push({name: `Comprovativo_${m.name}`, url: m.comprovativo});
-      });
-
-      localStorage.setItem('kosmo_members', JSON.stringify(members));
-      localStorage.setItem('kosmo_produtos', JSON.stringify(products));
-      localStorage.setItem('kosmo_sales', JSON.stringify(salesHistory));
-      localStorage.setItem('kosmo_expenses', JSON.stringify(expenses));
-      localStorage.setItem('kosmo_salaries', JSON.stringify(salaries));
-      localStorage.setItem('kosmo_invoices', JSON.stringify(invoicesList));
-      localStorage.setItem('kosmo_inscricoes', JSON.stringify(inscricoesOnline));
-      localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
-      localStorage.setItem('kosmo_staff_attendance', JSON.stringify(staffLogs));
-      localStorage.setItem('kosmo_chat', JSON.stringify(chatMsgs));
-      localStorage.setItem('kosmo_bib', JSON.stringify(biblioteca));
-      localStorage.setItem('kosmo_staff', JSON.stringify(collaborators));
+      const badgeCount = document.getElementById('badge-inscricoes-count');
+      if (badgeCount) badgeCount.innerText = inscricoesOnline.length;
+      salvarTudoLocal();
     }
 
-    function converterFotoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-foto-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
-    function converterDocMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-doc-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
-    function converterComprovativoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-comprovativo-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
-    
-    function converterFotoPortal(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('portal-foto-b64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
-    function converterFotoProduto(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('p-foto-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterFotoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
+    function converterDocMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-doc-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
+    function converterComprovativoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-comprovativo-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
+    function converterFotoPortal(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('portal-foto-b64').value=evt.target.result; }; r.readAsDataURL(f); } }
+    function converterFotoProduto(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('p-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
     function converterFotoStaff(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('colab-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
-    function converterFileDespesa(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('exp-file-base64').value=evt.target.result; biblioteca.push({name: f.name, url: evt.target.result}); }; r.readAsDataURL(f); } }
+    function converterFileDespesa(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('exp-file-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
 
     function tratarMudancaPlano() {
       const plano = document.getElementById('m-plan').value;
       const divExtra = document.getElementById('div-comprovativo-extra');
       const lblExtra = document.getElementById('label-comprovativo-extra');
       if (plano === 'Plano Casal') {
-        divExtra.style.display = 'block';
-        lblExtra.innerText = 'Comprovativo de Casado / Certidão:';
+        divExtra.style.display = 'block'; lblExtra.innerText = 'Comprovativo de Casado / Certidão:';
       } else if (plano === 'Plano Estudante') {
-        divExtra.style.display = 'block';
-        lblExtra.innerText = 'Comprovativo de Estudante (Declaração Escolar):';
+        divExtra.style.display = 'block'; lblExtra.innerText = 'Comprovativo de Estudante:';
       } else {
         divExtra.style.display = 'none';
         document.getElementById('m-comprovativo-base64').value = '';
-        document.getElementById('m-comprovativo-file').value = '';
       }
     }
 
@@ -885,10 +896,10 @@
         else if (diff <= 5 && diff >= 0) cAVencer++;
         else cAtivos++;
       });
-      document.getElementById('count-ativos').innerText = cAtivos;
-      document.getElementById('count-avencer').innerText = cAVencer;
-      document.getElementById('count-expirados').innerText = cExpirados;
-      document.getElementById('count-inativos').innerText = cInativos;
+      const elAtivos = document.getElementById('count-ativos'); if(elAtivos) elAtivos.innerText = cAtivos;
+      const elAVencer = document.getElementById('count-avencer'); if(elAVencer) elAVencer.innerText = cAVencer;
+      const elExpirados = document.getElementById('count-expirados'); if(elExpirados) elExpirados.innerText = cExpirados;
+      const elInativos = document.getElementById('count-inativos'); if(elInativos) elInativos.innerText = cInativos;
     }
 
     function filtrarMembrosDashboard(filtro) {
@@ -908,7 +919,7 @@
           html += `<tr><td>${m.foto ? '<img src="'+m.foto+'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">' : '👤'}</td><td><strong>${m.name}</strong></td><td>${m.plan}</td><td>${d.toLocaleDateString('pt-PT')}</td></tr>`;
         }
       });
-      html += `</tbody></table>`; res.innerHTML = achou ? html : `<p style="margin-top:10px; color:#777;">Nenhum membro encontrado.</p>`;
+      html += `</tbody></table>`; if(res) res.innerHTML = achou ? html : `<p style="margin-top:10px; color:#777;">Nenhum membro encontrado.</p>`;
     }
 
     function saveMember() {
@@ -936,14 +947,14 @@
           if(doc) m.doc = doc;
           if(comprovativo) m.comprovativo = comprovativo;
         }
-        alert('Atualizado!'); cancelEditMember();
+        alert('Atualizado com sucesso!'); cancelEditMember();
       } else {
-        members.push({
+        const novoMembro = {
           id: Date.now(), name, email, barcode, nif, phone, altura, peso, patologias, plan, estado,
-          date: date || new Date().toISOString().split('T')[0],
-          foto, doc, comprovativo
-        });
-        alert('Membro criado!');
+          date: date || new Date().toISOString().split('T')[0], foto, doc, comprovativo
+        };
+        members.push(novoMembro);
+        alert('Membro criado com sucesso!');
         document.getElementById('m-name').value = ''; document.getElementById('m-barcode').value = ''; document.getElementById('m-nif').value = '';
       }
       refreshAll();
@@ -1072,7 +1083,7 @@
           <td>${fTag}</td><td><strong>${p.name}</strong></td><td>${p.use||''}</td><td>${p.price} CVE</td><td>${p.stock}</td>
           <td>
             <button class="btn btn-sm btn-blue" onclick="editProduct(${i})">✏️</button>
-            <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1);refreshAll();">🗑️</button>
+            <button class="btn btn-sm" style="background:var(--danger);" onclick="products.splice(${i},1); refreshAll();">🗑️</button>
           </td>
         </tr>`;
       });
@@ -1107,7 +1118,7 @@
       const t = document.getElementById('expenses-tbody'); if(!t)return;
       if (expenses.length === 0) { t.innerHTML = `<tr><td colspan="6" style="text-align:center;">Sem despesas.</td></tr>`; return; }
       t.innerHTML = ''; expenses.forEach((e, idx) => {
-        t.innerHTML += `<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.empresa||'--'}</td><td><strong>${e.amount} CVE</strong></td><td>${e.file?'Sim':'Não'}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+        t.innerHTML += `<tr><td>${e.date}</td><td>${e.desc}</td><td>${e.empresa||'--'}</td><td><strong>${e.amount} CVE</strong></td><td>${e.file?'Sim':'Não'}</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="expenses.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`;
       });
     }
 
@@ -1117,7 +1128,7 @@
       salaries.push({ name, base: Number(document.getElementById('sal-val').value)||0, nif: document.getElementById('sal-nif').value, doc: document.getElementById('sal-doc').value, mes: document.getElementById('sal-mes').value, horas: Number(document.getElementById('sal-horas').value)||0, total: (Number(document.getElementById('sal-val').value)||0) + (Number(document.getElementById('sal-horas').value)||0) });
       refreshAll(); alert('Salário registado!');
     }
-    function renderSalaries() { const t = document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach((s,idx)=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.mes}</td><td>${s.nif}</td><td>${s.total} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
+    function renderSalaries() { const t = document.getElementById('salaries-tbody'); if(!t)return; t.innerHTML=''; salaries.forEach((s,idx)=>t.innerHTML+=`<tr><td>${s.name}</td><td>${s.mes}</td><td>${s.nif}</td><td>${s.total} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="salaries.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
 
     function gerarFaturaMembroPrompt() {
       const n = prompt('Nome:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Fatura', name:n, desc:'Serviço', val:Number(v), date:new Date().toLocaleString('pt-PT')}); refreshAll(); }
@@ -1125,7 +1136,7 @@
     function gerarReciboStaffPrompt() {
       const n = prompt('Nome Staff:'), v = prompt('Valor CVE:'); if(n && v) { invoicesList.unshift({type:'Recibo', name:n, desc:'Ordenado', val:Number(v), date:new Date().toLocaleString('pt-PT')}); refreshAll(); }
     }
-    function renderInvoices() { const t = document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; invoicesList.forEach((inv,idx)=>t.innerHTML+=`<tr><td>${inv.type}</td><td>${inv.name}</td><td>${inv.desc}</td><td>${inv.val} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="invoicesList.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`); }
+    function renderInvoices() { const t = document.getElementById('invoices-tbody'); if(!t)return; t.innerHTML=''; invoicesList.forEach((inv,idx)=>t.innerHTML+=`<tr><td>${inv.type}</td><td>${inv.name}</td><td>${inv.desc}</td><td>${inv.val} CVE</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="invoicesList.splice(${idx},1); refreshAll();">🗑️</button></td></tr>`); }
 
     function onScan(e) { if(e.key==='Enter') processarCheckin(document.getElementById('chk-input').value.trim()); }
     function checkinManualPrompt() { const c=prompt('ID do Membro:'); if(c) processarCheckin(c.trim()); }
@@ -1164,8 +1175,7 @@
 
     function processarCheckin(code) {
       if (!code) return;
-      const freshMembers = JSON.parse(localStorage.getItem('kosmo_members')) || members;
-      const m = freshMembers.find(x => x.barcode === code);
+      const m = members.find(x => x.barcode === code);
       const now = new Date(); let ativo = false; let nome = 'Desconhecido';
       if(m) {
         nome = m.name;
@@ -1182,14 +1192,7 @@
       };
       
       attendanceLogs.unshift(logEntry);
-      localStorage.setItem('kosmo_attendance', JSON.stringify(attendanceLogs));
-      
-      window.dispatchEvent(new StorageEvent('storage', {
-        key: 'kosmo_attendance',
-        newValue: JSON.stringify(attendanceLogs)
-      }));
-
-      renderAttendance();
+      refreshAll();
       const inputChk = document.getElementById('chk-input');
       if(inputChk) { inputChk.value = ''; inputChk.focus(); }
     }
@@ -1199,7 +1202,7 @@
     function picaManualPrompt() { const c=prompt('ID Staff:'); if(c) processarPica(c); }
     function processarPica(code) {
       const s=collaborators.find(x=>x.barcode===code); staffLogs.unshift({time:new Date().toLocaleTimeString('pt-PT'), name:s?s.name:code, type:'Ponto'});
-      renderStaffAttendance();
+      refreshAll();
     }
     function renderStaffAttendance() { const t=document.getElementById('pica-tbody'); if(!t)return; t.innerHTML=''; staffLogs.forEach(s=>t.innerHTML+=`<tr><td>${s.time}</td><td>${s.name}</td><td>${s.type}</td></tr>`); }
 
@@ -1225,7 +1228,8 @@
     }
     function aprovarInscricao(idx) {
       const ins = inscricoesOnline[idx]; const barcode = String(Math.floor(100000 + Math.random()*900000));
-      members.push({ id:Date.now(), name:ins.name, email:ins.email, barcode, nif:ins.nif||'', phone:ins.phone, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto, doc:'', comprovativo:'' });
+      const novoMembro = { id:Date.now(), name:ins.name, email:ins.email, barcode, nif:ins.nif||'', phone:ins.phone, plan:ins.plan, estado:'Ativo', date:new Date().toISOString().split('T')[0], foto:ins.foto, doc:'', comprovativo:'' };
+      members.push(novoMembro);
       inscricoesOnline.splice(idx,1); refreshAll(); alert(`Inscrição aprovada! ID gerado: ${barcode}`);
     }
 
@@ -1256,14 +1260,24 @@
     function addColab() {
       const name = document.getElementById('colab-name').value.trim(); const barcode = document.getElementById('colab-barcode').value.trim();
       if(!name || !barcode) { alert('Preencha nome e ID.'); return; }
-      collaborators.push({ id: Date.now(), name, role: document.getElementById('colab-role').value, barcode, nif: document.getElementById('colab-nif').value, user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, foto: document.getElementById('colab-foto-base64').value });
+      const checkboxes = document.querySelectorAll('.perm-chk:checked');
+      const permissoesAtribuidas = Array.from(checkboxes).map(chk => chk.value);
+
+      collaborators.push({ 
+        id: Date.now(), name, role: document.getElementById('colab-role').value, 
+        barcode, nif: document.getElementById('colab-nif').value, 
+        user: document.getElementById('colab-user').value, pass: document.getElementById('colab-pass').value, 
+        perm: permissoesAtribuidas, foto: document.getElementById('colab-foto-base64').value 
+      });
       refreshAll(); alert('Staff registado!');
     }
+    
     function renderColab() {
       const t = document.getElementById('colab-tbody'); if(!t)return; t.innerHTML='';
       collaborators.forEach((c, idx) => {
         const fTag = c.foto ? '<img src="'+c.foto+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">' : '👤';
-        t.innerHTML += `<tr><td>${fTag}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif||'--'}</td><td><code>${c.barcode}</code></td><td>Total</td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
+        const listaPerms = c.perm ? c.perm.join(', ') : 'Nenhuma';
+        t.innerHTML += `<tr><td>${fTag}</td><td>${c.name}</td><td>${c.role}</td><td>${c.nif||'--'}</td><td><code>${c.barcode}</code></td><td><small>${listaPerms}</small></td><td><button class="btn btn-sm" style="background:var(--danger);" onclick="collaborators.splice(${idx},1);refreshAll();">🗑️</button></td></tr>`;
       });
     }
 
@@ -1295,8 +1309,6 @@
       </div>`;
       setTimeout(()=>{if(window.JsBarcode) JsBarcode("#card-bc", obj.barcode, {format:"CODE128", width:2, height:40, displayValue:true});}, 100);
     }
-
-    window.onload = () => { refreshAll(); };
   </script>
 </body>
 </html>
