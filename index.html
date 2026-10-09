@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
+  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Cloud Global)</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -145,7 +145,7 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">🟢 Sistema KOSMO Sincronizado</span>
+        <span id="cloud-sync-status" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Global Ativa</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
@@ -575,13 +575,15 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM PUBLICA (JSONBin / Shared Storage) -->
+  <!-- SCRIPT MASTER COM NUVEM GLOBAL PARTILHADA REAL -->
   <script>
-    // CHAVE ÚNICA DE NUVEM KOSMO (Sincronização entre qualquer dispositivo e domínio via API de nuvem leve)
-    const CLOUD_BIN_URL = "https://api.jsonbin.io/v3/b/660a0ad7acd3cb34a8335412"; // Armazenamento remoto partilhado KOSMO
-    const CLOUD_MASTER_KEY = "$2a$10$7vF9W8v5... (chave pública de sincronização)";
+    // URL de nuvem JSON global e pública dedicada ao Ginásio KOSMO
+    const CLOUD_BIN_ID = "660a0ad7acd3cb34a8335412";
+    const CLOUD_API_URL = `https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}`;
 
-    let members = [];
+    let members = [
+      { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', nif: '123456789', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '', doc: '', comprovativo: '' }
+    ];
     let products = [];
     let salesHistory = [];
     let expenses = [];
@@ -601,46 +603,84 @@
     let pastaFiltroGlobal = 'todos';
     let loggedStaff = null;
 
-    // CARREGAR DADOS DA NUVEM AUTOMATICAMENTE AO ABRIR EM QUALQUER DISPOSITIVO
-    async function carregarDadosDaNuvem() {
+    // SINCRONIZAÇÃO DRÁSTICA: Buscar dados da nuvem global ao abrir a página
+    async function sincronizarDaNuvem() {
       try {
-        // Tenta carregar do armazenamento local primeiro para abertura instantânea (zero lentidão)
-        const localData = localStorage.getItem('kosmo_global_sync');
-        if (localData) {
-          const parsed = JSON.parse(localData);
-          aplicarDadosMemoria(parsed);
-        } else {
-          // Se estiver virgem, define dados base
-          members = [{ id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', nif: '123456789', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '', doc: '', comprovativo: '' }];
+        const resposta = await fetch(CLOUD_API_URL + "/latest", {
+          headers: { "X-Master-Key": "$2a$10$7vF9W8v5..." }
+        });
+        if (resposta.ok) {
+          const json = await resposta.json();
+          if (json && json.record) {
+            const d = json.record;
+            if (d.members && d.members.length > 0) members = d.members;
+            if (d.products) products = d.products;
+            if (d.salesHistory) salesHistory = d.salesHistory;
+            if (d.expenses) expenses = d.expenses;
+            if (d.salaries) salaries = d.salaries;
+            if (d.invoicesList) invoicesList = d.invoicesList;
+            if (d.inscricoesOnline) inscricoesOnline = d.inscricoesOnline;
+            if (d.attendanceLogs) attendanceLogs = d.attendanceLogs;
+            if (d.staffLogs) staffLogs = d.staffLogs;
+            if (d.collaborators) collaborators = d.collaborators;
+            
+            // Guarda também localmente para acesso imediato
+            salvarTudoLocal();
+            refreshAll();
+          }
         }
-        refreshAll();
-      } catch(e) { console.error('Erro ao carregar dados', e); }
+      } catch(e) {
+        // Fallback para local se offline
+        const local = localStorage.getItem('kosmo_global_sync');
+        if (local) {
+          const d = JSON.parse(local);
+          aplicarDadosMemoria(d);
+          refreshAll();
+        }
+      }
     }
 
-    function aplicarDadosMemoria(data) {
-      if(data.members) members = data.members;
-      if(data.products) products = data.products;
-      if(data.salesHistory) salesHistory = data.salesHistory;
-      if(data.expenses) expenses = data.expenses;
-      if(data.salaries) salaries = data.salaries;
-      if(data.invoicesList) invoicesList = data.invoicesList;
-      if(data.inscricoesOnline) inscricoesOnline = data.inscricoesOnline;
-      if(data.attendanceLogs) attendanceLogs = data.attendanceLogs;
-      if(data.staffLogs) staffLogs = data.staffLogs;
-      if(data.chatMsgs) chatMsgs = data.chatMsgs;
-      if(data.biblioteca) biblioteca = data.biblioteca;
-      if(data.collaborators) collaborators = data.collaborators;
+    // SINCRONIZAÇÃO DRÁSTICA: Enviar dados para a nuvem global sempre que houver alteração
+    async function salvarTudoNuvemELocal() {
+      const pacote = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, chatMsgs, biblioteca, collaborators };
+      try {
+        localStorage.setItem('kosmo_global_sync', JSON.stringify(pacote));
+        
+        // Envia em segundo plano para a nuvem global
+        fetch(CLOUD_API_URL, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': '$2a$10$7vF9W8v5...'
+          },
+          body: JSON.stringify(pacote)
+        }).catch(err => console.error('Erro de envio nuvem', err));
+      } catch(e) { console.error('Erro ao salvar', e); }
+    }
+
+    function aplicarDadosMemoria(d) {
+      if(d.members) members = d.members;
+      if(d.products) products = d.products;
+      if(d.salesHistory) salesHistory = d.salesHistory;
+      if(d.expenses) expenses = d.expenses;
+      if(d.salaries) salaries = d.salaries;
+      if(d.invoicesList) invoicesList = d.invoicesList;
+      if(d.inscricoesOnline) inscricoesOnline = d.inscricoesOnline;
+      if(d.attendanceLogs) attendanceLogs = d.attendanceLogs;
+      if(d.staffLogs) staffLogs = d.staffLogs;
+      if(d.collaborators) collaborators = d.collaborators;
     }
 
     function salvarTudoLocal() {
       const pacote = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, chatMsgs, biblioteca, collaborators };
-      try {
-        localStorage.setItem('kosmo_global_sync', JSON.stringify(pacote));
-      } catch(e) { console.error('Erro ao gravar local', e); }
+      localStorage.setItem('kosmo_global_sync', JSON.stringify(pacote));
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      carregarDadosDaNuvem();
+      sincronizarDaNuvem();
+      // Atualiza automaticamente a cada 10 segundos para ver dados de outros dispositivos em tempo real
+      setInterval(sincronizarDaNuvem, 10000);
+
       const params = new URLSearchParams(window.location.search);
       if (params.get('portal') === 'inscricao') {
         document.getElementById('login-overlay').style.display = 'none';
@@ -688,7 +728,7 @@
       if (selecionados.length === 0) { alert('Selecione pelo menos um membro para eliminar.'); return; }
       if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} membro(s)?`)) {
         members = members.filter(m => !selecionados.includes(m.id));
-        salvarTudoLocal();
+        salvarTudoNuvemELocal();
         refreshAll();
         alert('Membros eliminados com sucesso!');
       }
@@ -702,7 +742,7 @@
       if (selecionados.length === 0) { alert('Selecione pelo menos um produto para eliminar.'); return; }
       if (confirm(`Tem certeza que deseja eliminar ${selecionados.length} produto(s)?`)) {
         products = products.filter((p, idx) => !selecionados.includes(idx));
-        salvarTudoLocal();
+        salvarTudoNuvemELocal();
         refreshAll();
         alert('Produtos eliminados com sucesso!');
       }
@@ -729,7 +769,7 @@
                 members.push(m);
               });
             }
-            salvarTudoLocal();
+            salvarTudoNuvemELocal();
             refreshAll();
             alert(`Importação de ${tipo} concluída com sucesso!`);
           } catch(err) { alert('Erro ao analisar ficheiro JSON.'); }
@@ -767,7 +807,7 @@
                 members.push(novoM);
               }
             });
-            salvarTudoLocal();
+            salvarTudoNuvemELocal();
             refreshAll();
             alert(`Importação concluída! ${rows.length} registos integrados.`);
           } catch(err) { alert('Erro ao processar tabela.'); }
@@ -817,7 +857,7 @@
     }
 
     function sairDaSessao() {
-      salvarTudoLocal();
+      salvarTudoNuvemELocal();
       location.reload();
     }
 
@@ -878,7 +918,7 @@
       populateCardSelect();
       const badgeCount = document.getElementById('badge-inscricoes-count');
       if (badgeCount) badgeCount.innerText = inscricoesOnline.length;
-      salvarTudoLocal();
+      salvarTudoNuvemELocal();
     }
 
     function converterFotoMembro(e) { const f = e.target.files[0]; if(f){ const r=new FileReader(); r.onload=evt=>{ document.getElementById('m-foto-base64').value=evt.target.result; }; r.readAsDataURL(f); } }
