@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
-    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; --oval-bg: #ffffff; }
+    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; --oval-bg: #c5d7e6; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
     body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; transition: background-color 0.5s ease; }
     
@@ -25,10 +25,10 @@
       justify-content: center; 
       align-items: center; 
       overflow: hidden; 
-      padding: 0; 
+      padding: 15px; 
       transition: all 0.5s ease;
     }
-    .totem-logo-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease; }
+    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; transition: opacity 0.3s ease; }
     
     .totem-logo-oval.foto-ativa {
         border: 8px solid #fff;
@@ -36,6 +36,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        padding: 0;
     }
     .totem-logo-oval.foto-ativa .totem-logo-img { opacity: 0; }
 
