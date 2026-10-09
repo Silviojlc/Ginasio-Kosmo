@@ -5,40 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
-    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
+    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; --oval-bg: #c5d7e6; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; transition: background-color 0.5s ease; }
     
     .totem-top { text-align: center; width: 100%; margin-top: 2px; }
     .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
     .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
 
-    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; }
+    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; position: relative; }
     .totem-logo-oval { 
       width: 750px; 
       height: 300px; 
-      background: #c5d7e6; 
+      background-color: var(--oval-bg); 
       border-radius: 50%; 
       border: 8px solid var(--primary); 
-      box-shadow: 0 0 45px rgba(201, 42, 42, 0.9), inset 0 0 25px rgba(0,0,0,0.15); 
+      box-shadow: 0 0 55px rgba(201, 42, 42, 0.7), inset 0 0 25px rgba(0,0,0,0.15); 
       display: flex; 
       justify-content: center; 
       align-items: center; 
       overflow: hidden; 
       padding: 15px; 
+      transition: all 0.5s ease;
     }
-    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; }
+    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; transition: opacity 0.3s ease; }
+    
+    /* Classe para quando a foto está ativa no oval */
+    .totem-logo-oval.foto-ativa {
+        border: 8px solid #fff; /* Borda branca na foto */
+        box-shadow: 0 0 65px rgba(255,255,255,0.5);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .totem-logo-oval.foto-ativa .totem-logo-img { opacity: 0; } /* Esconder logo quando foto aparece */
 
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
-    .totem-form { display: flex; gap: 10px; margin-bottom: 10px; }
-    .totem-input-manual { background: #fff; color: #212529; font-size: 1.4rem; font-weight: 800; padding: 10px 20px; border-radius: 8px; border: 4px solid var(--primary); flex: 1; text-align: center; outline: none; }
-    .totem-btn-ok { background: var(--success); color: #fff; border: none; padding: 0 30px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
-
-    .totem-status-card { background: #161b22; border: 2px solid #333; border-radius: 12px; padding: 12px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 20px; }
-    .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
-    .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
+    .totem-form { display: flex; gap: 10px; margin-bottom: 10px; position: absolute; left: -9999px; } /* Esconder input mas manter foco */
     
-    .totem-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #aaa; }
+    .totem-status-card { 
+        background: #161b22; 
+        border: 2px solid #333; 
+        border-radius: 12px; 
+        padding: 15px 25px; 
+        width: 100%; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+        min-height: 120px; 
+        display: flex; 
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center; 
+        text-align: center;
+        transition: all 0.4s ease;
+    }
+    
+    .status-ok { background: rgba(43, 138, 62, 0.95); color: #fff; border: 4px solid #fff; box-shadow: 0 0 40px rgba(43,138,62,0.9); }
+    .status-err { background: rgba(217, 72, 15, 0.95); color: #fff; border: 4px solid #fff; box-shadow: 0 0 40px rgba(217,72,15,0.9); }
+    
+    .totem-status-main-text { font-size: 2.4rem; font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+    .totem-status-member-name { font-size: 1.8rem; font-weight: bold; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .totem-status-plan { font-size: 1.1rem; opacity: 0.9; }
 
     .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
@@ -51,21 +77,21 @@
   </div>
 
   <div class="totem-logo-container">
-    <div class="totem-logo-oval">
-      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" onerror="this.src='src/img/logo.jpg';">
+    <!-- AQUI ESTÁ O OVAL QUE TERÁ O LOGÓTIPO OU A FOTO GIGANTE -->
+    <div class="totem-logo-oval" id="totem-oval-visual">
+      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-logo-image" onerror="this.src='src/img/logo.jpg';">
     </div>
   </div>
 
   <div class="totem-action-box">
     <form class="totem-form" onsubmit="event.preventDefault(); executarCheckin();">
-      <input type="text" id="totem-barcode-input" class="totem-input-manual" placeholder="PASSE O CARTÃO OU QR CODE..." autocomplete="off" autofocus oninput="detetarLeituraInstantanea(this)">
-      <button type="submit" class="totem-btn-ok">OK</button>
+      <input type="text" id="totem-barcode-input" autocomplete="off" autofocus oninput="detetarLeituraInstantanea(this)">
     </form>
     
     <div id="totem-resultado" class="totem-status-card">
       <div>
-        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
-        <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+        <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
+        <p style="font-size: 1.1rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
       </div>
     </div>
   </div>
@@ -92,6 +118,8 @@
     atualizarRelogio();
 
     const inputLeitor = document.getElementById('totem-barcode-input');
+    const ovalVisual = document.getElementById('totem-oval-visual');
+    const resBox = document.getElementById('totem-resultado');
 
     function focarInput() {
       if (inputLeitor) inputLeitor.focus();
@@ -121,10 +149,28 @@
       await processarCheckinTotem(codigo);
     }
 
+    function resetVisualTotem() {
+        if (temporizadorReset) clearTimeout(temporizadorReset);
+        
+        // Reset do oval (remover foto, voltar logo)
+        ovalVisual.style.backgroundImage = '';
+        ovalVisual.classList.remove('foto-ativa');
+        
+        // Reset do cartão de resultado
+        resBox.className = "totem-status-card";
+        resBox.innerHTML = `
+          <div>
+            <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
+            <p style="font-size: 1.1rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+          </div>
+        `;
+        focarInput();
+    }
+
     async function processarCheckinTotem(codigo) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
-      const resBox = document.getElementById('totem-resultado');
+      // Estado de "A verificar"
       resBox.className = "totem-status-card";
       resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
@@ -142,30 +188,34 @@
         const ativo = dataFim >= now && ((membro.estado || 'Ativo') === 'Ativo');
         const nomeMembro = membro.name || 'Membro';
         const planoMembro = membro.plan || 'Normal';
-        const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
+        
+        // A MÁGICA: Colocar a foto gigante como fundo do oval
+        if (membro.foto && membro.foto.startsWith('data:image')) {
+            ovalVisual.style.backgroundImage = `url('${membro.foto}')`;
+            ovalVisual.classList.add('foto-ativa');
+        } else {
+            // Se não tiver foto, garante o logo visível
+            ovalVisual.style.backgroundImage = '';
+            ovalVisual.classList.remove('foto-ativa');
+        }
 
         if (ativo) {
           resBox.className = "totem-status-card status-ok";
           resBox.innerHTML = `
-            ${fotoMembro}
-            <div style="text-align: left;">
-              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">✅ ACESSO AUTORIZADO</h3>
-              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 0.95rem; color: #d4edda;">Plano: ${planoMembro}</p>
-            </div>
+            <div class="totem-status-main-text">✅ ACESSO AUTORIZADO</div>
+            <div class="totem-status-member-name">${nomeMembro}</div>
+            <div class="totem-status-plan">Plano: ${planoMembro}</div>
           `;
         } else {
           resBox.className = "totem-status-card status-err";
           resBox.innerHTML = `
-            ${fotoMembro}
-            <div style="text-align: left;">
-              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ SUBSCRIÇÃO EXPIRADA</h3>
-              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 0.95rem; color: #f8d7da;">Por favor, renove o plano</p>
-            </div>
+            <div class="totem-status-main-text">❌ SUBSCRIÇÃO EXPIRADA</div>
+            <div class="totem-status-member-name">${nomeMembro}</div>
+            <div class="totem-status-plan">Por favor, renove o plano</div>
           `;
         }
 
+        // Registo de attendance
         const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
         logs.unshift({
           data: now.toLocaleDateString('pt-PT'),
@@ -178,26 +228,21 @@
         localStorage.setItem('kosmo_attendance', JSON.stringify(logs));
 
       } else {
+        // Cartão desconhecido
+        ovalVisual.style.backgroundImage = '';
+        ovalVisual.classList.remove('foto-ativa');
         resBox.className = "totem-status-card status-err";
         resBox.innerHTML = `
           <div style="text-align: center;">
-            <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
-            <p style="font-size: 1.1rem;">ID "${codigo}" não registado no sistema</p>
+            <div class="totem-status-main-text">❌ CARTÃO DESCONHECIDO</div>
+            <div class="totem-status-member-name">ID "${codigo}"</div>
+            <div class="totem-status-plan">não registado no sistema</div>
           </div>
         `;
       }
 
-      // Ciclo exato de 5 segundos antes de limpar e retornar ao estado inicial
-      temporizadorReset = setTimeout(() => {
-        resBox.className = "totem-status-card";
-        resBox.innerHTML = `
-          <div>
-            <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
-            <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
-          </div>
-        `;
-        focarInput();
-      }, 5000);
+      // Temporizador de 5s para resetar o visual
+      temporizadorReset = setTimeout(resetVisualTotem, 5000);
     }
   </script>
 </body>
