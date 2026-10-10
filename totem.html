@@ -6,11 +6,11 @@
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 20px; overflow: hidden; }
+    body { background-color: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 20px; overflow: hidden; }
     
-    .top-clock { text-align: center; margin-top: 5px; }
-    .top-clock h1 { font-size: 2.1rem; text-transform: uppercase; letter-spacing: 2px; color: #fff; font-weight: 800; margin-bottom: 4px; }
-    .top-clock h2 { font-size: 4.8rem; color: #ffd43b; font-weight: 900; text-shadow: 0 0 25px rgba(255,212,59,0.6); }
+    .top-clock { text-align: center; margin-top: 5px; width: 100%; }
+    .top-clock h1 { font-size: 3.5rem; text-transform: uppercase; letter-spacing: 3px; color: #fff; font-weight: 900; margin-bottom: 2px; }
+    .top-clock h2 { font-size: 8.5rem; color: #ffd43b; font-weight: 900; line-height: 1; text-shadow: 0 0 35px rgba(255,212,59,0.8); }
 
     .totem-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 800px; flex: 1; }
     
@@ -25,7 +25,7 @@
       align-items: center;
       background: #fff;
       box-shadow: 0 0 45px rgba(201, 42, 42, 0.9);
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
     .logo-oval-frame img {
       width: 115%;
@@ -33,14 +33,14 @@
       object-fit: cover;
     }
 
-    .scanner-box-ui { width: 100%; max-width: 400px; margin-bottom: 10px; }
-    .scanner-box-ui input { width: 100%; padding: 8px 12px; font-size: 1rem; font-weight: bold; text-align: center; border: 2px solid #c92a2a; border-radius: 6px; background: #1a1d20; color: #fff; outline: none; }
+    .scanner-box-ui { width: 100%; max-width: 400px; margin-bottom: 5px; }
+    .scanner-box-ui input { width: 100%; padding: 6px 10px; font-size: 0.9rem; font-weight: bold; text-align: center; border: 2px solid #c92a2a; border-radius: 6px; background: #1a1d20; color: #fff; outline: none; }
 
-    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 18px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    .status-box h3 { font-size: 1.9rem; margin-bottom: 6px; letter-spacing: 1px; }
-    .status-box p { font-size: 1.2rem; color: #adb5bd; }
+    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 15px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .status-box h3 { font-size: 1.9rem; margin-bottom: 4px; letter-spacing: 1px; }
+    .status-box p { font-size: 1.15rem; color: #adb5bd; }
 
-    footer { font-size: 0.8rem; color: #88929b; text-align: center; letter-spacing: 0.5px; margin-bottom: 5px; }
+    footer { font-size: 0.75rem; color: #88929b; text-align: center; letter-spacing: 0.5px; margin-bottom: 2px; }
   </style>
 </head>
 <body onclick="focarCaixaLeitor()">
@@ -56,7 +56,7 @@
     </div>
 
     <div class="scanner-box-ui">
-      <input type="text" id="totem-input-direto" placeholder="Leitor de códigos ativo..." autofocus autocomplete="off" onkeydown="processarLeituraTotem(event)">
+      <input type="text" id="totem-input-direto" placeholder="Leitor ativo..." autofocus autocomplete="off" onkeydown="processarLeituraTotem(event)">
     </div>
 
     <div id="totem-display" class="status-box" style="border-color: #2b8a3e;">
@@ -73,13 +73,28 @@
     const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
-    let ultimoTotalLogs = -1;
+    let ultimoCheckinKey = null;
+
+    // Prevenir hibernação e suspensão do ecrã do Totem
+    async function ativarAntiHibernacao() {
+      if ('wakeLock' in navigator) {
+        try {
+          await navigator.wakeLock.request('screen');
+        } catch (err) {}
+      }
+    }
+    ativarAntiHibernacao();
+    setInterval(ativarAntiHibernacao, 30000);
+    // Simula micro-atividade de segundo em segundo para o PC nunca suspender
+    setInterval(() => {
+      window.dispatchEvent(new Event('mousemove'));
+    }, 1000);
 
     function focarCaixaLeitor() {
       const inp = document.getElementById('totem-input-direto');
       if (inp && document.activeElement !== inp) inp.focus();
     }
-    setInterval(focarCaixaLeitor, 1000);
+    setInterval(focarCaixaLeitor, 800);
 
     function atualizarRelogio() {
       const agora = new Date();
@@ -161,7 +176,7 @@
       }
     }
 
-    // Sincronização em tempo real para refletir check-ins manuais do painel principal
+    // Sincronização em tempo real ultra-rápida para check-ins manuais do painel
     async function verificarCheckinsTempoReal() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
@@ -171,13 +186,17 @@
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
             const logs = rows[0].payload.attendanceLogs || [];
-            if (ultimoTotalLogs === -1) {
-              ultimoTotalLogs = logs.length;
-              return;
-            }
-            if (logs.length > ultimoTotalLogs) {
-              ultimoTotalLogs = logs.length;
-              mostrarEcranCheckin(logs[0]);
+            if (logs.length > 0) {
+              const ultimo = logs[0];
+              const chaveUnica = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data;
+              if (!ultimoCheckinKey) {
+                ultimoCheckinKey = chaveUnica;
+                return;
+              }
+              if (chaveUnica !== ultimoCheckinKey) {
+                ultimoCheckinKey = chaveUnica;
+                mostrarEcranCheckin(ultimo);
+              }
             }
           }
         }
@@ -220,7 +239,7 @@
       }, 6000);
     }
 
-    setInterval(verificarCheckinsTempoReal, 800);
+    setInterval(verificarCheckinsTempoReal, 500);
   </script>
 </body>
 </html>
