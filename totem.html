@@ -6,8 +6,8 @@
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
     :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; will-change: transform; transform: translateZ(0); }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
     
     .totem-top { text-align: center; width: 100%; margin-top: 2px; }
     .totem-data { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; color: #fff; letter-spacing: 3px; margin-bottom: 2px; }
@@ -32,7 +32,7 @@
 
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
     
-    .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; will-change: transform; }
+    .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
     .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
     .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
     
@@ -64,7 +64,7 @@
     </div>
 
     <div class="scanner-indicator">
-      <span>⚡</span> <span id="scanner-status-text">Totem turbo otimizado e sincronizado em segundo plano</span>
+      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo em segundo plano (Modo Turbo Instantâneo)</span>
     </div>
   </div>
 
@@ -77,7 +77,9 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
     let temporizadorReset = null;
-    let ultimoCheckinKey = null;
+    let bufferLeitor = "";
+    let ultimoTempoTecla = Date.now();
+    let membrosCacheLocal = [];
 
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
@@ -102,13 +104,8 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    function silenciarSomLocal(silenciar) {
-      document.querySelectorAll('audio, video').forEach(media => {
-        media.muted = silenciar;
-      });
-    }
-
-    async function verificarCheckinsSegundoPlano() {
+    // Carregar cache de membros de forma ultra-rápida em segundo plano
+    async function sincronizarCacheMembros() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
           headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
@@ -116,51 +113,56 @@
         if (res.ok) {
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
-            const dados = rows[0].payload;
-            const logs = dados.attendanceLogs || [];
-            if (logs.length > 0) {
-              const ultimo = logs[0];
-              const chaveUnica = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data;
-              if (!ultimoCheckinKey) {
-                ultimoCheckinKey = chaveUnica;
-                return;
-              }
-              if (chaveUnica !== ultimoCheckinKey) {
-                ultimoCheckinKey = chaveUnica;
-                processarCheckinTotem(ultimo.barcode, dados.members || []);
-              }
-            }
+            membrosCacheLocal = rows[0].payload.members || [];
+            localStorage.setItem('kosmo_members_cache', JSON.stringify(membrosCacheLocal));
           }
         }
-      } catch(e) {}
+      } catch(e) {
+        membrosCacheLocal = JSON.parse(localStorage.getItem('kosmo_members_cache')) || [];
+      }
     }
-    setInterval(verificarCheckinsSegundoPlano, 200);
+    sincronizarCacheMembros();
+    setInterval(sincronizarCacheMembros, 5000); // Atualiza a cache silenciosamente a cada 5 segundos
 
-    async function processarCheckinTotem(codigo, membrosLista) {
+    // Escuta global de teclado em segundo plano
+    window.addEventListener('keydown', (e) => {
+      const agora = Date.now();
+      if (agora - ultimoTempoTecla > 120) {
+        bufferLeitor = "";
+      }
+      ultimoTempoTecla = agora;
+
+      if (e.key === 'Enter') {
+        const codigoLido = bufferLeitor.trim();
+        bufferLeitor = "";
+        if (codigoLido.length > 0) {
+          processarCheckinTotemTurbo(codigoLido);
+        }
+      } else if (e.key.length === 1) {
+        bufferLeitor += e.key;
+      }
+    });
+
+    function silenciarSomLocal(silenciar) {
+      document.querySelectorAll('audio, video').forEach(media => {
+        media.muted = silenciar;
+      });
+    }
+
+    // Processamento Instantâneo na Memória Local (Zero Bloqueio)
+    async function processarCheckinTotemTurbo(codigo) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
       resBox.className = "totem-status-card";
       resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      let membros = membrosLista;
-      if (!membros || membros.length === 0) {
-        try {
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
-            headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-          });
-          if (res.ok) {
-            const rows = await res.json();
-            if (rows && rows.length > 0 && rows[0].payload) {
-              membros = rows[0].payload.members || [];
-            }
-          }
-        } catch(e) {
-          membros = JSON.parse(localStorage.getItem('kosmo_members')) || [];
-        }
+      // Procura instantaneamente na cache local sem travamentos
+      if (!membrosCacheLocal || membrosCacheLocal.length === 0) {
+        membrosCacheLocal = JSON.parse(localStorage.getItem('kosmo_members_cache')) || [];
       }
 
-      const membro = membros.find(m => {
+      const membro = membrosCacheLocal.find(m => {
         const b = String(m.barcode || m.id || '').trim();
         return b === String(codigo).trim();
       });
