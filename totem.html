@@ -9,14 +9,14 @@
     body { background-color: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; overflow: hidden; }
     
     .top-clock { text-align: center; }
-    .top-clock h1 { font-size: 1.6rem; text-transform: uppercase; letter-spacing: 2px; color: #fff; font-weight: 700; margin-bottom: 2px; }
-    .top-clock h2 { font-size: 3.5rem; color: #ffd43b; font-weight: 800; text-shadow: 0 0 20px rgba(255,212,59,0.5); }
+    .top-clock h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; color: #fff; font-weight: 700; margin-bottom: 2px; }
+    .top-clock h2 { font-size: 3.2rem; color: #ffd43b; font-weight: 800; text-shadow: 0 0 20px rgba(255,212,59,0.5); }
 
     .totem-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 700px; flex: 1; }
     
     .logo-oval-frame {
-      width: 620px;
-      height: 290px;
+      width: 580px;
+      height: 270px;
       border: 6px solid #c92a2a;
       border-radius: 50%;
       overflow: hidden;
@@ -25,7 +25,7 @@
       align-items: center;
       background: #fff;
       box-shadow: 0 0 40px rgba(201, 42, 42, 0.8);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     .logo-oval-frame img {
       width: 112%;
@@ -33,26 +33,30 @@
       object-fit: cover;
     }
 
-    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 20px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    .status-box h3 { font-size: 1.8rem; margin-bottom: 6px; letter-spacing: 1px; }
-    .status-box p { font-size: 1.1rem; color: #adb5bd; }
+    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 18px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .status-box h3 { font-size: 1.7rem; margin-bottom: 4px; letter-spacing: 1px; }
+    .status-box p { font-size: 1.05rem; color: #adb5bd; }
 
-    footer { font-size: 0.80rem; color: #88929b; text-align: center; letter-spacing: 0.5px; }
+    .scanner-box-ui { width: 100%; max-width: 450px; margin-bottom: 5px; }
+    .scanner-box-ui input { width: 100%; padding: 10px 15px; font-size: 1.1rem; font-weight: bold; text-align: center; border: 2px solid var(--primary, #c92a2a); border-radius: 6px; background: #1a1d20; color: #fff; outline: none; }
+
+    footer { font-size: 0.75rem; color: #88929b; text-align: center; letter-spacing: 0.5px; }
   </style>
 </head>
-<body>
-
-  <!-- Input oculto e permanente para focar o leitor de código de barras a qualquer segundo -->
-  <input type="text" id="totem-scanner-input" autofocus style="position: absolute; opacity: 0; pointer-events: none;" onkeydown="tratarLeituraTotem(event)">
+<body onclick="focarCaixaLeitor()">
 
   <div class="top-clock">
     <h1 id="date-label">SÁBADO, 10 DE OUTUBRO DE 2026</h1>
     <h2 id="clock-label">12:25:58</h2>
   </div>
 
-  <div class="totem-center" onclick="focarScanner()">
+  <div class="totem-center">
     <div class="logo-oval-frame">
       <img src="logo.jpg" alt="KOSMO" onerror="this.src='src/img/logo.jpg';">
+    </div>
+
+    <div class="scanner-box-ui">
+      <input type="text" id="totem-input-direto" placeholder="Passe o cartão no leitor..." autofocus autocomplete="off" onkeydown="processarLeituraTeclado(event)">
     </div>
 
     <div id="totem-display" class="status-box" style="border-color: #2b8a3e;">
@@ -72,12 +76,11 @@
     let carregamentoInicial = true;
     let ultimoCheckinId = null;
 
-    function focarScanner() {
-      const inp = document.getElementById('totem-scanner-input');
-      if (inp) inp.focus();
+    function focarCaixaLeitor() {
+      const inp = document.getElementById('totem-input-direto');
+      if (inp && document.activeElement !== inp) inp.focus();
     }
-    window.addEventListener('click', focarScanner);
-    window.addEventListener('keydown', focarScanner);
+    setInterval(focarCaixaLeitor, 1500);
 
     function atualizarRelogio() {
       const agora = new Date();
@@ -90,14 +93,14 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    async function tratarLeituraTotem(e) {
+    async function processarLeituraTeclado(e) {
       if (e.key === 'Enter') {
-        const code = document.getElementById('totem-scanner-input').value.trim();
-        document.getElementById('totem-scanner-input').value = '';
+        const inputEl = document.getElementById('totem-input-direto');
+        const code = inputEl.value.trim();
+        inputEl.value = '';
         if (!code) return;
 
         try {
-          // Busca os dados atuais do Supabase
           const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
             headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
           });
@@ -138,7 +141,6 @@
                 foto: m ? m.foto : ''
               };
 
-              // Adiciona ao topo dos logs e guarda no Supabase de imediato
               dados.attendanceLogs = dados.attendanceLogs || [];
               dados.attendanceLogs.unshift(logEntry);
 
@@ -203,14 +205,11 @@
         <p style="font-size: 1rem; color: #ccc;">Estado: ${log.status} | Hora: ${log.time}</p>
       `;
 
-      // Novas falas de voz adaptadas e distintas para membros ativos e inativos/expirados/desativados
       if ('speechSynthesis' in window) {
-        let textoVoz = '';
-        if (ativo) {
-          textoVoz = `Acesso autorizado. Seja bem-vindo ao ginásio KOSMO, ${log.name}. Bom treino!`;
-        } else {
-          textoVoz = `Atenção. Acesso negado para ${log.name}. O seu plano encontra-se ${log.status}. Por favor, dirija-se à receção.`;
-        }
+        let textoVoz = ativo 
+          ? `Acesso autorizado. Seja bem-vindo ao ginásio KOSMO, ${log.name}. Bom treino!` 
+          : `Atenção. Acesso negado para ${log.name}. O seu plano encontra-se ${log.status}. Por favor, dirija-se à receção.`;
+        
         const msg = new SpeechSynthesisUtterance(textoVoz);
         msg.lang = 'pt-PT';
         msg.rate = 1.0;
@@ -224,6 +223,7 @@
           <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
           <p>Aproxime o cartão de membro ou código de barras</p>
         `;
+        focarCaixaLeitor();
       }, 6000);
     }
 
