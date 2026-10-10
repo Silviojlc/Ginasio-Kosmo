@@ -28,8 +28,12 @@
       padding: 10px; 
     }
     .totem-logo-img { width: 115%; height: 115%; object-fit: cover; }
+    .totem-oval-avatar { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
+    
+    /* Input invisível cravado para capturar o leitor USB Approx LS21 instantaneamente sem cliques */
+    .totem-form-hidden { position: absolute; opacity: 0; pointer-events: none; }
 
     .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
     .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
@@ -41,7 +45,12 @@
     .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
 </head>
-<body>
+<body onclick="forcarFocoLeitor()" onkeydown="forcarFocoLeitor()">
+
+  <!-- Input oculto com foco automático permanente a cada 50ms -->
+  <form class="totem-form-hidden" onsubmit="event.preventDefault();">
+    <input type="text" id="totem-barcode-input" autofocus autocomplete="off" oninput="detetarLeituraInstantanea(this)">
+  </form>
 
   <div class="totem-top">
     <div class="totem-data" id="data-atual">--</div>
@@ -49,8 +58,8 @@
   </div>
 
   <div class="totem-logo-container">
-    <div class="totem-logo-oval">
-      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" onerror="this.src='src/img/logo.jpg';">
+    <div class="totem-logo-oval" id="totem-oval-container">
+      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">
     </div>
   </div>
 
@@ -63,7 +72,7 @@
     </div>
 
     <div class="scanner-indicator">
-      <span>⚡</span> <span id="scanner-status-text">Leitor ótico global ativo em tempo real</span>
+      <span>⚡</span> <span id="scanner-status-text">Leitor ótico ativo em tempo real</span>
     </div>
   </div>
 
@@ -76,8 +85,6 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
     let temporizadorReset = null;
-    let bufferLeitor = "";
-    let ultimoTempoTecla = Date.now();
 
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
@@ -102,24 +109,31 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    // Escuta global de teclado / leitor USB em qualquer parte da janela sem precisar de cliques
-    window.addEventListener('keydown', (e) => {
-      const agora = Date.now();
-      if (agora - ultimoTempoTecla > 150) {
-        bufferLeitor = ""; // Reseta se houver pausa humana na digitação
-      }
-      ultimoTempoTecla = agora;
+    const inputLeitor = document.getElementById('totem-barcode-input');
 
-      if (e.key === 'Enter') {
-        const codigoLido = bufferLeitor.trim();
-        bufferLeitor = "";
-        if (codigoLido.length > 0) {
-          processarCheckinTotem(codigoLido);
-        }
-      } else if (e.key.length === 1) {
-        bufferLeitor += e.key;
+    // Foco cravado e contínuo no input oculto para garantir que o leitor USB funcione sem cliques
+    function forcarFocoLeitor() {
+      if (inputLeitor && document.activeElement !== inputLeitor) {
+        inputLeitor.focus();
       }
-    });
+    }
+    setInterval(forcarFocoLeitor, 50);
+    window.onload = forcarFocoLeitor;
+    window.addEventListener('click', forcarFocoLeitor);
+    window.addEventListener('keydown', forcarFocoLeitor);
+
+    let timeoutInput = null;
+    function detetarLeituraInstantanea(el) {
+      const valor = el.value.trim();
+      if (valor.length >= 3) {
+        clearTimeout(timeoutInput);
+        timeoutInput = setTimeout(async () => {
+          const codigo = el.value.trim();
+          el.value = '';
+          if (codigo) await processarCheckinTotem(codigo);
+        }, 80);
+      }
+    }
 
     function silenciarSomLocal(silenciar) {
       document.querySelectorAll('audio, video').forEach(media => {
@@ -131,6 +145,8 @@
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
+      const ovalContainer = document.getElementById('totem-oval-content');
+      
       resBox.className = "totem-status-card";
       resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
@@ -169,6 +185,13 @@
         const nomeMembro = membro.name || 'Membro';
         const planoMembro = membro.plan || 'Normal';
         const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
+
+        // Exibe a foto do membro diretamente no espaço oval central do logótipo
+        if (membro.foto && ovalContainer) {
+          ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
+        } else if (ovalContainer) {
+          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:5rem;background:#333;color:#aaa;">👤</div>`;
+        }
 
         let textoVoz = "";
 
@@ -211,9 +234,9 @@
           window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(textoVoz);
           msg.lang = 'pt-PT';
-          msg.rate = 0.95;
-          msg.pitch = 1.0;
-          msg.volume = 1.0;
+          msg.rate = 0.95;  // Velocidade firme e pausada
+          msg.pitch = 1.1;  // Tom de voz ligeiramente mais vivo e claro
+          msg.volume = 1.0; // Volume alto e percetível
 
           silenciarSomLocal(true);
           msg.onend = () => { silenciarSomLocal(false); };
@@ -239,7 +262,7 @@
         }
       }
 
-      // Mantém a foto e estado durante exatamente 4 minutos (240000 ms)
+      // Mantém a foto no espaço oval e o estado no ecrã exatamente durante 4 minutos (240000 ms) antes de restaurar o logótipo original
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
@@ -248,6 +271,14 @@
             <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
           </div>
         `;
+        
+        // Restaura o logótipo original no espaço oval
+        const ovalElement = document.getElementById('totem-oval-content');
+        if (ovalElement) {
+          ovalElement.outerHTML = `<img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">`;
+        }
+
+        forcarFocoLeitor();
       }, 240000);
     }
   </script>
