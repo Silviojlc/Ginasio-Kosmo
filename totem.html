@@ -85,7 +85,6 @@
 
     let temporizadorReset = null;
 
-    // Prevenir hibernação permanentemente (WakeLock + micro-movimento)
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
@@ -145,7 +144,6 @@
       resBox.className = "totem-status-card";
       resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      // Sincroniza com o Supabase para garantir dados em tempo real
       let membros = [];
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
@@ -191,17 +189,17 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPRIADO</h3>
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO</h3>
               <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #f8d7da;">Por favor, dirija-se à receção</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Mensalidade inativa ou expirada</p>
             </div>
           `;
         }
 
         if ('speechSynthesis' in window) {
           let textoVoz = ativo 
-            ? `Acesso autorizado. Seja bem-vindo ao ginásio KOSMO, ${nomeMembro}. Bom treino!` 
-            : `Atenção. Acesso negado para ${nomeMembro}. O seu plano encontra-se expirado. Por favor, dirija-se à receção.`;
+            ? "Mensalidade ativa tenha um Bom Treino" 
+            : "Acesso negado, Voce não pode Treinar";
           
           const msg = new SpeechSynthesisUtterance(textoVoz);
           msg.lang = 'pt-PT';
@@ -218,9 +216,14 @@
             <p style="font-size: 1.2rem;">ID "${codigo}" não registado no sistema</p>
           </div>
         `;
+
+        if ('speechSynthesis' in window) {
+          const msg = new SpeechSynthesisUtterance("Acesso negado, Voce não pode Treinar");
+          msg.lang = 'pt-PT';
+          window.speechSynthesis.speak(msg);
+        }
       }
 
-      // A foto e o estado permanecem no ecrã exatamente durante 4 minutos (240000 ms) antes de voltar ao estado original
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
