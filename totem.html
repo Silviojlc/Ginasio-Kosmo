@@ -1,279 +1,268 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
-  <style>
-    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
-    
-    .totem-top { text-align: center; width: 100%; margin-top: 2px; }
-    .totem-data { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; color: #fff; letter-spacing: 3px; margin-bottom: 2px; }
-    .totem-relogio { font-size: 8.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.8); line-height: 1; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
+  <style>
+    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
+    
+    .totem-top { text-align: center; width: 100%; margin-top: 2px; }
+    .totem-data { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; color: #fff; letter-spacing: 3px; margin-bottom: 2px; }
+    .totem-relogio { font-size: 8.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.8); line-height: 1; }
 
-    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 10px 0; }
-    .totem-logo-oval { 
-      width: 750px; 
-      height: 320px; 
-      background: #c5d7e6; 
-      border-radius: 50%; 
-      border: 8px solid var(--primary); 
-      box-shadow: 0 0 45px rgba(201, 42, 42, 0.9), inset 0 0 25px rgba(0,0,0,0.15); 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      overflow: hidden; 
-      padding: 0px; 
-    }
-    .totem-logo-img { width: 115%; height: 115%; object-fit: cover; }
-    .totem-oval-avatar { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 50%; }
+    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 10px 0; }
+    .totem-logo-oval { 
+      width: 750px; 
+      height: 320px; 
+      background: #c5d7e6; 
+      border-radius: 50%; 
+      border: 8px solid var(--primary); 
+      box-shadow: 0 0 45px rgba(201, 42, 42, 0.9), inset 0 0 25px rgba(0,0,0,0.15); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      overflow: hidden; 
+      padding: 0px; 
+    }
+    .totem-logo-img { width: 115%; height: 115%; object-fit: cover; }
+    .totem-oval-avatar { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 50%; }
 
-    .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
-    
-    .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
-    .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
-    .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
-    
-    .totem-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #aaa; box-shadow: 0 0 25px rgba(0,0,0,0.7); }
+    .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
+    
+    .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
+    .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
+    .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
+    
+    .totem-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #aaa; box-shadow: 0 0 25px rgba(0,0,0,0.7); }
 
-    .scanner-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 0.85rem; color: #339af0; font-weight: 600; }
-    .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
-  </style>
+    .scanner-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 0.85rem; color: #339af0; font-weight: 600; }
+    .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
+  </style>
 </head>
 <body>
 
-  <div class="totem-top">
-    <div class="totem-data" id="data-atual">--</div>
-    <div class="totem-relogio" id="relogio">--:--:--</div>
-  </div>
+  <div class="totem-top">
+    <div class="totem-data" id="data-atual">--</div>
+    <div class="totem-relogio" id="relogio">--:--:--</div>
+  </div>
 
-  <div class="totem-logo-container">
-    <div class="totem-logo-oval" id="totem-oval-container">
-      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">
-    </div>
-  </div>
+  <div class="totem-logo-container">
+    <div class="totem-logo-oval" id="totem-oval-container">
+      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">
+    </div>
+  </div>
 
-  <div class="totem-action-box">
-    <div id="totem-resultado" class="totem-status-card">
-      <div>
-        <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
-        <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
-      </div>
-    </div>
+  <div class="totem-action-box">
+    <div id="totem-resultado" class="totem-status-card">
+      <div>
+        <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
+        <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
+      </div>
+    </div>
 
-    <div class="scanner-indicator">
-      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo em segundo plano (Modo Turbo Instantâneo)</span>
-    </div>
-  </div>
+    <div class="scanner-indicator">
+      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo em segundo plano (Global)</span>
+    </div>
+  </div>
 
-  <div class="totem-footer">
-    Ginásio KOSMO | Terra Branca, Frente Escola Amor De Deus | NIF: 283023805
-  </div>
+  <div class="totem-footer">
+    Ginásio KOSMO | Terra Branca, Frente Escola Amor De Deus | NIF: 283023805
+  </div>
 
-  <script>
-    const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
+  <script>
+    const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
-    let temporizadorReset = null;
-    let bufferLeitor = "";
-    let ultimoTempoTecla = Date.now();
-    let membrosCacheLocal = [];
+    let temporizadorReset = null;
+    let bufferLeitor = "";
+    let ultimoTempoTecla = Date.now();
 
-    async function ativarAntiHibernacao() {
-      if ('wakeLock' in navigator) {
-        try { await navigator.wakeLock.request('screen'); } catch (err) {}
-      }
-    }
-    ativarAntiHibernacao();
-    setInterval(ativarAntiHibernacao, 15000);
-    setInterval(() => { window.dispatchEvent(new Event('mousemove')); }, 1000);
+    // Prevenção de Hibernação (WakeLock + micro-atividade)
+    async function ativarAntiHibernacao() {
+      if ('wakeLock' in navigator) {
+        try { await navigator.wakeLock.request('screen'); } catch (err) {}
+      }
+    }
+    ativarAntiHibernacao();
+    setInterval(ativarAntiHibernacao, 15000);
+    setInterval(() => { window.dispatchEvent(new Event('mousemove')); }, 1000);
 
-    function atualizarRelogio() {
-      const d = new Date();
-      const dias = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
-      const meses = ['DE JANEIRO', 'DE FEVEREIRO', 'DE MARÇO', 'DE ABRIL', 'DE MAIO', 'DE JUNHO', 'DE JULHO', 'DE AGOSTO', 'DE SETEMBRO', 'DE OUTUBRO', 'DE NOVEMBRO', 'DE DEZEMBRO'];
-      
-      const elData = document.getElementById('data-atual');
-      const elRelogio = document.getElementById('relogio');
+    function atualizarRelogio() {
+      const d = new Date();
+      const dias = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
+      const meses = ['DE JANEIRO', 'DE FEVEREIRO', 'DE MARÇO', 'DE ABRIL', 'DE MAIO', 'DE JUNHO', 'DE JULHO', 'DE AGOSTO', 'DE SETEMBRO', 'DE OUTUBRO', 'DE NOVEMBRO', 'DE DEZEMBRO'];
+      
+      const elData = document.getElementById('data-atual');
+      const elRelogio = document.getElementById('relogio');
 
-      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} DE ${d.getFullYear()}`;
-      if(elRelogio) elRelogio.innerText = d.toLocaleTimeString('pt-PT');
-    }
-    setInterval(atualizarRelogio, 1000);
-    atualizarRelogio();
+      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} DE ${d.getFullYear()}`;
+      if(elRelogio) elRelogio.innerText = d.toLocaleTimeString('pt-PT');
+    }
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
 
-    // Carregar cache de membros de forma ultra-rápida em segundo plano
-    async function sincronizarCacheMembros() {
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
-          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-        });
-        if (res.ok) {
-          const rows = await res.json();
-          if (rows && rows.length > 0 && rows[0].payload) {
-            membrosCacheLocal = rows[0].payload.members || [];
-            localStorage.setItem('kosmo_members_cache', JSON.stringify(membrosCacheLocal));
-          }
-        }
-      } catch(e) {
-        membrosCacheLocal = JSON.parse(localStorage.getItem('kosmo_members_cache')) || [];
-      }
-    }
-    sincronizarCacheMembros();
-    setInterval(sincronizarCacheMembros, 5000); // Atualiza a cache silenciosamente a cada 5 segundos
+    // Escuta global de teclado em segundo plano (para o leitor Approx LS21 disparar sem precisar de foco manual)
+    window.addEventListener('keydown', (e) => {
+      const agora = Date.now();
+      if (agora - ultimoTempoTecla > 120) {
+        bufferLeitor = "";
+      }
+      ultimoTempoTecla = agora;
 
-    // Escuta global de teclado em segundo plano
-    window.addEventListener('keydown', (e) => {
-      const agora = Date.now();
-      if (agora - ultimoTempoTecla > 120) {
-        bufferLeitor = "";
-      }
-      ultimoTempoTecla = agora;
+      if (e.key === 'Enter') {
+        const codigoLido = bufferLeitor.trim();
+        bufferLeitor = "";
+        if (codigoLido.length > 0) {
+          processarCheckinTotem(codigoLido);
+        }
+      } else if (e.key.length === 1) {
+        bufferLeitor += e.key;
+      }
+    });
 
-      if (e.key === 'Enter') {
-        const codigoLido = bufferLeitor.trim();
-        bufferLeitor = "";
-        if (codigoLido.length > 0) {
-          processarCheckinTotemTurbo(codigoLido);
-        }
-      } else if (e.key.length === 1) {
-        bufferLeitor += e.key;
-      }
-    });
+    function silenciarSomLocal(silenciar) {
+      document.querySelectorAll('audio, video').forEach(media => {
+        media.muted = silenciar;
+      });
+    }
 
-    function silenciarSomLocal(silenciar) {
-      document.querySelectorAll('audio, video').forEach(media => {
-        media.muted = silenciar;
-      });
-    }
+    async function processarCheckinTotem(codigo) {
+      if (temporizadorReset) clearTimeout(temporizadorReset);
 
-    // Processamento Instantâneo na Memória Local (Zero Bloqueio)
-    async function processarCheckinTotemTurbo(codigo) {
-      if (temporizadorReset) clearTimeout(temporizadorReset);
+      const resBox = document.getElementById('totem-resultado');
+      resBox.className = "totem-status-card";
+      resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      const resBox = document.getElementById('totem-resultado');
-      resBox.className = "totem-status-card";
-      resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
+      let membros = [];
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          if (rows && rows.length > 0 && rows[0].payload) {
+            membros = rows[0].payload.members || [];
+          }
+        }
+      } catch(e) {
+        membros = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+      }
 
-      // Procura instantaneamente na cache local sem travamentos
-      if (!membrosCacheLocal || membrosCacheLocal.length === 0) {
-        membrosCacheLocal = JSON.parse(localStorage.getItem('kosmo_members_cache')) || [];
-      }
+      const membro = membros.find(m => {
+        const b = String(m.barcode || m.id || '').trim();
+        return b === String(codigo).trim();
+      });
 
-      const membro = membrosCacheLocal.find(m => {
-        const b = String(m.barcode || m.id || '').trim();
-        return b === String(codigo).trim();
-      });
+      const now = new Date();
+      const ovalContainer = document.getElementById('totem-oval-content');
 
-      const now = new Date();
-      const ovalContainer = document.getElementById('totem-oval-content');
+      if (membro) {
+        const dataFim = new Date(membro.date || '2026-01-01');
+        dataFim.setDate(dataFim.getDate() + 30);
+        
+        const estadoStr = (membro.estado || 'Ativo').trim();
+        const subscricaoExpirada = dataFim < now;
+        const membroInativo = estadoStr === 'Inativo' || estadoStr === 'Desativado';
+        const ativo = !membroInativo && !subscricaoExpirada;
 
-      if (membro) {
-        const dataFim = new Date(membro.date || '2026-01-01');
-        dataFim.setDate(dataFim.getDate() + 30);
-        
-        const estadoStr = (membro.estado || 'Ativo').trim();
-        const subscricaoExpirada = dataFim < now;
-        const membroInativo = estadoStr === 'Inativo' || estadoStr === 'Desativado';
-        const ativo = !membroInativo && !subscricaoExpirada;
+        const nomeMembro = membro.name || 'Membro';
+        const planoMembro = membro.plan || 'Normal';
+        const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
 
-        const nomeMembro = membro.name || 'Membro';
-        const planoMembro = membro.plan || 'Normal';
-        const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
+        if (membro.foto && ovalContainer) {
+          ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
+        } else if (ovalContainer) {
+          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:5rem;background:#333;color:#aaa;">👤</div>`;
+        }
 
-        if (membro.foto && ovalContainer) {
-          ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
-        } else if (ovalContainer) {
-          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:5rem;background:#333;color:#aaa;">👤</div>`;
-        }
+        let textoVoz = "";
 
-        let textoVoz = "";
+        if (ativo) {
+          resBox.className = "totem-status-card status-ok";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">✅ ACESSO PERMITIDO - MEMBRO ATIVO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #d4edda;">Plano: ${planoMembro}</p>
+            </div>
+          `;
+          textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
+        } else if (subscricaoExpirada) {
+          resBox.className = "totem-status-card status-err";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPIRADO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Subscrição expirada</p>
+            </div>
+          `;
+          textoVoz = "Mensalidade Expirada. Voce não pode treinar.";
+        } else {
+          resBox.className = "totem-status-card status-err";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - INATIVO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Conta inativa</p>
+            </div>
+          `;
+          textoVoz = "Mensalidade Inativa. Voce não pode treinar.";
+        }
 
-        if (ativo) {
-          resBox.className = "totem-status-card status-ok";
-          resBox.innerHTML = `
-            ${fotoMembro}
-            <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">✅ ACESSO PERMITIDO - MEMBRO ATIVO</h3>
-              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #d4edda;">Plano: ${planoMembro}</p>
-            </div>
-          `;
-          textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
-        } else if (subscricaoExpirada) {
-          resBox.className = "totem-status-card status-err";
-          resBox.innerHTML = `
-            ${fotoMembro}
-            <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPIRADO</h3>
-              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #f8d7da;">Subscrição expirada</p>
-            </div>
-          `;
-          textoVoz = "Mensalidade Expirada. Voce não pode treinar.";
-        } else {
-          resBox.className = "totem-status-card status-err";
-          resBox.innerHTML = `
-            ${fotoMembro}
-            <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - INATIVO</h3>
-              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #f8d7da;">Conta inativa</p>
-            </div>
-          `;
-          textoVoz = "Mensalidade Inativa. Voce não pode treinar.";
-        }
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const msg = new SpeechSynthesisUtterance(textoVoz);
+          msg.lang = 'pt-PT';
+          msg.rate = 0.95;
+          msg.pitch = 1.1;
+          msg.volume = 1.0;
 
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const msg = new SpeechSynthesisUtterance(textoVoz);
-          msg.lang = 'pt-PT';
-          msg.rate = 0.95;
-          msg.pitch = 1.1;
-          msg.volume = 1.0;
+          silenciarSomLocal(true);
+          msg.onend = () => { silenciarSomLocal(false); };
+          msg.onerror = () => { silenciarSomLocal(false); };
 
-          silenciarSomLocal(true);
-          msg.onend = () => { silenciarSomLocal(false); };
-          msg.onerror = () => { silenciarSomLocal(false); };
+          window.speechSynthesis.speak(msg);
+        }
 
-          window.speechSynthesis.speak(msg);
-        }
+      } else {
+        resBox.className = "totem-status-card status-err";
+        resBox.innerHTML = `
+          <div style="text-align: center;">
+            <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
+            <p style="font-size: 1.2rem;">ID "${codigo}" não registado no sistema</p>
+          </div>
+        `;
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const msg = new SpeechSynthesisUtterance("Cartão desconhecido. Acesso negado.");
+          msg.lang = 'pt-PT';
+          msg.volume = 1.0;
+          window.speechSynthesis.speak(msg);
+        }
+      }
 
-      } else {
-        resBox.className = "totem-status-card status-err";
-        resBox.innerHTML = `
-          <div style="text-align: center;">
-            <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
-            <p style="font-size: 1.2rem;">ID "${codigo}" não registado no sistema</p>
-          </div>
-        `;
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const msg = new SpeechSynthesisUtterance("Cartão desconhecido. Acesso negado.");
-          msg.lang = 'pt-PT';
-          msg.volume = 1.0;
-          window.speechSynthesis.speak(msg);
-        }
-      }
+      // Mantém a foto e o estado exatamente durante 4 minutos antes de restaurar o original
+      temporizadorReset = setTimeout(() => {
+        resBox.className = "totem-status-card";
+        resBox.innerHTML = `
+          <div>
+            <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
+            <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
+          </div>
+        `;
 
-      // Mantém a foto e o estado exatamente durante 4 minutos (240000 ms) antes de restaurar o original
-      temporizadorReset = setTimeout(() => {
-        resBox.className = "totem-status-card";
-        resBox.innerHTML = `
-          <div>
-            <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
-            <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
-          </div>
-        `;
-
-        const ovalElement = document.getElementById('totem-oval-content');
-        if (ovalElement) {
-          ovalElement.outerHTML = `<img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">`;
-        }
-      }, 240000);
-    }
-  </script>
+        const ovalElement = document.getElementById('totem-oval-content');
+        if (ovalElement) {
+          ovalElement.outerHTML = `<img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">`;
+        }
+      }, 240000);
+    }
+  </script>
 </body>
 </html>
