@@ -37,17 +37,20 @@
     .status-box h3 { font-size: 1.8rem; margin-bottom: 6px; letter-spacing: 1px; }
     .status-box p { font-size: 1.1rem; color: #adb5bd; }
 
-    footer { font-size: 0.8rem; color: #88929b; text-align: center; letter-spacing: 0.5px; }
+    footer { font-size: 0.80rem; color: #88929b; text-align: center; letter-spacing: 0.5px; }
   </style>
 </head>
 <body>
+
+  <!-- Input oculto e permanente para focar o leitor de código de barras a qualquer segundo -->
+  <input type="text" id="totem-scanner-input" autofocus style="position: absolute; opacity: 0; pointer-events: none;" onkeydown="tratarLeituraTotem(event)">
 
   <div class="top-clock">
     <h1 id="date-label">SÁBADO, 10 DE OUTUBRO DE 2026</h1>
     <h2 id="clock-label">12:25:58</h2>
   </div>
 
-  <div class="totem-center">
+  <div class="totem-center" onclick="focarScanner()">
     <div class="logo-oval-frame">
       <img src="logo.jpg" alt="KOSMO" onerror="this.src='src/img/logo.jpg';">
     </div>
@@ -69,29 +72,98 @@
     let carregamentoInicial = true;
     let ultimoCheckinId = null;
 
+    function focarScanner() {
+      const inp = document.getElementById('totem-scanner-input');
+      if (inp) inp.focus();
+    }
+    window.addEventListener('click', focarScanner);
+    window.addEventListener('keydown', focarScanner);
+
     function atualizarRelogio() {
       const agora = new Date();
       const dias = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
       const meses = ['DE JANEIRO', 'DE FEVEREIRO', 'DE MARÇO', 'DE ABRIL', 'DE MAIO', 'DE JUNHO', 'DE JULHO', 'DE AGOSTO', 'DE SETEMBRO', 'DE OUTUBRO', 'DE NOVEMBRO', 'DE DEZEMBRO'];
       
-      const diaSem = dias[agora.getDay()];
-      const diaNum = agora.getDate();
-      const mesStr = meses[agora.getMonth()];
-      const anoNum = agora.getFullYear();
-
-      document.getElementById('date-label').innerText = `${diaSem}, ${diaNum} ${mesStr} DE ${anoNum}`;
+      document.getElementById('date-label').innerText = `${dias[agora.getDay()]}, ${agora.getDate()} ${meses[agora.getMonth()]} DE ${agora.getFullYear()}`;
       document.getElementById('clock-label').innerText = agora.toLocaleTimeString('pt-PT');
     }
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
+    async function tratarLeituraTotem(e) {
+      if (e.key === 'Enter') {
+        const code = document.getElementById('totem-scanner-input').value.trim();
+        document.getElementById('totem-scanner-input').value = '';
+        if (!code) return;
+
+        try {
+          // Busca os dados atuais do Supabase
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+            headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+          });
+          if (res.ok) {
+            const rows = await res.json();
+            if (rows && rows.length > 0 && rows[0].payload) {
+              const dados = rows[0].payload;
+              const members = dados.members || [];
+              const m = members.find(x => x.barcode === code);
+              
+              const now = new Date();
+              let ativo = false;
+              let nome = 'Desconhecido';
+              let estadoStr = 'Expirado';
+
+              if (m) {
+                nome = m.name;
+                const d = new Date(m.date || '2026-01-01');
+                d.setDate(d.getDate() + 30);
+                if (m.estado === 'Inativo' || m.estado === 'Desativado') {
+                  estadoStr = m.estado;
+                  ativo = false;
+                } else if (d < now) {
+                  estadoStr = 'Expirado';
+                  ativo = false;
+                } else {
+                  estadoStr = 'Ativo';
+                  ativo = true;
+                }
+              }
+
+              const logEntry = {
+                data: now.toLocaleDateString('pt-PT'),
+                time: now.toLocaleTimeString('pt-PT'),
+                name: nome,
+                barcode: code,
+                status: estadoStr,
+                foto: m ? m.foto : ''
+              };
+
+              // Adiciona ao topo dos logs e guarda no Supabase de imediato
+              dados.attendanceLogs = dados.attendanceLogs || [];
+              dados.attendanceLogs.unshift(logEntry);
+
+              await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'apikey': SUPABASE_KEY,
+                  'Authorization': `Bearer ${SUPABASE_KEY}`,
+                  'Prefer': 'resolution=merge-duplicates'
+                },
+                body: JSON.stringify({ id: 1, payload: dados })
+              });
+
+              mostrarEcranCheckin(logEntry);
+            }
+          }
+        } catch(err) {}
+      }
+    }
+
     async function verificarNovosCheckins() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`
-          }
+          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
         });
         if (res.ok) {
           const rows = await res.json();
@@ -102,7 +174,6 @@
               const identificadorUnico = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data;
               
               if (carregamentoInicial) {
-                // Memoriza o check-in atual ao abrir a página para não disparar antigos
                 ultimoCheckinId = identificadorUnico;
                 carregamentoInicial = false;
                 return;
@@ -127,13 +198,19 @@
 
       box.innerHTML = `
         ${fotoHtml}
-        <h3 style="color: ${ativo ? '#2b8a3e' : '#d9480f'}; font-size: 2rem;">${ativo ? '✅ ACESSO PERMITIDO' : '❌ ACESSO NEGADO / EXPIRADO'}</h3>
+        <h3 style="color: ${ativo ? '#2b8a3e' : '#d9480f'}; font-size: 2rem;">${ativo ? '✅ ACESSO PERMITIDO - MEMBRO ATIVO' : '❌ ACESSO NEGADO - ' + log.status.toUpperCase()}</h3>
         <p style="font-size: 1.5rem; font-weight: bold; color: #fff; margin-top:5px;">${log.name}</p>
         <p style="font-size: 1rem; color: #ccc;">Estado: ${log.status} | Hora: ${log.time}</p>
       `;
 
+      // Novas falas de voz adaptadas e distintas para membros ativos e inativos/expirados/desativados
       if ('speechSynthesis' in window) {
-        const textoVoz = ativo ? `Acesso autorizado para ${log.name}` : `Acesso negado para ${log.name}`;
+        let textoVoz = '';
+        if (ativo) {
+          textoVoz = `Acesso autorizado. Seja bem-vindo ao ginásio KOSMO, ${log.name}. Bom treino!`;
+        } else {
+          textoVoz = `Atenção. Acesso negado para ${log.name}. O seu plano encontra-se ${log.status}. Por favor, dirija-se à receção.`;
+        }
         const msg = new SpeechSynthesisUtterance(textoVoz);
         msg.lang = 'pt-PT';
         msg.rate = 1.0;
@@ -147,7 +224,7 @@
           <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
           <p>Aproxime o cartão de membro ou código de barras</p>
         `;
-      }, 5000);
+      }, 6000);
     }
 
     setInterval(verificarNovosCheckins, 1000);
