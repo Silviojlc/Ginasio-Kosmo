@@ -10,13 +10,13 @@
     body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
     
     .totem-top { text-align: center; width: 100%; margin-top: 2px; }
-    .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
-    .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
+    .totem-data { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; color: #fff; letter-spacing: 3px; margin-bottom: 2px; }
+    .totem-relogio { font-size: 8.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.8); line-height: 1; }
 
-    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; }
+    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 10px 0; }
     .totem-logo-oval { 
       width: 750px; 
-      height: 300px; 
+      height: 320px; 
       background: #c5d7e6; 
       border-radius: 50%; 
       border: 8px solid var(--primary); 
@@ -25,21 +25,20 @@
       justify-content: center; 
       align-items: center; 
       overflow: hidden; 
-      padding: 15px; 
+      padding: 0px; 
     }
-    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; }
+    .totem-logo-img { width: 115%; height: 115%; object-fit: cover; }
     .totem-oval-avatar { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 50%; }
 
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
-    .totem-form { display: flex; gap: 10px; margin-bottom: 10px; opacity: 0; position: absolute; pointer-events: none; }
-    .totem-input-manual { background: #fff; color: #212529; font-size: 1.4rem; font-weight: 800; padding: 10px 20px; border-radius: 8px; border: 4px solid var(--primary); flex: 1; text-align: center; outline: none; }
-
-    .totem-status-card { background: #161b22; border: 2px solid #333; border-radius: 12px; padding: 12px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+    
+    .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
     .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
     .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
     
-    .totem-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #aaa; }
+    .totem-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #aaa; box-shadow: 0 0 25px rgba(0,0,0,0.7); }
 
+    .scanner-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 0.85rem; color: #339af0; font-weight: 600; }
     .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
 </head>
@@ -57,15 +56,15 @@
   </div>
 
   <div class="totem-action-box">
-    <form class="totem-form">
-      <input type="text" id="totem-barcode-input" autocomplete="off" autofocus>
-    </form>
-    
     <div id="totem-resultado" class="totem-status-card">
       <div>
-        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
-        <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+        <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
+        <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
       </div>
+    </div>
+
+    <div class="scanner-indicator">
+      <span>⚡</span> <span id="scanner-status-text">Totem sincronizado em segundo plano (Cloud Realtime)</span>
     </div>
   </div>
 
@@ -78,7 +77,9 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
     let temporizadorReset = null;
+    let ultimoCheckinKey = null;
 
+    // Prevenção de Hibernação permanente
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
@@ -90,13 +91,13 @@
 
     function atualizarRelogio() {
       const d = new Date();
-      const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const dias = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
+      const meses = ['DE JANEIRO', 'DE FEVEREIRO', 'DE MARÇO', 'DE ABRIL', 'DE MAIO', 'DE JUNHO', 'DE JULHO', 'DE AGOSTO', 'DE SETEMBRO', 'DE OUTUBRO', 'DE NOVEMBRO', 'DE DEZEMBRO'];
       
       const elData = document.getElementById('data-atual');
       const elRelogio = document.getElementById('relogio');
 
-      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} DE ${d.getFullYear()}`;
       if(elRelogio) elRelogio.innerText = d.toLocaleTimeString('pt-PT');
     }
     setInterval(atualizarRelogio, 1000);
@@ -108,17 +109,8 @@
       });
     }
 
-    // Sincronização cruzada instantânea em segundo plano via Storage e Supabase
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'kosmo_attendance' || e.key === 'kosmo_trigger_checkin') {
-        const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
-        if (logs.length > 0) {
-          processarCheckinTotemObjeto(logs[0]);
-        }
-      }
-    });
-
-    async function verificarCheckinsSegundoPlano() {
+    // Monitorização em tempo real ultra-rápida (200ms) no Supabase: funciona em qualquer aba ou segundo plano
+    async function verificarCheckinsCloud() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
           headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
@@ -126,51 +118,50 @@
         if (res.ok) {
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
-            const dados = rows[0].payload;
-            const logs = dados.attendanceLogs || [];
+            const logs = rows[0].payload.attendanceLogs || [];
             if (logs.length > 0) {
               const ultimo = logs[0];
               const chaveUnica = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data;
-              const ultimaProcessada = localStorage.getItem('totem_ultimo_processado');
-              
-              if (chaveUnica !== ultimaProcessada) {
-                localStorage.setItem('totem_ultimo_processado', chaveUnica);
-                processarCheckinTotemObjeto(ultimo, dados.members || []);
+              if (!ultimoCheckinKey) {
+                ultimoCheckinKey = chaveUnica;
+                return;
+              }
+              if (chaveUnica !== ultimoCheckinKey) {
+                ultimoCheckinKey = chaveUnica;
+                processarCheckinTotem(ultimo.barcode, true);
               }
             }
           }
         }
       } catch(e) {}
     }
-    setInterval(verificarCheckinsSegundoPlano, 200);
+    setInterval(verificarCheckinsCloud, 200);
 
-    async function processarCheckinTotemObjeto(logItem, membrosLista) {
+    async function processarCheckinTotem(codigo, veioDaCloud = false) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
       resBox.className = "totem-status-card";
-      resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${logItem.barcode}...</h3>`;
+      resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      let membros = membrosLista;
-      if (!membros || membros.length === 0) {
-        try {
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
-            headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-          });
-          if (res.ok) {
-            const rows = await res.json();
-            if (rows && rows.length > 0 && rows[0].payload) {
-              membros = rows[0].payload.members || [];
-            }
+      let membros = [];
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          if (rows && rows.length > 0 && rows[0].payload) {
+            membros = rows[0].payload.members || [];
           }
-        } catch(e) {
-          membros = JSON.parse(localStorage.getItem('kosmo_members')) || [];
         }
+      } catch(e) {
+        membros = JSON.parse(localStorage.getItem('kosmo_members')) || [];
       }
 
       const membro = membros.find(m => {
         const b = String(m.barcode || m.id || '').trim();
-        return b === String(logItem.barcode).trim();
+        return b === String(codigo).trim();
       });
 
       const now = new Date();
@@ -192,7 +183,7 @@
         if (membro.foto && ovalContainer) {
           ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
         } else if (ovalContainer) {
-          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:4rem;background:#333;color:#aaa;">👤</div>`;
+          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:5rem;background:#333;color:#aaa;">👤</div>`;
         }
 
         let textoVoz = "";
@@ -202,9 +193,9 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">✅ ACESSO AUTORIZADO</h3>
-              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 0.95rem; color: #d4edda;">Plano: ${planoMembro}</p>
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">✅ ACESSO PERMITIDO - MEMBRO ATIVO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #d4edda;">Plano: ${planoMembro}</p>
             </div>
           `;
           textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
@@ -213,9 +204,9 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ SUBSCRIÇÃO EXPIRADA</h3>
-              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 0.95rem; color: #f8d7da;">Mensalidade Expirada. Voce não pode treinar.</p>
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPIRADO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Subscrição expirada</p>
             </div>
           `;
           textoVoz = "Mensalidade Expirada. Voce não pode treinar.";
@@ -224,9 +215,9 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CONTA INATIVA</h3>
-              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 0.95rem; color: #f8d7da;">Mensalidade Inativa. Voce não pode treinar.</p>
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - INATIVO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Conta inativa</p>
             </div>
           `;
           textoVoz = "Mensalidade Inativa. Voce não pode treinar.";
@@ -247,12 +238,46 @@
           window.speechSynthesis.speak(msg);
         }
 
+        // Se o check-in foi feito localmente no Totem e não veio da cloud, envia para o Supabase para sincronizar
+        if (!veioDaCloud) {
+          try {
+            const resGet = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+              headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+            });
+            if (resGet.ok) {
+              const rows = await resGet.json();
+              if (rows && rows.length > 0 && rows[0].payload) {
+                const dados = rows[0].payload;
+                dados.attendanceLogs = dados.attendanceLogs || [];
+                dados.attendanceLogs.unshift({
+                  data: now.toLocaleDateString('pt-PT'),
+                  time: now.toLocaleTimeString('pt-PT'),
+                  name: nomeMembro,
+                  barcode: codigo,
+                  status: ativo ? 'Ativo' : 'Expirado',
+                  foto: membro.foto || ''
+                });
+                await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Prefer': 'resolution=merge-duplicates'
+                  },
+                  body: JSON.stringify({ id: 1, payload: dados })
+                });
+              }
+            }
+          } catch(err) {}
+        }
+
       } else {
         resBox.className = "totem-status-card status-err";
         resBox.innerHTML = `
           <div style="text-align: center;">
-            <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
-            <p style="font-size: 1.1rem;">ID "${logItem.barcode}" não registado no sistema</p>
+            <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
+            <p style="font-size: 1.2rem;">ID "${codigo}" não registado no sistema</p>
           </div>
         `;
         if ('speechSynthesis' in window) {
@@ -264,13 +289,13 @@
         }
       }
 
-      // Mantém a foto no espaço oval e o estado exatamente durante 4 minutos (240000 ms) antes de voltar ao estado inicial
+      // Mantém a foto e o estado exatamente durante 4 minutos (240000 ms) antes de restaurar o original
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
           <div>
-            <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
-            <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+            <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
+            <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
           </div>
         `;
 
