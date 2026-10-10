@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
+  <title>Ginásio KOSMO - Sistema Integrado Supabase Realtime</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -145,7 +145,7 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Ativa (Sync Total)</span>
+        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Supabase Ativo (Realtime)</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
@@ -487,6 +487,7 @@
               <label style="font-weight:bold; color:var(--primary); margin-bottom:6px; display:block;">Permissões / Tarefas Autorizadas:</label>
               <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
                 <label><input type="checkbox" class="perm-chk" value="Registar Membros"> Registar Membros</label>
+                <label><input type="checkbox" class="perm-chk" value="Registar Membros"> Registar Membros</label>
                 <label><input type="checkbox" class="perm-chk" value="POS Vendas"> POS Vendas</label>
                 <label><input type="checkbox" class="perm-chk" value="Check-ins Totem"> Check-ins Totem</label>
                 <label><input type="checkbox" class="perm-chk" value="Gerir Stock"> Gerir Stock</label>
@@ -575,10 +576,10 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM GLOBAL EM TEMPO REAL -->
+  <!-- SCRIPT MASTER COM SUPABASE REALTIME -->
   <script>
-    const CLOUD_JSONBIN_URL = "https://api.jsonbin.io/v3/b/660a0ad7acd3cb34a8335412";
-    const CLOUD_API_KEY = "$2a$10$7vF9W8v5...";
+    const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
     let members = [
       { id: 1, name: 'Silvio Cabral', email: 'silvio@email.com', barcode: '112233', nif: '123456789', plan: 'Musculação Mensal', estado: 'Ativo', phone: '9988886', date: '2026-01-01', foto: '', doc: '', comprovativo: '' }
@@ -607,13 +608,16 @@
       if (aSincronizarNuvem) return;
       aSincronizarNuvem = true;
       try {
-        const res = await fetch(CLOUD_JSONBIN_URL + "/latest", {
-          headers: { "X-Master-Key": CLOUD_API_KEY }
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`
+          }
         });
         if (res.ok) {
-          const json = await res.json();
-          if (json && json.record) {
-            const d = json.record;
+          const rows = await res.json();
+          if (rows && rows.length > 0 && rows[0].payload) {
+            const d = rows[0].payload;
             if (d.members && d.members.length > 0) members = d.members;
             if (d.products) products = d.products;
             if (d.salesHistory) salesHistory = d.salesHistory;
@@ -640,13 +644,15 @@
       salvarLocalCache();
       const pacote = { members, products, salesHistory, expenses, salaries, invoicesList, inscricoesOnline, attendanceLogs, staffLogs, chatMsgs, biblioteca, collaborators };
       try {
-        await fetch(CLOUD_JSONBIN_URL, {
-          method: 'PUT',
+        await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Master-Key': CLOUD_API_KEY
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'resolution=merge-duplicates'
           },
-          body: JSON.stringify(pacote)
+          body: JSON.stringify({ id: 1, payload: pacote })
         });
       } catch(e) {}
     }
@@ -680,7 +686,7 @@
       refreshAllUI();
       await sincronizarComNuvem();
 
-      // Sincronização automática em tempo real a cada 3 segundos
+      // Polling de sincronização em tempo real do Supabase a cada 3 segundos
       setInterval(sincronizarComNuvem, 3000);
 
       const params = new URLSearchParams(window.location.search);
