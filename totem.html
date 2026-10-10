@@ -12,7 +12,7 @@
     .top-clock h1 { font-size: 2.1rem; text-transform: uppercase; letter-spacing: 2px; color: #fff; font-weight: 800; margin-bottom: 4px; }
     .top-clock h2 { font-size: 4.8rem; color: #ffd43b; font-weight: 900; text-shadow: 0 0 25px rgba(255,212,59,0.6); }
 
-    .totem-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 780px; flex: 1; }
+    .totem-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 800px; flex: 1; }
     
     .logo-oval-frame {
       width: 680px;
@@ -25,7 +25,7 @@
       align-items: center;
       background: #fff;
       box-shadow: 0 0 45px rgba(201, 42, 42, 0.9);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     .logo-oval-frame img {
       width: 115%;
@@ -33,14 +33,17 @@
       object-fit: cover;
     }
 
-    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 20px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .scanner-box-ui { width: 100%; max-width: 400px; margin-bottom: 10px; }
+    .scanner-box-ui input { width: 100%; padding: 8px 12px; font-size: 1rem; font-weight: bold; text-align: center; border: 2px solid #c92a2a; border-radius: 6px; background: #1a1d20; color: #fff; outline: none; }
+
+    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 18px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     .status-box h3 { font-size: 1.9rem; margin-bottom: 6px; letter-spacing: 1px; }
     .status-box p { font-size: 1.2rem; color: #adb5bd; }
 
     footer { font-size: 0.8rem; color: #88929b; text-align: center; letter-spacing: 0.5px; margin-bottom: 5px; }
   </style>
 </head>
-<body>
+<body onclick="focarCaixaLeitor()">
 
   <div class="top-clock">
     <h1 id="date-label">SÁBADO, 10 DE OUTUBRO DE 2026</h1>
@@ -50,6 +53,10 @@
   <div class="totem-center">
     <div class="logo-oval-frame">
       <img src="logo.jpg" alt="KOSMO" onerror="this.src='src/img/logo.jpg';">
+    </div>
+
+    <div class="scanner-box-ui">
+      <input type="text" id="totem-input-direto" placeholder="Leitor de códigos ativo..." autofocus autocomplete="off" onkeydown="processarLeituraTotem(event)">
     </div>
 
     <div id="totem-display" class="status-box" style="border-color: #2b8a3e;">
@@ -66,10 +73,13 @@
     const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
-    let carregamentoInicial = true;
-    let ultimoCheckinId = null;
-    let bufferLeitor = "";
-    let ultimoTempoTecla = Date.now();
+    let ultimoTotalLogs = -1;
+
+    function focarCaixaLeitor() {
+      const inp = document.getElementById('totem-input-direto');
+      if (inp && document.activeElement !== inp) inp.focus();
+    }
+    setInterval(focarCaixaLeitor, 1000);
 
     function atualizarRelogio() {
       const agora = new Date();
@@ -82,89 +92,77 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    // Captura global do leitor físico e teclado
-    window.addEventListener('keydown', (e) => {
-      const agora = Date.now();
-      if (agora - ultimoTempoTecla > 120) {
-        bufferLeitor = "";
-      }
-      ultimoTempoTecla = agora;
-
+    async function processarLeituraTotem(e) {
       if (e.key === 'Enter') {
-        const codigoLido = bufferLeitor.trim();
-        bufferLeitor = "";
-        if (codigoLido.length > 0) {
-          executarCheckinAutomatico(codigoLido);
-        }
-      } else if (e.key.length === 1) {
-        bufferLeitor += e.key;
-      }
-    });
+        const inputEl = document.getElementById('totem-input-direto');
+        const code = inputEl.value.trim();
+        inputEl.value = '';
+        if (!code) return;
 
-    async function executarCheckinAutomatico(code) {
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
-          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-        });
-        if (res.ok) {
-          const rows = await res.json();
-          if (rows && rows.length > 0 && rows[0].payload) {
-            const dados = rows[0].payload;
-            const members = dados.members || [];
-            const m = members.find(x => x.barcode === code);
-            
-            const now = new Date();
-            let ativo = false;
-            let nome = 'Desconhecido';
-            let estadoStr = 'Expirado';
+        try {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+            headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+          });
+          if (res.ok) {
+            const rows = await res.json();
+            if (rows && rows.length > 0 && rows[0].payload) {
+              const dados = rows[0].payload;
+              const members = dados.members || [];
+              const m = members.find(x => x.barcode === code);
+              
+              const now = new Date();
+              let ativo = false;
+              let nome = 'Desconhecido';
+              let estadoStr = 'Expirado';
 
-            if (m) {
-              nome = m.name;
-              const d = new Date(m.date || '2026-01-01');
-              d.setDate(d.getDate() + 30);
-              if (m.estado === 'Inativo' || m.estado === 'Desativado') {
-                estadoStr = m.estado;
-                ativo = false;
-              } else if (d < now) {
-                estadoStr = 'Expirado';
-                ativo = false;
-              } else {
-                estadoStr = 'Ativo';
-                ativo = true;
+              if (m) {
+                nome = m.name;
+                const d = new Date(m.date || '2026-01-01');
+                d.setDate(d.getDate() + 30);
+                if (m.estado === 'Inativo' || m.estado === 'Desativado') {
+                  estadoStr = m.estado;
+                  ativo = false;
+                } else if (d < now) {
+                  estadoStr = 'Expirado';
+                  ativo = false;
+                } else {
+                  estadoStr = 'Ativo';
+                  ativo = true;
+                }
               }
+
+              const logEntry = {
+                data: now.toLocaleDateString('pt-PT'),
+                time: now.toLocaleTimeString('pt-PT'),
+                name: nome,
+                barcode: code,
+                status: estadoStr,
+                foto: m ? m.foto : ''
+              };
+
+              dados.attendanceLogs = dados.attendanceLogs || [];
+              dados.attendanceLogs.unshift(logEntry);
+
+              await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'apikey': SUPABASE_KEY,
+                  'Authorization': `Bearer ${SUPABASE_KEY}`,
+                  'Prefer': 'resolution=merge-duplicates'
+                },
+                body: JSON.stringify({ id: 1, payload: dados })
+              });
+
+              mostrarEcranCheckin(logEntry);
             }
-
-            const logEntry = {
-              data: now.toLocaleDateString('pt-PT'),
-              time: now.toLocaleTimeString('pt-PT'),
-              name: nome,
-              barcode: code,
-              status: estadoStr,
-              foto: m ? m.foto : ''
-            };
-
-            dados.attendanceLogs = dados.attendanceLogs || [];
-            dados.attendanceLogs.unshift(logEntry);
-
-            await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Prefer': 'resolution=merge-duplicates'
-              },
-              body: JSON.stringify({ id: 1, payload: dados })
-            });
-
-            mostrarEcranCheckin(logEntry);
           }
-        }
-      } catch(err) {}
+        } catch(err) {}
+      }
     }
 
-    // Sincronização em tempo real ultra-rápida (500ms) para refletir check-ins manuais do painel
-    async function verificarNovosCheckins() {
+    // Sincronização em tempo real para refletir check-ins manuais do painel principal
+    async function verificarCheckinsTempoReal() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
           headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
@@ -172,21 +170,14 @@
         if (res.ok) {
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
-            const logs = rows[0].payload.attendanceLogs;
-            if (logs && logs.length > 0) {
-              const ultimo = logs[0];
-              const identificadorUnico = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data + '_' + logs.length;
-              
-              if (carregamentoInicial) {
-                ultimoCheckinId = identificadorUnico;
-                carregamentoInicial = false;
-                return;
-              }
-
-              if (identificadorUnico !== ultimoCheckinId) {
-                ultimoCheckinId = identificadorUnico;
-                mostrarEcranCheckin(ultimo);
-              }
+            const logs = rows[0].payload.attendanceLogs || [];
+            if (ultimoTotalLogs === -1) {
+              ultimoTotalLogs = logs.length;
+              return;
+            }
+            if (logs.length > ultimoTotalLogs) {
+              ultimoTotalLogs = logs.length;
+              mostrarEcranCheckin(logs[0]);
             }
           }
         }
@@ -225,10 +216,11 @@
           <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
           <p>Aproxime o cartão de membro ou código de barras</p>
         `;
+        focarCaixaLeitor();
       }, 6000);
     }
 
-    setInterval(verificarNovosCheckins, 500);
+    setInterval(verificarCheckinsTempoReal, 800);
   </script>
 </body>
 </html>
