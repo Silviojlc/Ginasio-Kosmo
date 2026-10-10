@@ -32,7 +32,6 @@
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
     .totem-form { display: flex; gap: 10px; margin-bottom: 10px; opacity: 0; position: absolute; pointer-events: none; }
     .totem-input-manual { background: #fff; color: #212529; font-size: 1.4rem; font-weight: 800; padding: 10px 20px; border-radius: 8px; border: 4px solid var(--primary); flex: 1; text-align: center; outline: none; }
-    .totem-btn-ok { background: var(--success); color: #fff; border: none; padding: 0 30px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
     .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
     .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
@@ -44,7 +43,7 @@
     .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
 </head>
-<body onclick="focarInput()">
+<body onclick="focarInput()" onkeydown="focarInput()">
 
   <div class="totem-top">
     <div class="totem-data" id="data-atual">--</div>
@@ -58,9 +57,9 @@
   </div>
 
   <div class="totem-action-box">
-    <form class="totem-form" onsubmit="event.preventDefault(); executarCheckin();">
+    <!-- Input oculto e permanente focado para receber o leitor ótico sem clique de rato -->
+    <form class="totem-form" onsubmit="event.preventDefault();">
       <input type="text" id="totem-barcode-input" class="totem-input-manual" autocomplete="off" autofocus oninput="detetarLeituraInstantanea(this)">
-      <button type="submit" class="totem-btn-ok">OK</button>
     </form>
     
     <div id="totem-resultado" class="totem-status-card">
@@ -110,12 +109,16 @@
 
     const inputLeitor = document.getElementById('totem-barcode-input');
 
+    // Foco forçado a cada 50ms para garantir que o leitor USB atue sem rato
     function focarInput() {
-      if (inputLeitor) inputLeitor.focus();
+      if (inputLeitor && document.activeElement !== inputLeitor) {
+        inputLeitor.focus();
+      }
     }
-    setInterval(focarInput, 150);
+    setInterval(focarInput, 50);
     window.onload = focarInput;
-    document.body.onclick = focarInput;
+    window.addEventListener('click', focarInput);
+    window.addEventListener('keydown', focarInput);
 
     let timeoutInput = null;
     function detetarLeituraInstantanea(el) {
@@ -126,18 +129,10 @@
           const codigo = el.value.trim();
           el.value = '';
           if (codigo) await processarCheckinTotem(codigo);
-        }, 120);
+        }, 100);
       }
     }
 
-    async function executarCheckin() {
-      const codigo = inputLeitor.value.trim();
-      if (!codigo) return;
-      inputLeitor.value = '';
-      await processarCheckinTotem(codigo);
-    }
-
-    // Silencia qualquer elemento de áudio/vídeo eventualmente aberto na página durante a fala
     function silenciarSomLocal(silenciar) {
       document.querySelectorAll('audio, video').forEach(media => {
         media.muted = silenciar;
@@ -176,9 +171,14 @@
       if (membro) {
         const dataFim = new Date(membro.date || '2026-01-01');
         dataFim.setDate(dataFim.getDate() + 30);
-        const estadoAtual = membro.estado || 'Ativo';
-        const ativo = dataFim >= now && (estadoAtual === 'Ativo');
-        const expirado = dataFim < now;
+        
+        const estadoStr = (membro.estado || 'Ativo').trim();
+        const subscricaoExpirada = dataFim < now;
+        const membroInativo = estadoStr === 'Inativo' || estadoStr === 'Desativado';
+        
+        // Validação rigorosa: só é considerado estritamente ativo se o estado for 'Ativo' E a data não estiver expirada
+        const ativo = !membroInativo && !subscricaoExpirada;
+        
         const nomeMembro = membro.name || 'Membro';
         const planoMembro = membro.plan || 'Normal';
         const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
@@ -196,7 +196,7 @@
             </div>
           `;
           textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
-        } else if (expirado) {
+        } else if (subscricaoExpirada) {
           resBox.className = "totem-status-card status-err";
           resBox.innerHTML = `
             ${fotoMembro}
@@ -224,18 +224,13 @@
           window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(textoVoz);
           msg.lang = 'pt-PT';
-          msg.rate = 0.95;  // Velocidade firme e pausada
+          msg.rate = 0.95;
           msg.pitch = 1.0;
-          msg.volume = 1.0; // Volume máximo / alto
+          msg.volume = 1.0;
 
           silenciarSomLocal(true);
-
-          msg.onend = () => {
-            silenciarSomLocal(false);
-          };
-          msg.onerror = () => {
-            silenciarSomLocal(false);
-          };
+          msg.onend = () => { silenciarSomLocal(false); };
+          msg.onerror = () => { silenciarSomLocal(false); };
 
           window.speechSynthesis.speak(msg);
         }
