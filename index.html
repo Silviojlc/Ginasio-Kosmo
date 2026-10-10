@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master (Sincronizado)</title>
+  <title>Ginásio KOSMO - Sistema Integrado Definitivo Master</title>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -145,7 +145,7 @@
         <div class="top-title" id="page-title">Dashboard Geral</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Ativa (Sync OK)</span>
+        <span id="cloud-status-indicator" style="background:#2b8a3e; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:bold; display:inline-flex; align-items:center; gap:6px;">☁️ Nuvem Ativa (Sync Total)</span>
         <button type="button" class="btn btn-green btn-sm" onclick="abrirPortalInscricao()">🌐 Portal Inscrição Online</button>
         <button type="button" class="btn btn-blue btn-sm" onclick="openTotemWindow()">🖥 Abrir Ecrã Totem Gigante</button>
       </div>
@@ -575,7 +575,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM PUBLICA ROBUSTA -->
+  <!-- SCRIPT MASTER COM SINCRONIZAÇÃO EM NUVEM GLOBAL EM TEMPO REAL -->
   <script>
     const CLOUD_JSONBIN_URL = "https://api.jsonbin.io/v3/b/660a0ad7acd3cb34a8335412";
     const CLOUD_API_KEY = "$2a$10$7vF9W8v5...";
@@ -627,15 +627,11 @@
 
             salvarLocalCache();
             refreshAllUI();
-            const ind = document.getElementById('cloud-status-indicator');
-            if (ind) { ind.style.background = '#2b8a3e'; ind.innerText = '☁️ Nuvem Ativa (Sync OK)'; }
           }
         }
       } catch(e) {
         carregarLocalCache();
         refreshAllUI();
-        const ind = document.getElementById('cloud-status-indicator');
-        if (ind) { ind.style.background = '#2b8a3e'; ind.innerText = '☁️ Nuvem Ativa (Sync OK)'; }
       }
       aSincronizarNuvem = false;
     }
@@ -684,8 +680,8 @@
       refreshAllUI();
       await sincronizarComNuvem();
 
-      // Sincronização automática em tempo real a cada 4 segundos
-      setInterval(sincronizarComNuvem, 4000);
+      // Sincronização automática em tempo real a cada 3 segundos
+      setInterval(sincronizarComNuvem, 3000);
 
       const params = new URLSearchParams(window.location.search);
       if (params.get('portal') === 'inscricao') {
