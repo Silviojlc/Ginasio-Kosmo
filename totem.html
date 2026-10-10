@@ -10,47 +10,41 @@
     body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
     
     .totem-top { text-align: center; width: 100%; margin-top: 2px; }
-    .totem-data { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; color: #fff; letter-spacing: 3px; margin-bottom: 2px; }
-    .totem-relogio { font-size: 8.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.8); line-height: 1; }
+    .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
+    .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
 
-    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 10px 0; }
+    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; }
     .totem-logo-oval { 
-      width: 680px; 
-      height: 320px; 
+      width: 750px; 
+      height: 300px; 
       background: #c5d7e6; 
       border-radius: 50%; 
-      border: 7px solid var(--primary); 
+      border: 8px solid var(--primary); 
       box-shadow: 0 0 45px rgba(201, 42, 42, 0.9), inset 0 0 25px rgba(0,0,0,0.15); 
       display: flex; 
       justify-content: center; 
       align-items: center; 
       overflow: hidden; 
-      padding: 10px; 
+      padding: 15px; 
     }
-    .totem-logo-img { width: 115%; height: 115%; object-fit: cover; }
+    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; }
     .totem-oval-avatar { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
-    
-    /* Input invisível cravado para capturar o leitor USB Approx LS21 instantaneamente sem cliques */
-    .totem-form-hidden { position: absolute; opacity: 0; pointer-events: none; }
+    .totem-form { display: flex; gap: 10px; margin-bottom: 10px; }
+    .totem-input-manual { background: #fff; color: #212529; font-size: 1.4rem; font-weight: 800; padding: 10px 20px; border-radius: 8px; border: 4px solid var(--primary); flex: 1; text-align: center; outline: none; }
+    .totem-btn-ok { background: var(--success); color: #fff; border: none; padding: 0 30px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-    .totem-status-card { background: #161b22; border: 3px solid #333; border-radius: 12px; padding: 20px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 160px; display: flex; align-items: center; justify-content: center; gap: 25px; }
+    .totem-status-card { background: #161b22; border: 2px solid #333; border-radius: 12px; padding: 12px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 20px; }
     .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
     .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
     
-    .totem-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #aaa; box-shadow: 0 0 25px rgba(0,0,0,0.7); }
+    .totem-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #aaa; }
 
-    .scanner-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 0.85rem; color: #339af0; font-weight: 600; }
     .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
 </head>
-<body onclick="forcarFocoLeitor()" onkeydown="forcarFocoLeitor()">
-
-  <!-- Input oculto com foco automático permanente a cada 50ms -->
-  <form class="totem-form-hidden" onsubmit="event.preventDefault();">
-    <input type="text" id="totem-barcode-input" autofocus autocomplete="off" oninput="detetarLeituraInstantanea(this)">
-  </form>
+<body onclick="focarInput()">
 
   <div class="totem-top">
     <div class="totem-data" id="data-atual">--</div>
@@ -64,15 +58,16 @@
   </div>
 
   <div class="totem-action-box">
+    <form class="totem-form" onsubmit="event.preventDefault(); executarCheckin();">
+      <input type="text" id="totem-barcode-input" class="totem-input-manual" placeholder="PASSE O CARTÃO OU QR CODE..." autocomplete="off" autofocus oninput="detetarLeituraInstantanea(this)">
+      <button type="submit" class="totem-btn-ok">OK</button>
+    </form>
+    
     <div id="totem-resultado" class="totem-status-card">
       <div>
-        <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
-        <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
+        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
+        <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
       </div>
-    </div>
-
-    <div class="scanner-indicator">
-      <span>⚡</span> <span id="scanner-status-text">Leitor ótico ativo em tempo real</span>
     </div>
   </div>
 
@@ -97,13 +92,13 @@
 
     function atualizarRelogio() {
       const d = new Date();
-      const dias = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
-      const meses = ['DE JANEIRO', 'DE FEVEREIRO', 'DE MARÇO', 'DE ABRIL', 'DE MAIO', 'DE JUNHO', 'DE JULHO', 'DE AGOSTO', 'DE SETEMBRO', 'DE OUTUBRO', 'DE NOVEMBRO', 'DE DEZEMBRO'];
+      const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       
       const elData = document.getElementById('data-atual');
       const elRelogio = document.getElementById('relogio');
 
-      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} DE ${d.getFullYear()}`;
+      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
       if(elRelogio) elRelogio.innerText = d.toLocaleTimeString('pt-PT');
     }
     setInterval(atualizarRelogio, 1000);
@@ -111,16 +106,12 @@
 
     const inputLeitor = document.getElementById('totem-barcode-input');
 
-    // Foco cravado e contínuo no input oculto para garantir que o leitor USB funcione sem cliques
-    function forcarFocoLeitor() {
-      if (inputLeitor && document.activeElement !== inputLeitor) {
-        inputLeitor.focus();
-      }
+    function focarInput() {
+      if (inputLeitor) inputLeitor.focus();
     }
-    setInterval(forcarFocoLeitor, 50);
-    window.onload = forcarFocoLeitor;
-    window.addEventListener('click', forcarFocoLeitor);
-    window.addEventListener('keydown', forcarFocoLeitor);
+    setInterval(focarInput, 150);
+    window.onload = focarInput;
+    document.body.onclick = focarInput;
 
     let timeoutInput = null;
     function detetarLeituraInstantanea(el) {
@@ -131,8 +122,15 @@
           const codigo = el.value.trim();
           el.value = '';
           if (codigo) await processarCheckinTotem(codigo);
-        }, 80);
+        }, 120);
       }
+    }
+
+    async function executarCheckin() {
+      const codigo = inputLeitor.value.trim();
+      if (!codigo) return;
+      inputLeitor.value = '';
+      await processarCheckinTotem(codigo);
     }
 
     function silenciarSomLocal(silenciar) {
@@ -145,10 +143,8 @@
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
-      const ovalContainer = document.getElementById('totem-oval-content');
-      
       resBox.className = "totem-status-card";
-      resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
+      resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
       let membros = [];
       try {
@@ -171,6 +167,7 @@
       });
 
       const now = new Date();
+      const ovalContainer = document.getElementById('totem-oval-content');
 
       if (membro) {
         const dataFim = new Date(membro.date || '2026-01-01');
@@ -179,9 +176,8 @@
         const estadoStr = (membro.estado || 'Ativo').trim();
         const subscricaoExpirada = dataFim < now;
         const membroInativo = estadoStr === 'Inativo' || estadoStr === 'Desativado';
-        
         const ativo = !membroInativo && !subscricaoExpirada;
-        
+
         const nomeMembro = membro.name || 'Membro';
         const planoMembro = membro.plan || 'Normal';
         const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
@@ -190,7 +186,7 @@
         if (membro.foto && ovalContainer) {
           ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
         } else if (ovalContainer) {
-          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:5rem;background:#333;color:#aaa;">👤</div>`;
+          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:4rem;background:#333;color:#aaa;">👤</div>`;
         }
 
         let textoVoz = "";
@@ -200,9 +196,9 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">✅ ACESSO PERMITIDO - MEMBRO ATIVO</h3>
-              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #d4edda;">Plano: ${planoMembro}</p>
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">✅ ACESSO AUTORIZADO</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #d4edda;">Plano: ${planoMembro}</p>
             </div>
           `;
           textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
@@ -211,9 +207,9 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPIRADO</h3>
-              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #f8d7da;">Subscrição expirada</p>
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ SUBSCRIÇÃO EXPIRADA</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #f8d7da;">Mensalidade expirada. Voce não pode treinar.</p>
             </div>
           `;
           textoVoz = "Mensalidade Expirada. Voce não pode treinar.";
@@ -222,9 +218,9 @@
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - INATIVO</h3>
-              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #f8d7da;">Conta inativa</p>
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CONTA INATIVA</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #f8d7da;">Mensalidade inativa. Voce não pode treinar.</p>
             </div>
           `;
           textoVoz = "Mensalidade Inativa. Voce não pode treinar.";
@@ -234,9 +230,9 @@
           window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(textoVoz);
           msg.lang = 'pt-PT';
-          msg.rate = 0.95;  // Velocidade firme e pausada
-          msg.pitch = 1.1;  // Tom de voz ligeiramente mais vivo e claro
-          msg.volume = 1.0; // Volume alto e percetível
+          msg.rate = 0.95;
+          msg.pitch = 1.1;
+          msg.volume = 1.0;
 
           silenciarSomLocal(true);
           msg.onend = () => { silenciarSomLocal(false); };
@@ -245,12 +241,23 @@
           window.speechSynthesis.speak(msg);
         }
 
+        const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+        logs.unshift({
+          data: now.toLocaleDateString('pt-PT'),
+          time: now.toLocaleTimeString('pt-PT'),
+          name: nomeMembro,
+          barcode: codigo,
+          status: ativo ? 'Ativo' : 'Expirado',
+          foto: membro.foto || ''
+        });
+        localStorage.setItem('kosmo_attendance', JSON.stringify(logs));
+
       } else {
         resBox.className = "totem-status-card status-err";
         resBox.innerHTML = `
           <div style="text-align: center;">
-            <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
-            <p style="font-size: 1.2rem;">ID "${codigo}" não registado no sistema</p>
+            <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
+            <p style="font-size: 1.1rem;">ID "${codigo}" não registado no sistema</p>
           </div>
         `;
         if ('speechSynthesis' in window) {
@@ -262,23 +269,23 @@
         }
       }
 
-      // Mantém a foto no espaço oval e o estado no ecrã exatamente durante 4 minutos (240000 ms) antes de restaurar o logótipo original
+      // Mantém a foto no espaço oval e o estado exatamente durante 4 minutos (240000 ms) antes de voltar ao estado original
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
           <div>
-            <h3 style="font-size: 2.1rem; color: #2b8a3e; margin-bottom: 4px;">PRONTO PARA LEITURA</h3>
-            <p style="font-size: 1.15rem; color: #adb5bd;">Aproxime o cartão de membro ou código de barras</p>
+            <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
+            <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
           </div>
         `;
-        
+
         // Restaura o logótipo original no espaço oval
         const ovalElement = document.getElementById('totem-oval-content');
         if (ovalElement) {
           ovalElement.outerHTML = `<img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">`;
         }
 
-        forcarFocoLeitor();
+        focarInput();
       }, 240000);
     }
   </script>
