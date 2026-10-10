@@ -64,7 +64,7 @@
     </div>
 
     <div class="scanner-indicator">
-      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo em segundo plano (Global)</span>
+      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo (Modo Foguetão Anti-Travamento)</span>
     </div>
   </div>
 
@@ -80,6 +80,7 @@
     let bufferLeitor = "";
     let ultimoTempoTecla = Date.now();
 
+    // Proteção rigorosa contra hibernação e suspensão do ecrã
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
@@ -103,6 +104,7 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
+    // Escuta global de teclado otimizada e leve para o leitor Approx LS21
     window.addEventListener('keydown', (e) => {
       const agora = Date.now();
       if (agora - ultimoTempoTecla > 120) {
@@ -114,7 +116,7 @@
         const codigoLido = bufferLeitor.trim();
         bufferLeitor = "";
         if (codigoLido.length > 0) {
-          processarCheckinTotem(codigoLido);
+          processarCheckinFoguetao(codigoLido);
         }
       } else if (e.key.length === 1) {
         bufferLeitor += e.key;
@@ -127,7 +129,8 @@
       });
     }
 
-    async function processarCheckinTotem(codigo) {
+    // Processamento otimizado foguetão: busca segura na cache local ou Supabase sem travamentos
+    async function processarCheckinFoguetao(codigo) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
@@ -143,10 +146,15 @@
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
             membros = rows[0].payload.members || [];
+            localStorage.setItem('kosmo_foguetao_cache', JSON.stringify(membros));
           }
         }
       } catch(e) {
-        membros = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+        membros = JSON.parse(localStorage.getItem('kosmo_foguetao_cache')) || [];
+      }
+
+      if (!membros || membros.length === 0) {
+        membros = JSON.parse(localStorage.getItem('kosmo_foguetao_cache')) || [];
       }
 
       const membro = membros.find(m => {
@@ -245,6 +253,7 @@
         }
       }
 
+      // Temporizador rigoroso de 4 minutos (240000ms) para retornar ao ecrã inicial
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
