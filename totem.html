@@ -85,7 +85,6 @@
 
     let temporizadorReset = null;
 
-    // Prevenir hibernação permanentemente (WakeLock + micro-movimento)
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
@@ -138,6 +137,13 @@
       await processarCheckinTotem(codigo);
     }
 
+    // Silencia qualquer elemento de áudio/vídeo eventualmente aberto na página durante a fala
+    function silenciarSomLocal(silenciar) {
+      document.querySelectorAll('audio, video').forEach(media => {
+        media.muted = silenciar;
+      });
+    }
+
     async function processarCheckinTotem(codigo) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
@@ -145,7 +151,6 @@
       resBox.className = "totem-status-card";
       resBox.innerHTML = `<h3 style="font-size: 1.8rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      // Sincroniza com o Supabase para garantir dados em tempo real
       let membros = [];
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
@@ -171,10 +176,14 @@
       if (membro) {
         const dataFim = new Date(membro.date || '2026-01-01');
         dataFim.setDate(dataFim.getDate() + 30);
-        const ativo = dataFim >= now && ((membro.estado || 'Ativo') === 'Ativo');
+        const estadoAtual = membro.estado || 'Ativo';
+        const ativo = dataFim >= now && (estadoAtual === 'Ativo');
+        const expirado = dataFim < now;
         const nomeMembro = membro.name || 'Membro';
         const planoMembro = membro.plan || 'Normal';
         const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
+
+        let textoVoz = "";
 
         if (ativo) {
           resBox.className = "totem-status-card status-ok";
@@ -186,27 +195,48 @@
               <p style="font-size: 1.05rem; color: #d4edda;">Plano: ${planoMembro}</p>
             </div>
           `;
+          textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
+        } else if (expirado) {
+          resBox.className = "totem-status-card status-err";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPIRADO</h3>
+              <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Subscrição expirada</p>
+            </div>
+          `;
+          textoVoz = "Mensalidade Expirada. Voce não pode treinar.";
         } else {
           resBox.className = "totem-status-card status-err";
           resBox.innerHTML = `
             ${fotoMembro}
             <div style="text-align: left;">
-              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - EXPRIADO</h3>
+              <h3 style="font-size: 2.1rem; margin-bottom: 2px;">❌ ACESSO NEGADO - INATIVO</h3>
               <p style="font-size: 1.6rem; font-weight: bold;">${nomeMembro}</p>
-              <p style="font-size: 1.05rem; color: #f8d7da;">Por favor, dirija-se à receção</p>
+              <p style="font-size: 1.05rem; color: #f8d7da;">Conta inativa</p>
             </div>
           `;
+          textoVoz = "Mensalidade Inativa. Voce não pode treinar.";
         }
 
         if ('speechSynthesis' in window) {
-          let textoVoz = ativo 
-            ? `Acesso autorizado. Seja bem-vindo ao ginásio KOSMO, ${nomeMembro}. Bom treino!` 
-            : `Atenção. Acesso negado para ${nomeMembro}. O seu plano encontra-se expirado. Por favor, dirija-se à receção.`;
-          
+          window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(textoVoz);
           msg.lang = 'pt-PT';
-          msg.rate = 1.0;
+          msg.rate = 0.95;  // Velocidade firme e pausada
           msg.pitch = 1.0;
+          msg.volume = 1.0; // Volume máximo / alto
+
+          silenciarSomLocal(true);
+
+          msg.onend = () => {
+            silenciarSomLocal(false);
+          };
+          msg.onerror = () => {
+            silenciarSomLocal(false);
+          };
+
           window.speechSynthesis.speak(msg);
         }
 
@@ -218,9 +248,16 @@
             <p style="font-size: 1.2rem;">ID "${codigo}" não registado no sistema</p>
           </div>
         `;
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const msg = new SpeechSynthesisUtterance("Cartão desconhecido. Acesso negado.");
+          msg.lang = 'pt-PT';
+          msg.volume = 1.0;
+          window.speechSynthesis.speak(msg);
+        }
       }
 
-      // A foto e o estado permanecem no ecrã exatamente durante 4 minutos (240000 ms) antes de voltar ao estado original
+      // Mantém a foto e estado durante exatamente 4 minutos (240000 ms)
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
