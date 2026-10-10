@@ -78,7 +78,6 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
     let temporizadorReset = null;
-    let ultimoCheckinKey = null;
 
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
@@ -103,23 +102,22 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    const inputLeitor = document.getElementById('totem-barcode-input');
-    function focarInput() {
-      if (inputLeitor && document.activeElement !== inputLeitor) {
-        inputLeitor.focus();
-      }
-    }
-    setInterval(focarInput, 50);
-    window.addEventListener('click', focarInput);
-    window.addEventListener('keydown', focarInput);
-
     function silenciarSomLocal(silenciar) {
       document.querySelectorAll('audio, video').forEach(media => {
         media.muted = silenciar;
       });
     }
 
-    // Monitorização inteligente em segundo plano inspirada no GYMMER (verifica a cada 200ms)
+    // Sincronização cruzada instantânea em segundo plano via Storage e Supabase
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'kosmo_attendance' || e.key === 'kosmo_trigger_checkin') {
+        const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+        if (logs.length > 0) {
+          processarCheckinTotemObjeto(logs[0]);
+        }
+      }
+    });
+
     async function verificarCheckinsSegundoPlano() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
@@ -133,13 +131,11 @@
             if (logs.length > 0) {
               const ultimo = logs[0];
               const chaveUnica = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data;
-              if (!ultimoCheckinKey) {
-                ultimoCheckinKey = chaveUnica;
-                return;
-              }
-              if (chaveUnica !== ultimoCheckinKey) {
-                ultimoCheckinKey = chaveUnica;
-                processarCheckinTotem(ultimo.barcode, dados.members || []);
+              const ultimaProcessada = localStorage.getItem('totem_ultimo_processado');
+              
+              if (chaveUnica !== ultimaProcessada) {
+                localStorage.setItem('totem_ultimo_processado', chaveUnica);
+                processarCheckinTotemObjeto(ultimo, dados.members || []);
               }
             }
           }
@@ -148,12 +144,12 @@
     }
     setInterval(verificarCheckinsSegundoPlano, 200);
 
-    async function processarCheckinTotem(codigo, membrosLista) {
+    async function processarCheckinTotemObjeto(logItem, membrosLista) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
       resBox.className = "totem-status-card";
-      resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
+      resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${logItem.barcode}...</h3>`;
 
       let membros = membrosLista;
       if (!membros || membros.length === 0) {
@@ -174,7 +170,7 @@
 
       const membro = membros.find(m => {
         const b = String(m.barcode || m.id || '').trim();
-        return b === String(codigo).trim();
+        return b === String(logItem.barcode).trim();
       });
 
       const now = new Date();
@@ -193,7 +189,6 @@
         const planoMembro = membro.plan || 'Normal';
         const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
 
-        // Exibe a foto do membro diretamente no espaço oval central do logótipo
         if (membro.foto && ovalContainer) {
           ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
         } else if (ovalContainer) {
@@ -257,7 +252,7 @@
         resBox.innerHTML = `
           <div style="text-align: center;">
             <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
-            <p style="font-size: 1.1rem;">ID "${codigo}" não registado no sistema</p>
+            <p style="font-size: 1.1rem;">ID "${logItem.barcode}" não registado no sistema</p>
           </div>
         `;
         if ('speechSynthesis' in window) {
