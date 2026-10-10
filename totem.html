@@ -66,6 +66,7 @@
     const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
+    let carregamentoInicial = true;
     let ultimoCheckinId = null;
 
     function atualizarRelogio() {
@@ -100,6 +101,13 @@
               const ultimo = logs[0];
               const identificadorUnico = ultimo.barcode + '_' + ultimo.time + '_' + ultimo.data;
               
+              if (carregamentoInicial) {
+                // Memoriza o check-in atual ao abrir a página para não disparar antigos
+                ultimoCheckinId = identificadorUnico;
+                carregamentoInicial = false;
+                return;
+              }
+
               if (identificadorUnico !== ultimoCheckinId) {
                 ultimoCheckinId = identificadorUnico;
                 mostrarEcranCheckin(ultimo);
@@ -142,8 +150,7 @@
       }, 5000);
     }
 
-    // Verificação ultra-rápida a cada 500ms para aparecer instantaneamente
-    setInterval(verificarNovosCheckins, 500);
+    setInterval(verificarNovosCheckins, 1000);
   </script>
 </body>
 </html>
