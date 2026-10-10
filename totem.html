@@ -33,8 +33,7 @@
       object-fit: cover;
     }
 
-    .scanner-box-ui { width: 100%; max-width: 400px; margin-bottom: 5px; }
-    .scanner-box-ui input { width: 100%; padding: 6px 10px; font-size: 0.9rem; font-weight: bold; text-align: center; border: 2px solid #c92a2a; border-radius: 6px; background: #1a1d20; color: #fff; outline: none; }
+    .scanner-box-ui { width: 100%; max-width: 400px; margin-bottom: 5px; opacity: 0; position: absolute; pointer-events: none; }
 
     .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 15px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     .status-box h3 { font-size: 1.9rem; margin-bottom: 4px; letter-spacing: 1px; }
@@ -43,7 +42,7 @@
     footer { font-size: 0.75rem; color: #88929b; text-align: center; letter-spacing: 0.5px; margin-bottom: 2px; }
   </style>
 </head>
-<body onclick="focarCaixaLeitor()">
+<body>
 
   <div class="top-clock">
     <h1 id="date-label">SÁBADO, 10 DE OUTUBRO DE 2026</h1>
@@ -56,7 +55,7 @@
     </div>
 
     <div class="scanner-box-ui">
-      <input type="text" id="totem-input-direto" placeholder="Leitor ativo..." autofocus autocomplete="off" onkeydown="processarLeituraTotem(event)">
+      <input type="text" id="totem-input-direto" autofocus autocomplete="off" onkeydown="processarLeituraTotem(event)">
     </div>
 
     <div id="totem-display" class="status-box" style="border-color: #2b8a3e;">
@@ -75,26 +74,24 @@
 
     let ultimoCheckinKey = null;
 
-    // Prevenir hibernação e suspensão do ecrã do Totem
+    // Prevenir hibernação e suspensão do ecrã do Totem permanentemente
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
-        try {
-          await navigator.wakeLock.request('screen');
-        } catch (err) {}
+        try { await navigator.wakeLock.request('screen'); } catch (err) {}
       }
     }
     ativarAntiHibernacao();
-    setInterval(ativarAntiHibernacao, 30000);
-    // Simula micro-atividade de segundo em segundo para o PC nunca suspender
-    setInterval(() => {
-      window.dispatchEvent(new Event('mousemove'));
-    }, 1000);
+    setInterval(ativarAntiHibernacao, 15000);
+    setInterval(() => { window.dispatchEvent(new Event('mousemove')); }, 1000);
 
+    // Manter o foco ativo no leitor sem precisar de rato
     function focarCaixaLeitor() {
       const inp = document.getElementById('totem-input-direto');
-      if (inp && document.activeElement !== inp) inp.focus();
+      if (inp) inp.focus();
     }
-    setInterval(focarCaixaLeitor, 800);
+    window.addEventListener('click', focarCaixaLeitor);
+    window.addEventListener('keydown', focarCaixaLeitor);
+    setInterval(focarCaixaLeitor, 500);
 
     function atualizarRelogio() {
       const agora = new Date();
@@ -176,7 +173,7 @@
       }
     }
 
-    // Sincronização em tempo real ultra-rápida para check-ins manuais do painel
+    // Sincronização em tempo real ultra-rápida (300ms) para refletir check-ins manuais do painel imediatamente
     async function verificarCheckinsTempoReal() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
@@ -208,7 +205,7 @@
       const ativo = log.status === 'Ativo';
       box.style.borderColor = ativo ? '#2b8a3e' : '#d9480f';
       
-      const fotoHtml = log.foto ? `<img src="${log.foto}" style="width:150px; height:150px; border-radius:50%; object-fit:cover; border:4px solid ${ativo?'#2b8a3e':'#d9480f'}; margin: 10px auto; display:block; box-shadow: 0 0 25px rgba(0,0,0,0.7);">` : `<div style="font-size:4.5rem; margin:10px;">👤</div>`;
+      const fotoHtml = log.foto ? `<img src="${log.foto}" style="width:160px; height:160px; border-radius:50%; object-fit:cover; border:4px solid ${ativo?'#2b8a3e':'#d9480f'}; margin: 10px auto; display:block; box-shadow: 0 0 25px rgba(0,0,0,0.7);">` : `<div style="font-size:4.5rem; margin:10px;">👤</div>`;
 
       box.innerHTML = `
         ${fotoHtml}
@@ -229,17 +226,19 @@
         window.speechSynthesis.speak(msg);
       }
 
-      setTimeout(() => {
+      // A foto e o estado permanecem no ecrã exatamente durante 4 minutos (240000 ms) antes de voltar ao estado original
+      if (window.totemTimeout) clearTimeout(window.totemTimeout);
+      window.totemTimeout = setTimeout(() => {
         box.style.borderColor = '#2b8a3e';
         box.innerHTML = `
           <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
           <p>Aproxime o cartão de membro ou código de barras</p>
         `;
         focarCaixaLeitor();
-      }, 6000);
+      }, 240000);
     }
 
-    setInterval(verificarCheckinsTempoReal, 500);
+    setInterval(verificarCheckinsTempoReal, 300);
   </script>
 </body>
 </html>
