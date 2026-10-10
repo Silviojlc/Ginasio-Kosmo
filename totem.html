@@ -33,11 +33,12 @@
       object-fit: cover;
     }
 
-    .scanner-box-ui { width: 100%; max-width: 400px; margin-bottom: 5px; opacity: 0; position: absolute; pointer-events: none; }
-
     .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 15px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     .status-box h3 { font-size: 1.9rem; margin-bottom: 4px; letter-spacing: 1px; }
     .status-box p { font-size: 1.15rem; color: #adb5bd; }
+
+    /* Indicador do raio elétrico azul */
+    .scanner-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 0.85rem; color: #339af0; font-weight: 600; }
 
     footer { font-size: 0.75rem; color: #88929b; text-align: center; letter-spacing: 0.5px; margin-bottom: 2px; }
   </style>
@@ -54,13 +55,13 @@
       <img src="logo.jpg" alt="KOSMO" onerror="this.src='src/img/logo.jpg';">
     </div>
 
-    <div class="scanner-box-ui">
-      <input type="text" id="totem-input-direto" autofocus autocomplete="off" onkeydown="processarLeituraTotem(event)">
-    </div>
-
     <div id="totem-display" class="status-box" style="border-color: #2b8a3e;">
       <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
       <p>Aproxime o cartão de membro ou código de barras</p>
+    </div>
+
+    <div class="scanner-indicator">
+      <span>⚡</span> <span id="scanner-status-text">Leitor ótico ativo em tempo real</span>
     </div>
   </div>
 
@@ -73,6 +74,8 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0eWJidGJheXhyZW91bmRvbGFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNzM1MTksImV4cCI6MjEwNTc0OTUxOX0.1EZ344Xl6gJjNTOO48oflTxKU2lijI7U2E8KLLimnDk";
 
     let ultimoCheckinKey = null;
+    let bufferLeitor = "";
+    let ultimoTempoTecla = Date.now();
 
     // Prevenir hibernação e suspensão do ecrã do Totem permanentemente
     async function ativarAntiHibernacao() {
@@ -83,15 +86,6 @@
     ativarAntiHibernacao();
     setInterval(ativarAntiHibernacao, 15000);
     setInterval(() => { window.dispatchEvent(new Event('mousemove')); }, 1000);
-
-    // Manter o foco ativo no leitor sem precisar de rato
-    function focarCaixaLeitor() {
-      const inp = document.getElementById('totem-input-direto');
-      if (inp) inp.focus();
-    }
-    window.addEventListener('click', focarCaixaLeitor);
-    window.addEventListener('keydown', focarCaixaLeitor);
-    setInterval(focarCaixaLeitor, 500);
 
     function atualizarRelogio() {
       const agora = new Date();
@@ -104,76 +98,88 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    async function processarLeituraTotem(e) {
-      if (e.key === 'Enter') {
-        const inputEl = document.getElementById('totem-input-direto');
-        const code = inputEl.value.trim();
-        inputEl.value = '';
-        if (!code) return;
-
-        try {
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
-            headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
-          });
-          if (res.ok) {
-            const rows = await res.json();
-            if (rows && rows.length > 0 && rows[0].payload) {
-              const dados = rows[0].payload;
-              const members = dados.members || [];
-              const m = members.find(x => x.barcode === code);
-              
-              const now = new Date();
-              let ativo = false;
-              let nome = 'Desconhecido';
-              let estadoStr = 'Expirado';
-
-              if (m) {
-                nome = m.name;
-                const d = new Date(m.date || '2026-01-01');
-                d.setDate(d.getDate() + 30);
-                if (m.estado === 'Inativo' || m.estado === 'Desativado') {
-                  estadoStr = m.estado;
-                  ativo = false;
-                } else if (d < now) {
-                  estadoStr = 'Expirado';
-                  ativo = false;
-                } else {
-                  estadoStr = 'Ativo';
-                  ativo = true;
-                }
-              }
-
-              const logEntry = {
-                data: now.toLocaleDateString('pt-PT'),
-                time: now.toLocaleTimeString('pt-PT'),
-                name: nome,
-                barcode: code,
-                status: estadoStr,
-                foto: m ? m.foto : ''
-              };
-
-              dados.attendanceLogs = dados.attendanceLogs || [];
-              dados.attendanceLogs.unshift(logEntry);
-
-              await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'apikey': SUPABASE_KEY,
-                  'Authorization': `Bearer ${SUPABASE_KEY}`,
-                  'Prefer': 'resolution=merge-duplicates'
-                },
-                body: JSON.stringify({ id: 1, payload: dados })
-              });
-
-              mostrarEcranCheckin(logEntry);
-            }
-          }
-        } catch(err) {}
+    // Escuta universal de alta prioridade para o leitor de códigos de barras (simula teclado rápido + Enter)
+    window.addEventListener('keydown', (e) => {
+      const agora = Date.now();
+      if (agora - ultimoTempoTecla > 120) {
+        bufferLeitor = "";
       }
+      ultimoTempoTecla = agora;
+
+      if (e.key === 'Enter') {
+        const codigoLido = bufferLeitor.trim();
+        bufferLeitor = "";
+        if (codigoLido.length > 0) {
+          executarCheckinAutomatico(codigoLido);
+        }
+      } else if (e.key.length === 1) {
+        bufferLeitor += e.key;
+      }
+    });
+
+    async function executarCheckinAutomatico(code) {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
+          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          if (rows && rows.length > 0 && rows[0].payload) {
+            const dados = rows[0].payload;
+            const members = dados.members || [];
+            const m = members.find(x => x.barcode === code);
+            
+            const now = new Date();
+            let ativo = false;
+            let nome = 'Desconhecido';
+            let estadoStr = 'Expirado';
+
+            if (m) {
+              nome = m.name;
+              const d = new Date(m.date || '2026-01-01');
+              d.setDate(d.getDate() + 30);
+              if (m.estado === 'Inativo' || m.estado === 'Desativado') {
+                estadoStr = m.estado;
+                ativo = false;
+              } else if (d < now) {
+                estadoStr = 'Expirado';
+                ativo = false;
+              } else {
+                estadoStr = 'Ativo';
+                ativo = true;
+              }
+            }
+
+            const logEntry = {
+              data: now.toLocaleDateString('pt-PT'),
+              time: now.toLocaleTimeString('pt-PT'),
+              name: nome,
+              barcode: code,
+              status: estadoStr,
+              foto: m ? m.foto : ''
+            };
+
+            dados.attendanceLogs = dados.attendanceLogs || [];
+            dados.attendanceLogs.unshift(logEntry);
+
+            await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify({ id: 1, payload: dados })
+            });
+
+            mostrarEcranCheckin(logEntry);
+          }
+        }
+      } catch(err) {}
     }
 
-    // Sincronização em tempo real ultra-rápida (300ms) para refletir check-ins manuais do painel imediatamente
+    // Sincronização em tempo real ultra-rápida (300ms) para check-ins manuais do painel principal
     async function verificarCheckinsTempoReal() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
@@ -234,7 +240,6 @@
           <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
           <p>Aproxime o cartão de membro ou código de barras</p>
         `;
-        focarCaixaLeitor();
       }, 240000);
     }
 
