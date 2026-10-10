@@ -5,74 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ginásio KOSMO - Totem Gigante de Check-in</title>
   <style>
+    :root { --primary: #c92a2a; --bg: #000000; --success: #2b8a3e; --danger: #d9480f; --text: #ffffff; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 20px; overflow: hidden; }
+    body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 30px; overflow: hidden; }
     
-    .top-clock { text-align: center; margin-top: 5px; }
-    .top-clock h1 { font-size: 2.1rem; text-transform: uppercase; letter-spacing: 2px; color: #fff; font-weight: 800; margin-bottom: 4px; }
-    .top-clock h2 { font-size: 4.8rem; color: #ffd43b; font-weight: 900; text-shadow: 0 0 25px rgba(255,212,59,0.6); }
+    .totem-top { text-align: center; width: 100%; margin-top: 2px; }
+    .totem-data { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 2px; margin-bottom: 2px; }
+    .totem-relogio { font-size: 7.5rem; font-weight: 900; color: #ffd43b; text-shadow: 0 0 35px rgba(255,212,59,0.6); line-height: 1; }
 
-    .totem-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 780px; flex: 1; }
+    .totem-logo-container { width: 100%; display: flex; justify-content: center; align-items: center; margin: 5px 0; }
+    .totem-logo-oval { 
+      width: 750px; 
+      height: 300px; 
+      background: #c5d7e6; 
+      border-radius: 50%; 
+      border: 8px solid var(--primary); 
+      box-shadow: 0 0 45px rgba(201, 42, 42, 0.9), inset 0 0 25px rgba(0,0,0,0.15); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      overflow: hidden; 
+      padding: 15px; 
+    }
+    .totem-logo-img { width: 100%; height: 100%; object-fit: contain; }
+    .totem-oval-avatar { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 50%; }
+
+    .totem-action-box { width: 100%; max-width: 750px; text-align: center; margin-bottom: 5px; }
+    .totem-form { display: flex; gap: 10px; margin-bottom: 10px; }
+    .totem-input-manual { background: #fff; color: #212529; font-size: 1.4rem; font-weight: 800; padding: 10px 20px; border-radius: 8px; border: 4px solid var(--primary); flex: 1; text-align: center; outline: none; }
+    .totem-btn-ok { background: var(--success); color: #fff; border: none; padding: 0 30px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
+
+    .totem-status-card { background: #161b22; border: 2px solid #333; border-radius: 12px; padding: 12px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); min-height: 110px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+    .status-ok { background: rgba(43, 138, 62, 0.4); color: #51cf66; border: 3px solid var(--success); }
+    .status-err { background: rgba(217, 72, 15, 0.4); color: #ff6b6b; border: 3px solid var(--danger); }
     
-    .logo-oval-frame {
-      width: 680px;
-      height: 320px;
-      border: 7px solid #c92a2a;
-      border-radius: 50%;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #fff;
-      box-shadow: 0 0 45px rgba(201, 42, 42, 0.9);
-      margin-bottom: 20px;
-    }
-    .logo-oval-frame img {
-      width: 115%;
-      height: 115%;
-      object-fit: cover;
-    }
-    .logo-oval-frame .oval-avatar {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 50%;
-    }
+    .totem-avatar { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; background: #333; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #aaa; }
 
-    .status-box { background: #14171a; border: 3px solid #2b8a3e; border-radius: 12px; padding: 20px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    .status-box h3 { font-size: 1.9rem; margin-bottom: 6px; letter-spacing: 1px; }
-    .status-box p { font-size: 1.2rem; color: #adb5bd; }
-
-    /* Input invisível cravado para capturar o leitor Approx LS21 em absoluto segundo plano sem cliques */
-    .scanner-input-oculto { position: absolute; opacity: 0; pointer-events: none; }
-
-    footer { font-size: 0.8rem; color: #88929b; text-align: center; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .totem-footer { font-size: 0.75rem; color: #777; text-align: center; width: 100%; border-top: 1px solid #222; padding-top: 5px; }
   </style>
 </head>
-<body onclick="focarLeitor()" onkeydown="focarLeitor()">
+<body onclick="focarInput()" onkeydown="focarInput()">
 
-  <input type="text" id="totem-input-scanner" class="scanner-input-oculto" autofocus autocomplete="off" oninput="processarLeitura(this)">
-
-  <div class="top-clock">
-    <h1 id="date-label">SÁBADO, 10 DE OUTUBRO DE 2026</h1>
-    <h2 id="clock-label">19:39:34</h2>
+  <div class="totem-top">
+    <div class="totem-data" id="data-atual">--</div>
+    <div class="totem-relogio" id="relogio">--:--:--</div>
   </div>
 
-  <div class="totem-center">
-    <div class="logo-oval-frame" id="totem-oval-container">
-      <img src="logo.jpg" alt="KOSMO" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">
-    </div>
-
-    <div id="totem-display" class="status-box" style="border-color: #2b8a3e;">
-      <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
-      <p>Aproxime o cartão de membro ou código de barras</p>
+  <div class="totem-logo-container">
+    <div class="totem-logo-oval" id="totem-oval-container">
+      <img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">
     </div>
   </div>
 
-  <footer>
+  <div class="totem-action-box">
+    <form class="totem-form" onsubmit="event.preventDefault(); executarCheckin();">
+      <input type="text" id="totem-barcode-input" class="totem-input-manual" placeholder="PASSE O CARTÃO OU QR CODE..." autocomplete="off" autofocus oninput="detetarLeituraInstantanea(this)">
+      <button type="submit" class="totem-btn-ok">OK</button>
+    </form>
+    
+    <div id="totem-resultado" class="totem-status-card">
+      <div>
+        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
+        <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="totem-footer">
     Ginásio KOSMO | Terra Branca, Frente Escola Amor De Deus | NIF: 283023805
-  </footer>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://htybbtbayxreoundolac.supabase.co";
@@ -80,7 +81,6 @@
 
     let temporizadorReset = null;
 
-    // Prevenir hibernação e suspensão do ecrã permanentemente
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
@@ -91,40 +91,49 @@
     setInterval(() => { window.dispatchEvent(new Event('mousemove')); }, 1000);
 
     function atualizarRelogio() {
-      const agora = new Date();
-      const dias = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
-      const meses = ['DE JANEIRO', 'DE FEVEREIRO', 'DE MARÇO', 'DE ABRIL', 'DE MAIO', 'DE JUNHO', 'DE JULHO', 'DE AGOSTO', 'DE SETEMBRO', 'DE OUTUBRO', 'DE NOVEMBRO', 'DE DEZEMBRO'];
+      const d = new Date();
+      const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       
-      document.getElementById('date-label').innerText = `${dias[agora.getDay()]}, ${agora.getDate()} ${meses[agora.getMonth()]} DE ${agora.getFullYear()}`;
-      document.getElementById('clock-label').innerText = agora.toLocaleTimeString('pt-PT');
+      const elData = document.getElementById('data-atual');
+      const elRelogio = document.getElementById('relogio');
+
+      if(elData) elData.innerText = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+      if(elRelogio) elRelogio.innerText = d.toLocaleTimeString('pt-PT');
     }
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    const inputScanner = document.getElementById('totem-input-scanner');
+    const inputLeitor = document.getElementById('totem-barcode-input');
 
-    // Foco cravado e contínuo no input oculto para o leitor responder sempre sem cliques
-    function focarLeitor() {
-      if (inputScanner && document.activeElement !== inputScanner) {
-        inputScanner.focus();
+    function focarInput() {
+      if (inputLeitor && document.activeElement !== inputLeitor) {
+        inputLeitor.focus();
       }
     }
-    setInterval(focarLeitor, 50);
-    window.onload = focarLeitor;
-    window.addEventListener('click', focarLeitor);
-    window.addEventListener('keydown', focarLeitor);
+    setInterval(focarInput, 50);
+    window.onload = focarInput;
+    window.addEventListener('click', focarInput);
+    window.addEventListener('keydown', focarInput);
 
-    let timeoutScanner = null;
-    function processarLeitura(el) {
+    let timeoutInput = null;
+    function detetarLeituraInstantanea(el) {
       const valor = el.value.trim();
       if (valor.length >= 3) {
-        clearTimeout(timeoutScanner);
-        timeoutScanner = setTimeout(async () => {
+        clearTimeout(timeoutInput);
+        timeoutInput = setTimeout(async () => {
           const codigo = el.value.trim();
           el.value = '';
-          if (codigo) await executarCheckinTotem(codigo);
-        }, 80);
+          if (codigo) await processarCheckinTotem(codigo);
+        }, 100);
       }
+    }
+
+    async function executarCheckin() {
+      const codigo = inputLeitor.value.trim();
+      if (!codigo) return;
+      inputLeitor.value = '';
+      await processarCheckinTotem(codigo);
     }
 
     function silenciarSomLocal(silenciar) {
@@ -133,16 +142,14 @@
       });
     }
 
-    async function executarCheckinTotem(codigo) {
+    async function processarCheckinTotem(codigo) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
-      const box = document.getElementById('totem-display');
-      const ovalContent = document.getElementById('totem-oval-content');
+      const resBox = document.getElementById('totem-resultado');
+      resBox.className = "totem-status-card";
+      resBox.innerHTML = `<h3 style="font-size: 1.3rem; color: #ffd43b;">A verificar ID: ${codigo}...</h3>`;
 
-      box.style.borderColor = '#ffd43b';
-      box.innerHTML = `<h3 style="color: #ffd43b;">A verificar ID: ${codigo}...</h3><p>Aguarde um momento</p>`;
-
-      let membros = [];
+      let membrosLocais = [];
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
           headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
@@ -150,19 +157,20 @@
         if (res.ok) {
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
-            membros = rows[0].payload.members || [];
+            membrosLocais = rows[0].payload.members || [];
           }
         }
       } catch(e) {
-        membros = JSON.parse(localStorage.getItem('kosmo_members')) || [];
+        membrosLocais = JSON.parse(localStorage.getItem('kosmo_members')) || [];
       }
 
-      const membro = membros.find(m => {
+      const membro = membrosLocais.find(m => {
         const b = String(m.barcode || m.id || '').trim();
         return b === String(codigo).trim();
       });
 
       const now = new Date();
+      const ovalContainer = document.getElementById('totem-oval-content');
 
       if (membro) {
         const dataFim = new Date(membro.date || '2026-01-01');
@@ -175,38 +183,48 @@
 
         const nomeMembro = membro.name || 'Membro';
         const planoMembro = membro.plan || 'Normal';
+        const fotoMembro = membro.foto ? `<img src="${membro.foto}" class="totem-avatar">` : `<div class="totem-avatar">👤</div>`;
 
-        // Exibe a cara inteira do membro perfeitamente ajustada no oval do logótipo
-        if (membro.foto && ovalContent) {
-          ovalContent.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="oval-avatar" id="totem-oval-content">`;
-        } else if (ovalContent) {
-          ovalContent.outerHTML = `<div class="oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:5rem;background:#333;color:#aaa;">👤</div>`;
+        // Exibe a cara inteira do membro perfeitamente no espaço oval do logótipo
+        if (membro.foto && ovalContainer) {
+          ovalContainer.outerHTML = `<img src="${membro.foto}" alt="${nomeMembro}" class="totem-oval-avatar" id="totem-oval-content">`;
+        } else if (ovalContainer) {
+          ovalContainer.outerHTML = `<div class="totem-oval-avatar" id="totem-oval-content" style="display:flex;align-items:center;justify-content:center;font-size:4rem;background:#333;color:#aaa;">👤</div>`;
         }
 
         let textoVoz = "";
 
         if (ativo) {
-          box.style.borderColor = '#2b8a3e';
-          box.innerHTML = `
-            <h3 style="color: #2b8a3e; font-size: 2.1rem;">✅ ACESSO PERMITIDO - MEMBRO ATIVO</h3>
-            <p style="font-size: 1.6rem; font-weight: bold; color: #fff;">${nomeMembro}</p>
-            <p style="font-size: 1.05rem; color: #d4edda;">Plano: ${planoMembro}</p>
+          resBox.className = "totem-status-card status-ok";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">✅ ACESSO AUTORIZADO</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #d4edda;">Plano: ${planoMembro}</p>
+            </div>
           `;
           textoVoz = "Mensalidade ativa. Tenha um Bom treino.";
         } else if (subscricaoExpirada) {
-          box.style.borderColor = '#d9480f';
-          box.innerHTML = `
-            <h3 style="color: #d9480f; font-size: 2.1rem;">❌ ACESSO NEGADO - EXPIRADO</h3>
-            <p style="font-size: 1.6rem; font-weight: bold; color: #fff;">${nomeMembro}</p>
-            <p style="font-size: 1.05rem; color: #f8d7da;">Subscrição expirada. Por favor, renove.</p>
+          resBox.className = "totem-status-card status-err";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ SUBSCRIÇÃO EXPIRADA</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #f8d7da;">Mensalidade Expirada. Voce não pode treinar.</p>
+            </div>
           `;
           textoVoz = "Mensalidade Expirada. Voce não pode treinar.";
         } else {
-          box.style.borderColor = '#d9480f';
-          box.innerHTML = `
-            <h3 style="color: #d9480f; font-size: 2.1rem;">❌ ACESSO NEGADO - INATIVO</h3>
-            <p style="font-size: 1.6rem; font-weight: bold; color: #fff;">${nomeMembro}</p>
-            <p style="font-size: 1.05rem; color: #f8d7da;">Conta inativa. Dirija-se à receção.</p>
+          resBox.className = "totem-status-card status-err";
+          resBox.innerHTML = `
+            ${fotoMembro}
+            <div style="text-align: left;">
+              <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CONTA INATIVA</h3>
+              <p style="font-size: 1.3rem; font-weight: bold;">${nomeMembro}</p>
+              <p style="font-size: 0.95rem; color: #f8d7da;">Mensalidade Inativa. Voce não pode treinar.</p>
+            </div>
           `;
           textoVoz = "Mensalidade Inativa. Voce não pode treinar.";
         }
@@ -215,9 +233,9 @@
           window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(textoVoz);
           msg.lang = 'pt-PT';
-          msg.rate = 0.95;  // Firme e pausada
-          msg.pitch = 1.1;  // Clara e viva
-          msg.volume = 1.0; // Volume alto
+          msg.rate = 0.95;
+          msg.pitch = 1.1;
+          msg.volume = 1.0;
 
           silenciarSomLocal(true);
           msg.onend = () => { silenciarSomLocal(false); };
@@ -226,11 +244,24 @@
           window.speechSynthesis.speak(msg);
         }
 
+        const logs = JSON.parse(localStorage.getItem('kosmo_attendance')) || [];
+        logs.unshift({
+          data: now.toLocaleDateString('pt-PT'),
+          time: now.toLocaleTimeString('pt-PT'),
+          name: nomeMembro,
+          barcode: codigo,
+          status: ativo ? 'Ativo' : 'Expirado',
+          foto: membro.foto || ''
+        });
+        localStorage.setItem('kosmo_attendance', JSON.stringify(logs));
+
       } else {
-        box.style.borderColor = '#d9480f';
-        box.innerHTML = `
-          <h3 style="color: #d9480f; font-size: 2.1rem;">❌ CARTÃO DESCONHECIDO</h3>
-          <p style="font-size: 1.2rem; color: #fff;">ID "${codigo}" não registado no sistema</p>
+        resBox.className = "totem-status-card status-err";
+        resBox.innerHTML = `
+          <div style="text-align: center;">
+            <h3 style="font-size: 1.8rem; margin-bottom: 2px;">❌ CARTÃO DESCONHECIDO</h3>
+            <p style="font-size: 1.1rem;">ID "${codigo}" não registado no sistema</p>
+          </div>
         `;
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -241,21 +272,23 @@
         }
       }
 
-      // Mantém a foto no oval e o estado exatamente durante 4 minutos (240000 ms) antes de restaurar o original
+      // Mantém a foto no espaço oval e o estado exatamente durante 4 minutos (240000 ms) antes de voltar ao estado inicial
       temporizadorReset = setTimeout(() => {
-        box.style.borderColor = '#2b8a3e';
-        box.innerHTML = `
-          <h3 style="color: #2b8a3e;">PRONTO PARA LEITURA</h3>
-          <p>Aproxime o cartão de membro ou código de barras</p>
+        resBox.className = "totem-status-card";
+        resBox.innerHTML = `
+          <div>
+            <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 2px;">PRONTO PARA LEITURA</h3>
+            <p style="font-size: 0.95rem; color: #aaa;">Aproxime o cartão de membro ou código de barras</p>
+          </div>
         `;
 
         // Restaura o logótipo original no espaço oval
-        const ovalEl = document.getElementById('totem-oval-content');
-        if (ovalEl) {
-          ovalEl.outerHTML = `<img src="logo.jpg" alt="KOSMO" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">`;
+        const ovalElement = document.getElementById('totem-oval-content');
+        if (ovalElement) {
+          ovalElement.outerHTML = `<img src="logo.jpg" alt="KOSMO" class="totem-logo-img" id="totem-oval-content" onerror="this.src='src/img/logo.jpg';">`;
         }
 
-        focarLeitor();
+        focarInput();
       }, 240000);
     }
   </script>
