@@ -64,7 +64,7 @@
     </div>
 
     <div class="scanner-indicator">
-      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo (Modo Foguetão Instantâneo)</span>
+      <span>⚡</span> <span id="scanner-status-text">Leitor ótico Approx LS21 ativo (Modo Foguetão Sem Bloqueio)</span>
     </div>
   </div>
 
@@ -80,7 +80,7 @@
     let bufferLeitor = "";
     let ultimoTempoTecla = Date.now();
 
-    // Prevenção contra hibernação e suspensão do ecrã
+    // Prevenção contra hibernação
     async function ativarAntiHibernacao() {
       if ('wakeLock' in navigator) {
         try { await navigator.wakeLock.request('screen'); } catch (err) {}
@@ -104,8 +104,8 @@
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
-    // Sincronização inteligente e silenciosa em segundo plano (atualiza a cache local sem bloquear o ecrã)
-    async function sincronizarDadosSilenciosos() {
+    // Sincronização em segundo plano totalmente assíncrona (não interfere nem bloqueia a leitura de novos membros)
+    async function sincronizarBackground() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/kosmo_data?select=*`, {
           headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}` }
@@ -114,17 +114,16 @@
           const rows = await res.json();
           if (rows && rows.length > 0 && rows[0].payload) {
             const dados = rows[0].payload;
-            if (dados.members && dados.members.length > 0) {
+            if (dados.members) {
               localStorage.setItem('kosmo_membros_foguetao', JSON.stringify(dados.members));
             }
           }
         }
       } catch(e) {}
     }
-    sincronizarDadosSilenciosos();
-    setInterval(sincronizarDadosSilenciosos, 5000); // Atualiza os dados na retaguarda a cada 5 segundos
+    sincronizarBackground();
+    setInterval(sincronizarBackground, 4000);
 
-    // Escuta global instantânea do leitor Approx LS21
     window.addEventListener('keydown', (e) => {
       const agora = Date.now();
       if (agora - ultimoTempoTecla > 120) {
@@ -136,7 +135,7 @@
         const codigoLido = bufferLeitor.trim();
         bufferLeitor = "";
         if (codigoLido.length > 0) {
-          processarCheckinRelampago(codigoLido);
+          processarCheckinFoguetaoSeguro(codigoLido);
         }
       } else if (e.key.length === 1) {
         bufferLeitor += e.key;
@@ -149,8 +148,8 @@
       });
     }
 
-    // Processamento Instantâneo tipo Foguetão (Lê diretamente da memória local sem travamentos)
-    function processarCheckinRelampago(codigo) {
+    // Processamento Instantâneo sem bloqueio (lê diretamente da cache local atualizada)
+    function processarCheckinFoguetaoSeguro(codigo) {
       if (temporizadorReset) clearTimeout(temporizadorReset);
 
       const resBox = document.getElementById('totem-resultado');
@@ -260,7 +259,7 @@
         }
       }
 
-      // Temporizador rigoroso de exatamente 4 minutos (240000ms) antes de restaurar o estado original
+      // Temporizador rigoroso de 4 minutos antes de restaurar o estado original
       temporizadorReset = setTimeout(() => {
         resBox.className = "totem-status-card";
         resBox.innerHTML = `
